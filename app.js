@@ -314,6 +314,202 @@ const questions = [
 ];
 
 const list = document.querySelector("#questionList");
+const levelButtons = [...document.querySelectorAll(".difficulty-tab")];
+let currentLevel = "beginner";
+
+levelButtons.forEach((button) => {
+  button.setAttribute("aria-pressed", String(button.dataset.level === currentLevel));
+});
+
+const intermediateData = [
+  {
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    for (",
+      { answer: "int i = 1", accepts: ["int i = 1", "int i=1"], chars: 10 },
+      "; ",
+      { answer: "i <= 5", accepts: ["i <= 5", "i<=5"], chars: 7 },
+      "; ",
+      { answer: "i++", accepts: ["i++", "++i", "i += 1", "i=i+1", "i = i + 1"], chars: 6 },
+      ") {\n      System.out.println(",
+      { answer: "i", chars: 2 },
+      ");\n    }\n  }\n}"
+    ],
+    hints: [
+      "for文は for (初期化式; 条件式; 更新式) の順番で書きます。中級では、初期化式を int i = 1 のようにまとまりで書きます。",
+      "目標の出力は1から5です。始まりは1、終わりは5、増え方は1ずつです。",
+      "printlnの中には、今の回で表示したい値を入れます。今回は繰り返しで変わる変数を表示します。"
+    ]
+  },
+  {
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    for (",
+      { answer: "int i = 2", accepts: ["int i = 2", "int i=2"], chars: 10 },
+      "; ",
+      { answer: "i <= 10", accepts: ["i <= 10", "i<=10"], chars: 8 },
+      "; ",
+      { answer: "i += 2", accepts: ["i += 2", "i=i+2", "i = i + 2"], chars: 8 },
+      ") {\n      System.out.println(",
+      { answer: "i", chars: 2 },
+      ");\n    }\n  }\n}"
+    ],
+    hints: [
+      "2、4、6、8、10は、始まりが2で、最後が10です。",
+      "偶数を順番に出したいので、毎回1ではなく2ずつ増やします。",
+      "表示する値は、for文の中で変化している変数です。printlnの中にその変数を入れます。"
+    ]
+  },
+  {
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int ",
+      { answer: "sum", chars: 5 },
+      " = ",
+      { answer: "0", chars: 2 },
+      ";\n\n    for (",
+      { answer: "int i = 1", accepts: ["int i = 1", "int i=1"], chars: 10 },
+      "; ",
+      { answer: "i <= 10", accepts: ["i <= 10", "i<=10"], chars: 8 },
+      "; ",
+      { answer: "i++", accepts: ["i++", "++i", "i += 1", "i=i+1", "i = i + 1"], chars: 6 },
+      ") {\n      ",
+      { answer: "sum += i", accepts: ["sum += i", "sum=sum+i", "sum = sum + i"], chars: 10 },
+      ";\n    }\n\n    System.out.println(",
+      { answer: "sum", chars: 5 },
+      ");\n  }\n}"
+    ],
+    hints: [
+      "合計を作るには、足した結果を覚えておく変数が必要です。よく使う名前はsumです。",
+      "合計は0から始めて、1から10までのiを順番に足していきます。",
+      "繰り返しの中では、sumにiを足して更新します。表示するのは最後に完成したsumです。"
+    ]
+  },
+  {
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int i = ",
+      { answer: "1", chars: 2 },
+      ";\n\n    while (",
+      { answer: "i <= 5", accepts: ["i <= 5", "i<=5"], chars: 7 },
+      ") {\n      System.out.println(",
+      { answer: "i", chars: 2 },
+      ");\n      ",
+      { answer: "i++", accepts: ["i++", "++i", "i += 1", "i=i+1", "i = i + 1"], chars: 6 },
+      ";\n    }\n  }\n}"
+    ],
+    hints: [
+      "while文では、繰り返しの前に変数を用意します。今回は1から始めます。",
+      "whileの丸かっこには、続ける条件だけを書きます。5まで表示したいので、5以下の間続けます。",
+      "表示したあとに変数を増やさないと、同じ値のまま止まらなくなります。"
+    ]
+  },
+  {
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int count = ",
+      { answer: "5", chars: 2 },
+      ";\n\n    while (",
+      { answer: "count >= 1", accepts: ["count >= 1", "count>=1"], chars: 11 },
+      ") {\n      System.out.println(",
+      { answer: "count", chars: 6 },
+      ");\n      ",
+      { answer: "count--", accepts: ["count--", "--count", "count -= 1", "count=count-1", "count = count - 1"], chars: 9 },
+      ";\n    }\n  }\n}"
+    ],
+    hints: [
+      "カウントダウンは、最初を大きい数字にして、毎回小さくします。",
+      "最後に1も表示したいので、条件は1以上の間続ける形にします。",
+      "表示したあと、countを1減らします。増やすのではなく減らす点に注意します。"
+    ]
+  },
+  {
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    for (int i = 1; i <= 10; i++) {\n      if (",
+      { answer: "i == 4", accepts: ["i == 4", "i==4"], chars: 7 },
+      ") {\n        ",
+      { answer: "break", chars: 7 },
+      ";\n      }\n\n      System.out.println(",
+      { answer: "i", chars: 2 },
+      ");\n    }\n  }\n}"
+    ],
+    hints: [
+      "途中で完全に止めたいときはbreakを使います。",
+      "止めるタイミングは、iが4になったときです。同じかどうかの比較には == を使います。",
+      "breakをprintlnより前に置くと、4は表示されずに繰り返しが終了します。"
+    ]
+  },
+  {
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    for (int i = 1; i <= 5; i++) {\n      if (",
+      { answer: "i == 3", accepts: ["i == 3", "i==3"], chars: 7 },
+      ") {\n        ",
+      { answer: "continue", chars: 10 },
+      ";\n      }\n\n      System.out.println(",
+      { answer: "i", chars: 2 },
+      ");\n    }\n  }\n}"
+    ],
+    hints: [
+      "繰り返し自体は続けて、特定の回だけ表示しないときはcontinueを使います。",
+      "飛ばしたい値は3です。条件には、iが3かどうかを調べる式を書きます。",
+      "continueをprintlnより前に置くと、その回だけ表示処理に進みません。"
+    ]
+  },
+  {
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    for (int i = 1; i <= 9; i++) {\n      if (",
+      { answer: "i % 2 == 0", accepts: ["i % 2 == 0", "i%2==0"], chars: 11 },
+      ") {\n        ",
+      { answer: "continue", chars: 10 },
+      ";\n      }\n\n      System.out.println(",
+      { answer: "i", chars: 2 },
+      ");\n    }\n  }\n}"
+    ],
+    hints: [
+      "奇数だけ表示するには、偶数の回を飛ばすと考えると書きやすいです。",
+      "% は余りを調べる記号です。2で割った余りが0なら偶数です。",
+      "偶数だとわかった回だけcontinueで飛ばせば、printlnには奇数だけが届きます。"
+    ]
+  },
+  {
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int sum = 0;\n\n    for (int i = 1; i <= 10; i++) {\n      ",
+      { answer: "sum += i", accepts: ["sum += i", "sum=sum+i", "sum = sum + i"], chars: 10 },
+      ";\n\n      if (",
+      { answer: "sum >= 10", accepts: ["sum >= 10", "sum>=10"], chars: 10 },
+      ") {\n        ",
+      { answer: "break", chars: 7 },
+      ";\n      }\n    }\n\n    System.out.println(",
+      { answer: "sum", chars: 5 },
+      ");\n  }\n}"
+    ],
+    hints: [
+      "まずsumにiを足します。足したあとで、合計が止める条件に届いたか確認します。",
+      "止める条件は「sumが10以上」です。ちょうど10も含めるので >= を使います。",
+      "条件を満たしたらbreakします。最後に表示するのは、止まった時点のsumです。"
+    ]
+  },
+  {
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    for (",
+      { answer: "int i = 1", accepts: ["int i = 1", "int i=1"], chars: 10 },
+      "; ",
+      { answer: "i <= 5", accepts: ["i <= 5", "i<=5"], chars: 7 },
+      "; ",
+      { answer: "i++", accepts: ["i++", "++i", "i += 1", "i=i+1", "i = i + 1"], chars: 6 },
+      ") {\n      System.out.println(",
+      { answer: "\"3 x \" + i + \" = \" + 3 * i", accepts: ["\"3 x \" + i + \" = \" + 3 * i", "\"3 x \"+i+\" = \"+3*i", "\"3 x \" + i + \" = \" + i * 3", "\"3 x \"+i+\" = \"+i*3"], chars: 28 },
+      ");\n    }\n  }\n}"
+    ],
+    hints: [
+      "3の段は、iを1から5まで変化させて、3とiをかけます。",
+      "文字と変数をつなげるときは + を使います。\"3 x \"、i、\" = \"、計算結果を順番につなげます。",
+      "Javaのかけ算は * です。3 * i または i * 3 で計算できます。"
+    ]
+  }
+];
+
+questions.forEach((question, index) => {
+  question.levels = {
+    beginner: { parts: question.parts, hints: question.hints },
+    intermediate: intermediateData[index]
+  };
+});
 
 function normalize(value) {
   return value.replace(/\s+/g, "");
@@ -421,58 +617,77 @@ function resetQuestion(card) {
   hintButton.setAttribute("aria-expanded", "false");
 }
 
-questions.forEach((question, index) => {
-  const card = document.createElement("article");
-  card.className = "question-card";
+function renderQuestions() {
+  list.textContent = "";
 
-  card.innerHTML = `
-    <div class="question-top">
-      <div class="question-number">Q${index + 1}</div>
-      <div class="question-copy">
-        <h3>${question.title}</h3>
-        <p>${question.prompt}</p>
-      </div>
-    </div>
-    <div class="question-body">
-      <div class="code-panel">
-        <div class="panel-title">
-          <span>穴埋めコード</span>
-          <span class="concept">${question.concept}</span>
-        </div>
-      </div>
-      <div class="side-panel">
-        <div class="output-box">
-          <h4>目標の出力</h4>
-          <pre></pre>
-        </div>
-        <div class="explain-box">
-          <h4>考え方</h4>
-          <p></p>
-        </div>
-        <div class="button-row">
-          <button class="action-button primary" type="button" data-action="check">入力をチェック</button>
-          <button class="action-button secondary" type="button" data-action="hint" aria-expanded="false">ヒントを表示</button>
-          <button class="action-button secondary" type="button" data-action="answer" aria-expanded="false">解答を表示</button>
-          <button class="action-button secondary" type="button" data-action="reset">リセット</button>
-        </div>
-        <p class="feedback" aria-live="polite"></p>
-        <div class="hint-box">
-          <h4>ヒント</h4>
-        </div>
-        <div class="answer-box">
-          <h4>解答例</h4>
-          <pre></pre>
-        </div>
-      </div>
-    </div>
-  `;
+  questions.forEach((question, index) => {
+    const level = question.levels[currentLevel];
+    const card = document.createElement("article");
+    card.className = "question-card";
 
-  card.querySelector(".code-panel").appendChild(renderCode(question.parts, index));
-  card.querySelector(".output-box pre").textContent = question.output;
-  card.querySelector(".explain-box p").textContent = question.explanation;
-  card.querySelector(".hint-box").appendChild(renderHints(question.hints));
-  card.querySelector(".answer-box pre").textContent = question.answer;
-  list.appendChild(card);
+    card.innerHTML = `
+      <div class="question-top">
+        <div class="question-number">Q${index + 1}</div>
+        <div class="question-copy">
+          <h3>${question.title}</h3>
+          <p>${question.prompt}</p>
+        </div>
+      </div>
+      <div class="question-body">
+        <div class="code-panel">
+          <div class="panel-title">
+            <span>穴埋めコード</span>
+            <span class="concept">${question.concept} / ${currentLevel === "beginner" ? "初級" : "中級"}</span>
+          </div>
+        </div>
+        <div class="side-panel">
+          <div class="output-box">
+            <h4>目標の出力</h4>
+            <pre></pre>
+          </div>
+          <div class="explain-box">
+            <h4>考え方</h4>
+            <p></p>
+          </div>
+          <div class="button-row">
+            <button class="action-button primary" type="button" data-action="check">入力をチェック</button>
+            <button class="action-button secondary" type="button" data-action="hint" aria-expanded="false">ヒントを表示</button>
+            <button class="action-button secondary" type="button" data-action="answer" aria-expanded="false">解答を表示</button>
+            <button class="action-button secondary" type="button" data-action="reset">リセット</button>
+          </div>
+          <p class="feedback" aria-live="polite"></p>
+          <div class="hint-box">
+            <h4>ヒント</h4>
+          </div>
+          <div class="answer-box">
+            <h4>解答例</h4>
+            <pre></pre>
+          </div>
+        </div>
+      </div>
+    `;
+
+    card.querySelector(".code-panel").appendChild(renderCode(level.parts, index));
+    card.querySelector(".output-box pre").textContent = question.output;
+    card.querySelector(".explain-box p").textContent = question.explanation;
+    card.querySelector(".hint-box").appendChild(renderHints(level.hints));
+    card.querySelector(".answer-box pre").textContent = question.answer;
+    list.appendChild(card);
+  });
+}
+
+renderQuestions();
+
+levelButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    currentLevel = button.dataset.level;
+    levelButtons.forEach((levelButton) => {
+      const active = levelButton === button;
+      levelButton.classList.toggle("active", active);
+      levelButton.setAttribute("aria-pressed", String(active));
+    });
+    renderQuestions();
+  });
 });
 
 list.addEventListener("click", (event) => {
