@@ -7,6 +7,35 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
+    <div class="auth-shell">
+      <div class="auth-brand">
+        <p class="eyebrow">Java Output Practice</p>
+        <h1>ログイン</h1>
+        <p>メール、パスワード、またはGoogleアカウントで学習ページに入ります。</p>
+      </div>
+      <form class="auth-card" id="authForm">
+        <label>
+          <span>メールアドレス</span>
+          <input type="email" id="authEmail" autocomplete="email" required>
+        </label>
+        <label>
+          <span>パスワード</span>
+          <input type="password" id="authPassword" autocomplete="current-password" required minlength="6">
+        </label>
+        <button class="action-button primary auth-submit" type="submit">メールでログイン</button>
+        <button class="action-button secondary auth-create" type="button" id="createAccountButton">新規作成</button>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="google-button" type="button" id="googleLoginButton">
+          <span>G</span>
+          Googleアカウントでログイン
+        </button>
+        <p class="auth-message" id="authMessage" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell" aria-hidden="true">
   <header class="site-header">
     <div class="header-inner">
       <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
@@ -178,8 +207,11 @@
 
   <footer class="site-footer">
     <p>Java loops / for・while・break・continue</p>
+    <button class="signout-button" type="button" id="signOutButton">ログアウト</button>
   </footer>
+  </div>
 
   <script src="app.js"></script>
+  <script type="module" src="firebase-auth.js"></script>
 </body>
 </html>
