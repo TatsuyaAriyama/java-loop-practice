@@ -389,7 +389,7 @@ h1 {
 
 .lesson-links {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .lesson-links a {
@@ -407,11 +407,11 @@ h1 {
   transition: background 160ms ease, color 160ms ease;
 }
 
-.lesson-links a:nth-child(3n) {
+.lesson-links a:nth-child(4n) {
   border-right: 0;
 }
 
-.lesson-links a:nth-last-child(-n + 3) {
+.lesson-links a:nth-last-child(-n + 4) {
   border-bottom: 0;
 }
 
@@ -452,6 +452,8 @@ h1 {
 .array-questions-section,
 .conditionals-section,
 .conditional-questions-section,
+.booleans-section,
+.boolean-questions-section,
 .questions-section {
   padding: 44px 0;
 }
@@ -1170,12 +1172,20 @@ h1 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .lesson-links a:nth-child(4n) {
+    border-right: 1px solid var(--line);
+  }
+
   .lesson-links a:nth-child(3n) {
     border-right: 1px solid var(--line);
   }
 
   .lesson-links a:nth-child(2n) {
     border-right: 0;
+  }
+
+  .lesson-links a:nth-last-child(-n + 4) {
+    border-bottom: 1px solid var(--line);
   }
 
   .lesson-links a:nth-last-child(-n + 3) {
@@ -1359,8 +1369,10 @@ h1 {
   .lesson-links a,
   .lesson-links a:nth-child(2n),
   .lesson-links a:nth-child(3n),
+  .lesson-links a:nth-child(4n),
   .lesson-links a:nth-last-child(-n + 2),
-  .lesson-links a:nth-last-child(-n + 3) {
+  .lesson-links a:nth-last-child(-n + 3),
+  .lesson-links a:nth-last-child(-n + 4) {
     min-height: 68px;
     border-right: 0;
     border-bottom: 1px solid var(--line);

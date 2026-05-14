@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Java 条件分岐編</title>
+  <title>Java 真偽値と条件式</title>
   <script>
     try {
       if (localStorage.getItem("java-output-practice-auth") === "signed-in") {
@@ -58,97 +58,95 @@
         <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
         <div class="header-actions">
           <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
-          <a href="#conditionalQuestions" class="primary-link">問題を始める</a>
-          <a href="#conditionals" class="secondary-link">条件分岐ガイドを見る</a>
-          <a href="arrays.html" class="secondary-link">配列編へ</a>
+          <a href="#booleanQuestions" class="primary-link">問題を始める</a>
+          <a href="#booleans" class="secondary-link">真偽値ガイドを見る</a>
+          <a href="conditionals.html" class="secondary-link">条件分岐編へ</a>
         </div>
         <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
           <div class="lesson-panel-head">
             <p class="eyebrow">Lesson Index</p>
             <h2>Lesson一覧</h2>
-            <p>学習したい編を選んでください。正解した問題数に応じて小さなチェックが更新されます。</p>
+            <p>学習したい編を選んでください。正解数に応じてチェックが更新されます。</p>
           </div>
           <div class="lesson-links">
             <a href="index.html" data-lesson-link="loops"><span>01</span><b>繰り返し処理編</b><small class="lesson-check">0/10</small></a>
             <a href="arrays.html" data-lesson-link="arrays"><span>02</span><b>配列編</b><small class="lesson-check">0/10</small></a>
-            <a href="conditionals.html" class="active" data-lesson-link="conditionals"><span>03</span><b>条件分岐編</b><small class="lesson-check">0/10</small></a>
-            <a href="booleans.html" data-lesson-link="booleans"><span>04</span><b>真偽値と条件式</b><small class="lesson-check">0/10</small></a>
+            <a href="conditionals.html" data-lesson-link="conditionals"><span>03</span><b>条件分岐編</b><small class="lesson-check">0/10</small></a>
+            <a href="booleans.html" class="active" data-lesson-link="booleans"><span>04</span><b>真偽値と条件式</b><small class="lesson-check">0/10</small></a>
           </div>
         </nav>
       </div>
     </header>
 
     <main>
-      <section id="conditionals" class="conditionals-section">
+      <section id="booleans" class="booleans-section">
         <div class="section-heading">
-          <p class="eyebrow">Conditional Lesson</p>
-          <h2>条件分岐を理解する</h2>
-          <p>条件を判定し、実行する処理を切り替えるための文法です。ここで曖昧だと、出力はすぐにずれます。</p>
+          <p class="eyebrow">Boolean Lesson</p>
+          <h2>真偽値と条件式を理解する</h2>
+          <p>条件式は、最後に必ずtrueかfalseへ変わります。if文へ進む前に、この判定の目を鍛えます。</p>
         </div>
 
         <div class="syntax-layout">
           <div class="syntax-code">
             <pre><code>int score = 82;
+boolean passed = score >= 60;
 
-if (score >= 80) {
-  System.out.println("合格");
-} else {
-  System.out.println("再挑戦");
-}</code></pre>
+System.out.println(passed); // true
+System.out.println(!passed); // false</code></pre>
           </div>
           <div class="syntax-cards">
             <article>
-              <span class="syntax-label">if</span>
-              <h3>条件がtrueなら実行する</h3>
-              <p><span class="term">if (条件式)</span> は「もし条件が成り立つなら」という意味です。条件式の結果がtrueのときだけ、中の処理が動きます。</p>
+              <span class="syntax-label">boolean</span>
+              <h3>trueかfalseだけを入れる型</h3>
+              <p><span class="term">boolean</span> は真偽値の型です。入れられる値は<span class="term">true</span>か<span class="term">false</span>だけです。</p>
             </article>
             <article>
-              <span class="syntax-label">else</span>
-              <h3>当てはまらない場合を受け止める</h3>
-              <p><span class="term">else</span> は、ifの条件がfalseだったときに実行されます。条件から外れた値を放置しないための出口です。</p>
-            </article>
-            <article>
-              <span class="syntax-label">else if</span>
-              <h3>条件を上から順番に試す</h3>
-              <p><span class="term">else if</span> は、条件を追加したいときに使います。最初にtrueになった場所だけが実行され、残りは見ません。</p>
+              <span class="syntax-label">condition</span>
+              <h3>条件式は判定結果を返す</h3>
+              <p><span class="term">score &gt;= 60</span> のような式は、計算結果としてtrueかfalseになります。ここを読めないと分岐は読めません。</p>
             </article>
             <article>
               <span class="syntax-label">comparison</span>
-              <h3>比較演算子で判定する</h3>
-              <p><span class="term">==</span>、<span class="term">!=</span>、<span class="term">&gt;=</span>、<span class="term">&lt;</span> などで値を比べます。代入の<span class="term">=</span>とは役割が違います。</p>
+              <h3>比較演算子で値を比べる</h3>
+              <p><span class="term">==</span>、<span class="term">!=</span>、<span class="term">&gt;</span>、<span class="term">&lt;=</span> などで値を比べます。代入の<span class="term">=</span>とは別物です。</p>
             </article>
             <article>
-              <span class="syntax-label">&amp;&amp; / ||</span>
-              <h3>条件を組み合わせる</h3>
-              <p><span class="term">&amp;&amp;</span> は両方true、<span class="term">||</span> はどちらかtrueです。条件を強くしたいのか、広げたいのかを決めて使います。</p>
+              <span class="syntax-label">!</span>
+              <h3>否定は結果を反転する</h3>
+              <p><span class="term">!passed</span> はpassedの反対です。trueならfalse、falseならtrue。短いですが、読み飛ばすと危険です。</p>
             </article>
             <article>
-              <span class="syntax-label">boolean</span>
-              <h3>true / falseを読む</h3>
-              <p>条件式の答えは必ずtrueかfalseです。今この値は条件を満たすのか。そこを一度止まって読む癖が、分岐のミスを減らします。</p>
+              <span class="syntax-label">&amp;&amp;</span>
+              <h3>両方trueならtrue</h3>
+              <p><span class="term">&amp;&amp;</span> は「かつ」です。条件を狭くします。片方でもfalseなら、全体はfalseです。</p>
+            </article>
+            <article>
+              <span class="syntax-label">||</span>
+              <h3>どちらかtrueならtrue</h3>
+              <p><span class="term">||</span> は「または」です。条件を広げます。片方でもtrueなら、全体はtrueです。</p>
             </article>
           </div>
         </div>
 
         <p class="source-note">
           参考: Oracle Java Tutorials の
-          <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/if.html">if-then / if-then-else文</a>、
-          <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/op2.html">比較・条件演算子</a>
+          <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html">Primitive Data Types</a>、
+          <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/op2.html">Equality, Relational, and Conditional Operators</a>
         </p>
       </section>
 
-      <section id="conditionalQuestions" class="conditional-questions-section">
+      <section id="booleanQuestions" class="boolean-questions-section">
         <div class="section-heading">
-          <p class="eyebrow">Conditional Output Practice</p>
-          <h2>条件分岐の穴埋め問題10問</h2>
-          <p>if、else if、else、比較演算子、論理演算子を使って、出力が切り替わる流れを練習します。</p>
+          <p class="eyebrow">Boolean Output Practice</p>
+          <h2>真偽値と条件式の穴埋め問題10問</h2>
+          <p>true/false、比較式、否定、&&、||を、出力で確かめながら読み切ります。</p>
         </div>
-        <div id="conditionalQuestionList" class="question-list"></div>
+        <div id="booleanQuestionList" class="question-list"></div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <p>Java conditionals / if・else if・else・boolean</p>
+      <p>Java booleans / true・false・comparison・condition</p>
       <button class="signout-button" type="button" id="signOutButton">ログアウト</button>
     </footer>
   </div>

@@ -316,6 +316,7 @@ const questions = [
 const list = document.querySelector("#questionList");
 const arrayList = document.querySelector("#arrayQuestionList");
 const conditionalList = document.querySelector("#conditionalQuestionList");
+const booleanList = document.querySelector("#booleanQuestionList");
 const levelButtons = [...document.querySelectorAll(".difficulty-tab")];
 const questionsSection = document.querySelector("#questions");
 const unlockInput = document.querySelector(".unlock-input");
@@ -1105,6 +1106,257 @@ const conditionalQuestions = [
   }
 ];
 
+const booleanQuestions = [
+  {
+    title: "trueをそのまま表示する",
+    concept: "boolean",
+    prompt: "boolean型の変数isOpenの値を表示します。",
+    output: "true",
+    explanation: "boolean型にはtrueかfalseだけが入ります。isOpenにはtrueが入っているので、そのままtrueと表示されます。",
+    hints: [
+      "booleanは真偽値を入れる型です。",
+      "trueは文字列ではないので、ダブルクォーテーションで囲みません。",
+      "変数の中身を表示するときはprintlnの中に変数名を書きます。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    boolean isOpen = ",
+      { answer: "true", accepts: ["true"], chars: 5 },
+      ";\n    System.out.println(",
+      { answer: "isOpen", accepts: ["isOpen"], chars: 7 },
+      ");\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    boolean isOpen = true;
+    System.out.println(isOpen);
+  }
+}`
+  },
+  {
+    title: "比較式の結果を表示する",
+    concept: "comparison",
+    prompt: "scoreが80以上かどうかを表示します。",
+    output: "true",
+    explanation: "score >= 80 は条件式です。scoreは82なので、この条件式の結果はtrueになります。",
+    hints: [
+      "条件式は、最後にtrueかfalseへ変わります。",
+      "82は80以上なので、score >= 80 はtrueです。",
+      "条件式そのものをprintlnに入れると、判定結果を表示できます。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int score = 82;\n    System.out.println(score ",
+      { answer: ">=", accepts: [">="], chars: 3 },
+      " ",
+      { answer: "80", accepts: ["80"], chars: 3 },
+      ");\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int score = 82;
+    System.out.println(score >= 80);
+  }
+}`
+  },
+  {
+    title: "等しいかどうかを判定する",
+    concept: "==",
+    prompt: "countが3と等しいかどうかを表示します。",
+    output: "false",
+    explanation: "countは4です。4と3は等しくないので、count == 3 の結果はfalseです。",
+    hints: [
+      "同じかどうかを調べるときは == を使います。",
+      "= は代入、== は比較です。ここを間違えると危険です。",
+      "countは4なので、3と同じではありません。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int count = 4;\n    System.out.println(count ",
+      { answer: "==", accepts: ["=="], chars: 3 },
+      " 3);\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int count = 4;
+    System.out.println(count == 3);
+  }
+}`
+  },
+  {
+    title: "等しくないかどうかを判定する",
+    concept: "!=",
+    prompt: "levelが1ではないかどうかを表示します。",
+    output: "true",
+    explanation: "!= は等しくないという意味です。levelは2なので、1ではありません。結果はtrueです。",
+    hints: [
+      "等しくないことを調べる記号は != です。",
+      "levelには2が入っています。",
+      "2は1ではないので、条件式はtrueになります。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int level = 2;\n    System.out.println(level ",
+      { answer: "!=", accepts: ["!="], chars: 3 },
+      " 1);\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int level = 2;
+    System.out.println(level != 1);
+  }
+}`
+  },
+  {
+    title: "否定でtrueとfalseを反転する",
+    concept: "!",
+    prompt: "isErrorを否定して表示します。",
+    output: "true",
+    explanation: "! は真偽値を反転します。isErrorはfalseなので、!isErrorはtrueになります。",
+    hints: [
+      "! は「ではない」と読むと考えやすいです。",
+      "falseを否定するとtrueになります。",
+      "if文だけでなく、printlnの中でも真偽値の反転を表示できます。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    boolean isError = false;\n    System.out.println(",
+      { answer: "!isError", accepts: ["!isError"], chars: 9 },
+      ");\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    boolean isError = false;
+    System.out.println(!isError);
+  }
+}`
+  },
+  {
+    title: "かつの条件を読む",
+    concept: "&&",
+    prompt: "ageが20以上、かつhasTicketがtrueかどうかを表示します。",
+    output: "true",
+    explanation: "&& は両方trueのときだけtrueです。age >= 20もhasTicketもtrueなので、結果はtrueです。",
+    hints: [
+      "&& は「かつ」です。",
+      "ageは22なので、age >= 20 はtrueです。",
+      "hasTicketもtrueです。両方trueなので全体もtrueです。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int age = 22;\n    boolean hasTicket = true;\n    System.out.println(age >= 20 ",
+      { answer: "&&", accepts: ["&&"], chars: 3 },
+      " ",
+      { answer: "hasTicket", accepts: ["hasTicket"], chars: 10 },
+      ");\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int age = 22;
+    boolean hasTicket = true;
+    System.out.println(age >= 20 && hasTicket);
+  }
+}`
+  },
+  {
+    title: "またはの条件を読む",
+    concept: "||",
+    prompt: "isMemberまたはcouponがtrueかどうかを表示します。",
+    output: "true",
+    explanation: "|| はどちらか1つでもtrueならtrueです。isMemberはfalseですが、couponがtrueなので全体はtrueです。",
+    hints: [
+      "|| は「または」です。",
+      "左がfalseでも、右がtrueなら全体はtrueです。",
+      "条件を広げたいときに||を使います。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    boolean isMember = false;\n    boolean coupon = true;\n    System.out.println(isMember ",
+      { answer: "||", accepts: ["||"], chars: 3 },
+      " coupon);\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    boolean isMember = false;
+    boolean coupon = true;
+    System.out.println(isMember || coupon);
+  }
+}`
+  },
+  {
+    title: "範囲の条件式を作る",
+    concept: "range",
+    prompt: "numが1以上10以下かどうかを表示します。",
+    output: "true",
+    explanation: "範囲は下限と上限を別々に判定し、&&でつなぎます。numは7なので範囲内です。",
+    hints: [
+      "1以上は num >= 1 です。",
+      "10以下は num <= 10 です。",
+      "両方を満たす必要があるので&&でつなぎます。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int num = 7;\n    System.out.println(num >= 1 ",
+      { answer: "&&", accepts: ["&&"], chars: 3 },
+      " num <= ",
+      { answer: "10", accepts: ["10"], chars: 3 },
+      ");\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int num = 7;
+    System.out.println(num >= 1 && num <= 10);
+  }
+}`
+  },
+  {
+    title: "条件式を変数に入れる",
+    concept: "boolean variable",
+    prompt: "scoreが60以上かどうかをboolean変数passedに入れて表示します。",
+    output: "true",
+    explanation: "条件式の結果はtrueかfalseです。その結果をboolean変数に入れて、あとから使うことができます。",
+    hints: [
+      "boolean変数にはtrue/falseを入れられます。",
+      "score >= 60 の結果もtrue/falseです。",
+      "条件式の結果をpassedに入れてから表示します。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int score = 75;\n    boolean passed = score ",
+      { answer: ">=", accepts: [">="], chars: 3 },
+      " 60;\n    System.out.println(",
+      { answer: "passed", accepts: ["passed"], chars: 7 },
+      ");\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int score = 75;
+    boolean passed = score >= 60;
+    System.out.println(passed);
+  }
+}`
+  },
+  {
+    title: "ifの中でboolean変数を使う",
+    concept: "if / boolean",
+    prompt: "canEnterがtrueならEnterと表示します。",
+    output: "Enter",
+    explanation: "boolean変数はifの条件としてそのまま使えます。canEnterはtrueなので、ifの中が実行されます。",
+    hints: [
+      "ifの丸かっこにはtrue/falseになる値を書きます。",
+      "canEnterはbooleanなので、それ自体が条件になります。",
+      "canEnter == true と書けますが、if (canEnter) が自然です。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    boolean canEnter = true;\n\n    if (",
+      { answer: "canEnter", accepts: ["canEnter", "canEnter == true"], chars: 10 },
+      ") {\n      System.out.println(",
+      { answer: "\"Enter\"", accepts: ["\"Enter\""], chars: 8 },
+      ");\n    }\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    boolean canEnter = true;
+
+    if (canEnter) {
+      System.out.println("Enter");
+    }
+  }
+}`
+  }
+];
+
 const arrayDeepDives = {
   array: {
     eyebrow: "array",
@@ -1201,7 +1453,8 @@ const arrayDeepDives = {
 const lessonMeta = [
   { id: "loops", total: questions.length },
   { id: "arrays", total: arrayQuestions.length },
-  { id: "conditionals", total: conditionalQuestions.length }
+  { id: "conditionals", total: conditionalQuestions.length },
+  { id: "booleans", total: booleanQuestions.length }
 ];
 
 const progressPrefix = "java-output-practice-progress";
@@ -1667,6 +1920,72 @@ function renderConditionalQuestions() {
   });
 }
 
+function renderBooleanQuestions() {
+  if (!booleanList) return;
+
+  booleanList.textContent = "";
+
+  booleanQuestions.forEach((question, index) => {
+    const card = document.createElement("article");
+    const completed = isQuestionComplete("booleans", index);
+    card.className = `question-card${completed ? " completed" : ""}`;
+    card.dataset.lesson = "booleans";
+    card.dataset.questionIndex = String(index);
+
+    card.innerHTML = `
+      <div class="question-top">
+        <div class="question-number">B${index + 1}</div>
+        <div class="question-copy">
+          <div class="question-title-line">
+            <h3>${question.title}</h3>
+            <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
+          </div>
+          <p>${question.prompt}</p>
+        </div>
+      </div>
+      <div class="question-body">
+        <div class="code-panel">
+          <div class="panel-title">
+            <span>真偽値コード</span>
+            <span class="concept">${question.concept}</span>
+          </div>
+        </div>
+        <div class="side-panel">
+          <div class="output-box">
+            <h4>目標の出力</h4>
+            <pre></pre>
+          </div>
+          <div class="explain-box">
+            <h4>考え方</h4>
+            <p></p>
+          </div>
+          <div class="button-row">
+            <button class="action-button primary" type="button" data-action="check">入力をチェック</button>
+            <button class="action-button secondary" type="button" data-action="hint" aria-expanded="false">ヒントを表示</button>
+            <button class="action-button secondary" type="button" data-action="answer" aria-expanded="false">解答を表示</button>
+            <button class="action-button secondary" type="button" data-action="reset">リセット</button>
+          </div>
+          <p class="feedback" aria-live="polite"></p>
+          <div class="hint-box">
+            <h4>ヒント</h4>
+          </div>
+          <div class="answer-box">
+            <h4>解答例</h4>
+            <pre></pre>
+          </div>
+        </div>
+      </div>
+    `;
+
+    card.querySelector(".code-panel").appendChild(renderCode(question.parts, index));
+    card.querySelector(".output-box pre").textContent = question.output;
+    card.querySelector(".explain-box p").textContent = question.explanation;
+    card.querySelector(".hint-box").appendChild(renderHints(question.hints));
+    card.querySelector(".answer-box pre").textContent = question.answer;
+    booleanList.appendChild(card);
+  });
+}
+
 function renderArrayDeepDive(topicKey) {
   if (!arrayDeepDive || !arrayDeepDives[topicKey]) return;
 
@@ -1724,6 +2043,7 @@ function activateArrayTopic(card) {
 renderQuestions();
 renderArrayQuestions();
 renderConditionalQuestions();
+renderBooleanQuestions();
 updateLessonProgress();
 if (hasLoopUnlock()) {
   applyLoopUnlock();
@@ -1806,6 +2126,12 @@ if (arrayList) {
 
 if (conditionalList) {
   conditionalList.addEventListener("click", (event) => {
+    handleQuestionAction(event);
+  });
+}
+
+if (booleanList) {
+  booleanList.addEventListener("click", (event) => {
     handleQuestionAction(event);
   });
 }
