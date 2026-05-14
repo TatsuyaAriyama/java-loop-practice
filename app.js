@@ -321,7 +321,7 @@ const unlockInput = document.querySelector(".unlock-input");
 const unlockButton = document.querySelector("#unlockButton");
 const unlockFeedback = document.querySelector("#unlockFeedback");
 const typeLogo = document.querySelector(".type-logo");
-const lessonToggle = document.querySelector("#lessonToggle");
+const lessonToggles = [...document.querySelectorAll(".lesson-toggle")];
 const lessonPanel = document.querySelector("#lessonPanel");
 let currentLevel = "beginner";
 
@@ -842,9 +842,13 @@ function startTypeLogo() {
 }
 
 function toggleLessonPanel(forceOpen) {
+  if (!lessonPanel) return;
+
   const shouldOpen = typeof forceOpen === "boolean" ? forceOpen : !lessonPanel.classList.contains("visible");
   lessonPanel.classList.toggle("visible", shouldOpen);
-  lessonToggle.setAttribute("aria-expanded", String(shouldOpen));
+  lessonToggles.forEach((button) => {
+    button.setAttribute("aria-expanded", String(shouldOpen));
+  });
 }
 
 function textNode(value) {
@@ -1092,9 +1096,11 @@ if (typeLogo) {
   startTypeLogo();
 }
 
-if (lessonToggle && lessonPanel) {
-  lessonToggle.addEventListener("click", () => {
-    toggleLessonPanel();
+if (lessonPanel && lessonToggles.length > 0) {
+  lessonToggles.forEach((button) => {
+    button.addEventListener("click", () => {
+      toggleLessonPanel();
+    });
   });
 
   lessonPanel.addEventListener("click", (event) => {
@@ -1102,7 +1108,24 @@ if (lessonToggle && lessonPanel) {
       toggleLessonPanel(false);
     }
   });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      toggleLessonPanel(false);
+    }
+  });
 }
+
+document.addEventListener("click", (event) => {
+  const clickedToggle = event.target.closest(".lesson-toggle");
+  const clickedPanel = event.target.closest("#lessonPanel");
+
+  if (!lessonPanel || clickedToggle || clickedPanel) return;
+
+  if (lessonPanel.classList.contains("visible")) {
+    toggleLessonPanel(false);
+  }
+});
 
 if (unlockButton && unlockInput) {
   unlockButton.addEventListener("click", checkUnlock);
