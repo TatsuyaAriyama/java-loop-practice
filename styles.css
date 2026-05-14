@@ -367,7 +367,7 @@ h1 {
 
 .lesson-links {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .lesson-links a {
@@ -385,11 +385,11 @@ h1 {
   transition: background 160ms ease, color 160ms ease;
 }
 
-.lesson-links a:nth-child(2n) {
+.lesson-links a:nth-child(3n) {
   border-right: 0;
 }
 
-.lesson-links a:nth-last-child(-n + 2) {
+.lesson-links a:nth-last-child(-n + 3) {
   border-bottom: 0;
 }
 
@@ -405,10 +405,31 @@ h1 {
   font-size: 12px;
 }
 
+.lesson-links b {
+  font-size: 15px;
+}
+
+.lesson-check {
+  width: fit-content;
+  border: 1px solid var(--line);
+  padding: 3px 7px;
+  color: #3a3a3a;
+  background: #ffffff;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.lesson-links a.lesson-complete .lesson-check {
+  border-color: var(--ok);
+  color: var(--ok);
+}
+
 .syntax-section,
 .basics-section,
 .arrays-section,
 .array-questions-section,
+.conditionals-section,
+.conditional-questions-section,
 .questions-section {
   padding: 44px 0;
 }
@@ -867,9 +888,32 @@ h1 {
   padding: 22px 24px;
 }
 
+.question-title-line {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
 .question-copy h3 {
   margin-bottom: 8px;
   font-size: 24px;
+}
+
+.progress-mark {
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  padding: 4px 8px;
+  color: #555555;
+  background: #ffffff;
+  font-size: 11px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.question-card.completed .progress-mark {
+  border-color: var(--ok);
+  color: var(--ok);
 }
 
 .question-copy p {
@@ -1102,6 +1146,26 @@ h1 {
 
   .lesson-links {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lesson-links a:nth-child(3n) {
+    border-right: 1px solid var(--line);
+  }
+
+  .lesson-links a:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .lesson-links a:nth-last-child(-n + 3) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .lesson-links a:nth-last-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .lesson-links a:last-child {
+    border-bottom: 0;
   }
 
   .syntax-layout,

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Java 条件分岐編</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
+    <div class="auth-shell">
+      <div class="auth-brand">
+        <p class="eyebrow">Java Output Practice</p>
+        <h1>ログイン</h1>
+        <p>メール、パスワード、またはGoogleアカウントで学習ページに入ります。</p>
+      </div>
+      <form class="auth-card" id="authForm">
+        <label>
+          <span>メールアドレス</span>
+          <input type="email" id="authEmail" autocomplete="email" required>
+        </label>
+        <label>
+          <span>パスワード</span>
+          <input type="password" id="authPassword" autocomplete="current-password" required minlength="6">
+        </label>
+        <button class="action-button primary auth-submit" type="submit">メールでログイン</button>
+        <button class="action-button secondary auth-create" type="button" id="createAccountButton">新規作成</button>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="google-button" type="button" id="googleLoginButton">
+          <span>G</span>
+          Googleアカウントでログイン
+        </button>
+        <p class="auth-message" id="authMessage" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell" aria-hidden="true">
+    <header class="site-header">
+      <div class="header-inner">
+        <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
+        <div class="header-actions">
+          <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
+          <a href="#conditionalQuestions" class="primary-link">問題を始める</a>
+          <a href="#conditionals" class="secondary-link">条件分岐ガイドを見る</a>
+          <a href="arrays.html" class="secondary-link">配列編へ</a>
+        </div>
+        <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
+          <div class="lesson-panel-head">
+            <p class="eyebrow">Lesson Index</p>
+            <h2>Lesson一覧</h2>
+            <p>学習したい編を選んでください。正解した問題数に応じて小さなチェックが更新されます。</p>
+          </div>
+          <div class="lesson-links">
+            <a href="index.html" data-lesson-link="loops"><span>01</span><b>繰り返し処理編</b><small class="lesson-check">0/10</small></a>
+            <a href="arrays.html" data-lesson-link="arrays"><span>02</span><b>配列編</b><small class="lesson-check">0/10</small></a>
+            <a href="conditionals.html" class="active" data-lesson-link="conditionals"><span>03</span><b>条件分岐編</b><small class="lesson-check">0/10</small></a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="conditionals" class="conditionals-section">
+        <div class="section-heading">
+          <p class="eyebrow">Conditional Lesson</p>
+          <h2>条件分岐を理解する</h2>
+          <p>条件を判定し、実行する処理を切り替えるための文法です。ここで曖昧だと、出力はすぐにずれます。</p>
+        </div>
+
+        <div class="syntax-layout">
+          <div class="syntax-code">
+            <pre><code>int score = 82;
+
+if (score >= 80) {
+  System.out.println("合格");
+} else {
+  System.out.println("再挑戦");
+}</code></pre>
+          </div>
+          <div class="syntax-cards">
+            <article>
+              <span class="syntax-label">if</span>
+              <h3>条件がtrueなら実行する</h3>
+              <p><span class="term">if (条件式)</span> は「もし条件が成り立つなら」という意味です。条件式の結果がtrueのときだけ、中の処理が動きます。</p>
+            </article>
+            <article>
+              <span class="syntax-label">else</span>
+              <h3>当てはまらない場合を受け止める</h3>
+              <p><span class="term">else</span> は、ifの条件がfalseだったときに実行されます。条件から外れた値を放置しないための出口です。</p>
+            </article>
+            <article>
+              <span class="syntax-label">else if</span>
+              <h3>条件を上から順番に試す</h3>
+              <p><span class="term">else if</span> は、条件を追加したいときに使います。最初にtrueになった場所だけが実行され、残りは見ません。</p>
+            </article>
+            <article>
+              <span class="syntax-label">comparison</span>
+              <h3>比較演算子で判定する</h3>
+              <p><span class="term">==</span>、<span class="term">!=</span>、<span class="term">&gt;=</span>、<span class="term">&lt;</span> などで値を比べます。代入の<span class="term">=</span>とは役割が違います。</p>
+            </article>
+            <article>
+              <span class="syntax-label">&amp;&amp; / ||</span>
+              <h3>条件を組み合わせる</h3>
+              <p><span class="term">&amp;&amp;</span> は両方true、<span class="term">||</span> はどちらかtrueです。条件を強くしたいのか、広げたいのかを決めて使います。</p>
+            </article>
+            <article>
+              <span class="syntax-label">boolean</span>
+              <h3>true / falseを読む</h3>
+              <p>条件式の答えは必ずtrueかfalseです。今この値は条件を満たすのか。そこを一度止まって読む癖が、分岐のミスを減らします。</p>
+            </article>
+          </div>
+        </div>
+
+        <p class="source-note">
+          参考: Oracle Java Tutorials の
+          <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/if.html">if-then / if-then-else文</a>、
+          <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/op2.html">比較・条件演算子</a>
+        </p>
+      </section>
+
+      <section id="conditionalQuestions" class="conditional-questions-section">
+        <div class="section-heading">
+          <p class="eyebrow">Conditional Output Practice</p>
+          <h2>条件分岐の穴埋め問題10問</h2>
+          <p>if、else if、else、比較演算子、論理演算子を使って、出力が切り替わる流れを練習します。</p>
+        </div>
+        <div id="conditionalQuestionList" class="question-list"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Java conditionals / if・else if・else・boolean</p>
+      <button class="signout-button" type="button" id="signOutButton">ログアウト</button>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+  <script type="module" src="firebase-auth.js"></script>
+</body>
+</html>

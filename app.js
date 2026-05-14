@@ -315,6 +315,7 @@ const questions = [
 
 const list = document.querySelector("#questionList");
 const arrayList = document.querySelector("#arrayQuestionList");
+const conditionalList = document.querySelector("#conditionalQuestionList");
 const levelButtons = [...document.querySelectorAll(".difficulty-tab")];
 const questionsSection = document.querySelector("#questions");
 const unlockInput = document.querySelector(".unlock-input");
@@ -811,6 +812,299 @@ const arrayQuestions = [
   }
 ];
 
+const conditionalQuestions = [
+  {
+    title: "80点以上なら合格と表示する",
+    concept: "if",
+    prompt: "scoreが80以上のときだけ、合格と表示します。",
+    output: "合格",
+    explanation: "if文は条件式がtrueのときだけ中の処理を実行します。scoreは82なので、score >= 80 はtrueです。",
+    hints: [
+      "80点以上は、80も含みます。だから > ではなく >= を使います。",
+      "ifの丸かっこには、trueかfalseになる条件式を書きます。",
+      "文字を表示するときは、\"合格\" のようにダブルクォーテーションで囲みます。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int score = 82;\n\n    if (score ",
+      { answer: ">=", accepts: [">="], chars: 3 },
+      " 80) {\n      System.out.println(",
+      { answer: "\"合格\"", accepts: ["\"合格\""], chars: 7 },
+      ");\n    }\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int score = 82;
+
+    if (score >= 80) {
+      System.out.println("合格");
+    }
+  }
+}`
+  },
+  {
+    title: "条件に合わないときは再挑戦と表示する",
+    concept: "if / else",
+    prompt: "scoreが80以上なら合格、それ以外なら再挑戦と表示します。",
+    output: "再挑戦",
+    explanation: "scoreは65なので、score >= 80 はfalseです。ifの中は通らず、elseの中が実行されます。",
+    hints: [
+      "elseは、ifの条件がfalseだったときの出口です。",
+      "scoreは65です。80以上ではないので、今回はelse側が動きます。",
+      "elseには条件式を書きません。ifで当てはまらなかった残りを受け取ります。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int score = 65;\n\n    if (score >= 80) {\n      System.out.println(\"合格\");\n    } ",
+      { answer: "else", accepts: ["else"], chars: 5 },
+      " {\n      System.out.println(",
+      { answer: "\"再挑戦\"", accepts: ["\"再挑戦\""], chars: 8 },
+      ");\n    }\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int score = 65;
+
+    if (score >= 80) {
+      System.out.println("合格");
+    } else {
+      System.out.println("再挑戦");
+    }
+  }
+}`
+  },
+  {
+    title: "点数でA・B・Cを分ける",
+    concept: "else if",
+    prompt: "90点以上はA、70点以上はB、それ以外はCと表示します。",
+    output: "B",
+    explanation: "条件は上から順番に試されます。scoreは78なので90以上ではありませんが、70以上には当てはまります。",
+    hints: [
+      "else ifは、条件をもう1つ追加したいときに使います。",
+      "78は90以上ではありません。最初のifはfalseです。",
+      "78は70以上です。次のelse ifがtrueになり、Bが表示されます。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int score = 78;\n\n    if (score >= 90) {\n      System.out.println(\"A\");\n    } else if (score ",
+      { answer: ">=", accepts: [">="], chars: 3 },
+      " 70) {\n      System.out.println(",
+      { answer: "\"B\"", accepts: ["\"B\""], chars: 4 },
+      ");\n    } else {\n      System.out.println(\"C\");\n    }\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int score = 78;
+
+    if (score >= 90) {
+      System.out.println("A");
+    } else if (score >= 70) {
+      System.out.println("B");
+    } else {
+      System.out.println("C");
+    }
+  }
+}`
+  },
+  {
+    title: "同じかどうかを判定する",
+    concept: "==",
+    prompt: "numberが3と同じなら、sameと表示します。",
+    output: "same",
+    explanation: "Javaで同じかどうかを比べるときは == を使います。= は代入なので、ifの比較には使いません。",
+    hints: [
+      "代入は =、比較は == です。ここは混ぜると危険です。",
+      "numberには3が入っています。",
+      "number == 3 がtrueなので、sameが表示されます。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int number = 3;\n\n    if (number ",
+      { answer: "==", accepts: ["=="], chars: 3 },
+      " 3) {\n      System.out.println(",
+      { answer: "\"same\"", accepts: ["\"same\""], chars: 7 },
+      ");\n    }\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int number = 3;
+
+    if (number == 3) {
+      System.out.println("same");
+    }
+  }
+}`
+  },
+  {
+    title: "文字列が違うことを判定する",
+    concept: "String / equals",
+    prompt: "nameがRenではないとき、not Renと表示します。",
+    output: "not Ren",
+    explanation: "文字列の中身を比べるときはequalsを使います。先頭に!を付けると「等しくないなら」という判定になります。",
+    hints: [
+      "文字列の中身を比べるときは name.equals(\"Ren\") の形を使います。",
+      "! は結果を反対にします。trueならfalse、falseならtrueになります。",
+      "nameはAoiなので、Renとは一致しません。だからnot Renが表示されます。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    String name = \"Aoi\";\n\n    if (!name.equals(",
+      { answer: "\"Ren\"", accepts: ["\"Ren\""], chars: 6 },
+      ")) {\n      System.out.println(",
+      { answer: "\"not Ren\"", accepts: ["\"not Ren\""], chars: 10 },
+      ");\n    }\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    String name = "Aoi";
+
+    if (!name.equals("Ren")) {
+      System.out.println("not Ren");
+    }
+  }
+}`
+  },
+  {
+    title: "両方の条件を満たすか判定する",
+    concept: "&&",
+    prompt: "scoreが80以上、かつ attendanceが90以上ならOKと表示します。",
+    output: "OK",
+    explanation: "&& は両方の条件がtrueのときだけtrueになります。今回は点数も出席率も条件を満たしています。",
+    hints: [
+      "&& は「かつ」です。左も右もtrueでなければ通りません。",
+      "scoreは85なので80以上です。",
+      "attendanceは95なので90以上です。両方trueなのでOKが表示されます。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int score = 85;\n    int attendance = 95;\n\n    if (score >= 80 ",
+      { answer: "&&", accepts: ["&&"], chars: 3 },
+      " attendance >= 90) {\n      System.out.println(",
+      { answer: "\"OK\"", accepts: ["\"OK\""], chars: 5 },
+      ");\n    }\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int score = 85;
+    int attendance = 95;
+
+    if (score >= 80 && attendance >= 90) {
+      System.out.println("OK");
+    }
+  }
+}`
+  },
+  {
+    title: "どちらかの条件を満たすか判定する",
+    concept: "||",
+    prompt: "couponがある、またはpriceが1000未満ならbuyと表示します。",
+    output: "buy",
+    explanation: "|| はどちらか1つでもtrueならtrueです。couponはfalseですが、price < 1000 がtrueです。",
+    hints: [
+      "|| は「または」です。どちらか一方がtrueなら通ります。",
+      "couponはfalseです。ここだけ見ると通りません。",
+      "priceは800なので1000未満です。右側がtrueなのでbuyが表示されます。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    boolean coupon = false;\n    int price = 800;\n\n    if (coupon ",
+      { answer: "||", accepts: ["||"], chars: 3 },
+      " price < 1000) {\n      System.out.println(",
+      { answer: "\"buy\"", accepts: ["\"buy\""], chars: 6 },
+      ");\n    }\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    boolean coupon = false;
+    int price = 800;
+
+    if (coupon || price < 1000) {
+      System.out.println("buy");
+    }
+  }
+}`
+  },
+  {
+    title: "booleanの値で分岐する",
+    concept: "boolean",
+    prompt: "isMemberがtrueならmemberと表示します。",
+    output: "member",
+    explanation: "boolean型の変数は、それ自体がtrueかfalseを持っています。if (isMember) と書けば、その値をそのまま判定できます。",
+    hints: [
+      "booleanはtrueまたはfalseを入れる型です。",
+      "isMemberにはtrueが入っています。",
+      "ifの中には isMember == true と書くこともできますが、if (isMember) の形が簡潔です。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    boolean isMember = true;\n\n    if (",
+      { answer: "isMember", accepts: ["isMember", "isMember == true"], chars: 10 },
+      ") {\n      System.out.println(",
+      { answer: "\"member\"", accepts: ["\"member\""], chars: 9 },
+      ");\n    }\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    boolean isMember = true;
+
+    if (isMember) {
+      System.out.println("member");
+    }
+  }
+}`
+  },
+  {
+    title: "範囲に入っているか判定する",
+    concept: "range",
+    prompt: "ageが13以上19以下ならteenと表示します。",
+    output: "teen",
+    explanation: "範囲を判定するときは、下限と上限の2つの条件を&&でつなぎます。ageは16なので両方を満たします。",
+    hints: [
+      "13以上は age >= 13 です。",
+      "19以下は age <= 19 です。",
+      "両方満たす必要があるので、条件は && でつなぎます。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int age = 16;\n\n    if (age >= 13 ",
+      { answer: "&&", accepts: ["&&"], chars: 3 },
+      " age <= ",
+      { answer: "19", accepts: ["19"], chars: 3 },
+      ") {\n      System.out.println(\"teen\");\n    }\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int age = 16;
+
+    if (age >= 13 && age <= 19) {
+      System.out.println("teen");
+    }
+  }
+}`
+  },
+  {
+    title: "偶数か奇数かを分ける",
+    concept: "if / modulo",
+    prompt: "numberが偶数ならeven、そうでなければoddと表示します。",
+    output: "odd",
+    explanation: "% は割った余りを調べます。7を2で割ると余りは1なので、偶数ではなくelse側のoddが表示されます。",
+    hints: [
+      "% は余りを求める記号です。",
+      "偶数は2で割った余りが0です。",
+      "numberは7なので、number % 2 == 0 はfalseです。else側が動きます。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int number = 7;\n\n    if (number % 2 == ",
+      { answer: "0", accepts: ["0"], chars: 2 },
+      ") {\n      System.out.println(\"even\");\n    } else {\n      System.out.println(",
+      { answer: "\"odd\"", accepts: ["\"odd\""], chars: 6 },
+      ");\n    }\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int number = 7;
+
+    if (number % 2 == 0) {
+      System.out.println("even");
+    } else {
+      System.out.println("odd");
+    }
+  }
+}`
+  }
+];
+
 const arrayDeepDives = {
   array: {
     eyebrow: "array",
@@ -903,6 +1197,73 @@ const arrayDeepDives = {
     code: "int[] scores = {80, 90, 70};\nSystem.out.println(scores[2]); // OK\n// System.out.println(scores[3]); // 範囲外"
   }
 };
+
+const lessonMeta = [
+  { id: "loops", total: questions.length },
+  { id: "arrays", total: arrayQuestions.length },
+  { id: "conditionals", total: conditionalQuestions.length }
+];
+
+const progressPrefix = "java-output-practice-progress";
+
+function progressKey(lessonId) {
+  return `${progressPrefix}:${lessonId}`;
+}
+
+function readCompletedQuestions(lessonId) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(progressKey(lessonId)) || "[]");
+    return new Set(Array.isArray(saved) ? saved : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function writeCompletedQuestions(lessonId, completed) {
+  try {
+    localStorage.setItem(progressKey(lessonId), JSON.stringify([...completed]));
+  } catch {
+    // Progress is helpful, but answering questions should still work if storage is unavailable.
+  }
+}
+
+function isQuestionComplete(lessonId, questionIndex) {
+  return readCompletedQuestions(lessonId).has(questionIndex);
+}
+
+function updateQuestionCompletion(card, completed) {
+  card.classList.toggle("completed", completed);
+  const mark = card.querySelector(".progress-mark");
+  if (mark) {
+    mark.textContent = completed ? "完了" : "未完了";
+  }
+}
+
+function markQuestionComplete(card) {
+  const lessonId = card.dataset.lesson;
+  const questionIndex = Number(card.dataset.questionIndex);
+  if (!lessonId || Number.isNaN(questionIndex)) return;
+
+  const completed = readCompletedQuestions(lessonId);
+  completed.add(questionIndex);
+  writeCompletedQuestions(lessonId, completed);
+  updateQuestionCompletion(card, true);
+  updateLessonProgress();
+}
+
+function updateLessonProgress() {
+  lessonMeta.forEach((lesson) => {
+    const completedCount = readCompletedQuestions(lesson.id).size;
+    const isComplete = completedCount >= lesson.total;
+    document.querySelectorAll(`[data-lesson-link="${lesson.id}"]`).forEach((link) => {
+      link.classList.toggle("lesson-complete", isComplete);
+      const check = link.querySelector(".lesson-check");
+      if (check) {
+        check.textContent = isComplete ? "✓ 完了" : `${completedCount}/${lesson.total}`;
+      }
+    });
+  });
+}
 
 function normalize(value) {
   return value.replace(/\s+/g, "");
@@ -1029,6 +1390,7 @@ function checkQuestion(card) {
   if (wrong.length === 0) {
     feedback.className = "feedback ok";
     feedback.textContent = "正解です。出力の流れまで説明できたら、かなり良い状態です。";
+    markQuestionComplete(card);
     return;
   }
 
@@ -1072,13 +1434,19 @@ function renderQuestions() {
   questions.forEach((question, index) => {
     const level = question.levels[currentLevel];
     const card = document.createElement("article");
-    card.className = "question-card";
+    const completed = isQuestionComplete("loops", index);
+    card.className = `question-card${completed ? " completed" : ""}`;
+    card.dataset.lesson = "loops";
+    card.dataset.questionIndex = String(index);
 
     card.innerHTML = `
       <div class="question-top">
         <div class="question-number">Q${index + 1}</div>
         <div class="question-copy">
-          <h3>${question.title}</h3>
+          <div class="question-title-line">
+            <h3>${question.title}</h3>
+            <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
+          </div>
           <p>${question.prompt}</p>
         </div>
       </div>
@@ -1132,13 +1500,19 @@ function renderArrayQuestions() {
 
   arrayQuestions.forEach((question, index) => {
     const card = document.createElement("article");
-    card.className = "question-card";
+    const completed = isQuestionComplete("arrays", index);
+    card.className = `question-card${completed ? " completed" : ""}`;
+    card.dataset.lesson = "arrays";
+    card.dataset.questionIndex = String(index);
 
     card.innerHTML = `
       <div class="question-top">
         <div class="question-number">A${index + 1}</div>
         <div class="question-copy">
-          <h3>${question.title}</h3>
+          <div class="question-title-line">
+            <h3>${question.title}</h3>
+            <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
+          </div>
           <p>${question.prompt}</p>
         </div>
       </div>
@@ -1182,6 +1556,72 @@ function renderArrayQuestions() {
     card.querySelector(".hint-box").appendChild(renderHints(question.hints));
     card.querySelector(".answer-box pre").textContent = question.answer;
     arrayList.appendChild(card);
+  });
+}
+
+function renderConditionalQuestions() {
+  if (!conditionalList) return;
+
+  conditionalList.textContent = "";
+
+  conditionalQuestions.forEach((question, index) => {
+    const card = document.createElement("article");
+    const completed = isQuestionComplete("conditionals", index);
+    card.className = `question-card${completed ? " completed" : ""}`;
+    card.dataset.lesson = "conditionals";
+    card.dataset.questionIndex = String(index);
+
+    card.innerHTML = `
+      <div class="question-top">
+        <div class="question-number">C${index + 1}</div>
+        <div class="question-copy">
+          <div class="question-title-line">
+            <h3>${question.title}</h3>
+            <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
+          </div>
+          <p>${question.prompt}</p>
+        </div>
+      </div>
+      <div class="question-body">
+        <div class="code-panel">
+          <div class="panel-title">
+            <span>条件分岐コード</span>
+            <span class="concept">${question.concept}</span>
+          </div>
+        </div>
+        <div class="side-panel">
+          <div class="output-box">
+            <h4>目標の出力</h4>
+            <pre></pre>
+          </div>
+          <div class="explain-box">
+            <h4>考え方</h4>
+            <p></p>
+          </div>
+          <div class="button-row">
+            <button class="action-button primary" type="button" data-action="check">入力をチェック</button>
+            <button class="action-button secondary" type="button" data-action="hint" aria-expanded="false">ヒントを表示</button>
+            <button class="action-button secondary" type="button" data-action="answer" aria-expanded="false">解答を表示</button>
+            <button class="action-button secondary" type="button" data-action="reset">リセット</button>
+          </div>
+          <p class="feedback" aria-live="polite"></p>
+          <div class="hint-box">
+            <h4>ヒント</h4>
+          </div>
+          <div class="answer-box">
+            <h4>解答例</h4>
+            <pre></pre>
+          </div>
+        </div>
+      </div>
+    `;
+
+    card.querySelector(".code-panel").appendChild(renderCode(question.parts, index));
+    card.querySelector(".output-box pre").textContent = question.output;
+    card.querySelector(".explain-box p").textContent = question.explanation;
+    card.querySelector(".hint-box").appendChild(renderHints(question.hints));
+    card.querySelector(".answer-box pre").textContent = question.answer;
+    conditionalList.appendChild(card);
   });
 }
 
@@ -1241,6 +1681,8 @@ function activateArrayTopic(card) {
 
 renderQuestions();
 renderArrayQuestions();
+renderConditionalQuestions();
+updateLessonProgress();
 if (typeLogo) {
   startTypeLogo();
 }
@@ -1307,6 +1749,12 @@ if (list) {
 
 if (arrayList) {
   arrayList.addEventListener("click", (event) => {
+    handleQuestionAction(event);
+  });
+}
+
+if (conditionalList) {
+  conditionalList.addEventListener("click", (event) => {
     handleQuestionAction(event);
   });
 }
