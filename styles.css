@@ -169,6 +169,83 @@ h1 {
   color: var(--red);
 }
 
+.lesson-toggle {
+  appearance: none;
+}
+
+.lesson-panel {
+  display: none;
+  margin-top: 18px;
+  border: 1px solid var(--ink);
+  background: #ffffff;
+}
+
+.lesson-panel.visible {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.3fr);
+}
+
+.lesson-panel-head {
+  border-right: 1px solid var(--ink);
+  padding: 20px;
+}
+
+.lesson-panel-head .eyebrow {
+  margin-bottom: 8px;
+}
+
+.lesson-panel-head h2 {
+  margin-bottom: 8px;
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+.lesson-panel-head p:last-child {
+  margin-bottom: 0;
+  color: #303030;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.lesson-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.lesson-links a {
+  min-height: 86px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 16px;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 800;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.lesson-links a:nth-child(3n) {
+  border-right: 0;
+}
+
+.lesson-links a:nth-last-child(-n + 3) {
+  border-bottom: 0;
+}
+
+.lesson-links a:hover {
+  background: #fff8f8;
+  color: var(--red);
+}
+
+.lesson-links span {
+  color: var(--red);
+  font-family: Menlo, Consolas, "Courier New", monospace;
+  font-size: 12px;
+}
+
 .syntax-section,
 .basics-section,
 .questions-section {
@@ -696,6 +773,35 @@ h1 {
 }
 
 @media (max-width: 900px) {
+  .lesson-panel.visible {
+    grid-template-columns: 1fr;
+  }
+
+  .lesson-panel-head {
+    border-right: 0;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .lesson-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lesson-links a:nth-child(3n) {
+    border-right: 1px solid var(--line);
+  }
+
+  .lesson-links a:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .lesson-links a:nth-last-child(-n + 3) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .lesson-links a:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+
   .syntax-layout {
     grid-template-columns: 1fr;
   }
@@ -805,6 +911,24 @@ h1 {
 
   .difficulty-tabs {
     width: 100%;
+  }
+
+  .lesson-links {
+    grid-template-columns: 1fr;
+  }
+
+  .lesson-links a,
+  .lesson-links a:nth-child(2n),
+  .lesson-links a:nth-child(3n),
+  .lesson-links a:nth-last-child(-n + 2),
+  .lesson-links a:nth-last-child(-n + 3) {
+    min-height: 68px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .lesson-links a:last-child {
+    border-bottom: 0;
   }
 
   .code-box {

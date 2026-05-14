@@ -11,10 +11,26 @@
     <div class="header-inner">
       <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
       <div class="header-actions">
+        <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
         <a href="#questions" class="primary-link">問題を始める</a>
         <a href="#syntax" class="secondary-link">文法ガイドを見る</a>
         <a href="#basics" class="secondary-link">先に要点を見る</a>
       </div>
+      <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
+        <div class="lesson-panel-head">
+          <p class="eyebrow">Lesson Index</p>
+          <h2>繰り返し処理編</h2>
+          <p>for、while、break、continueと、穴埋め問題10問をまとめています。</p>
+        </div>
+        <div class="lesson-links">
+          <a href="#syntax"><span>00</span>文法ガイド</a>
+          <a href="#lesson-for"><span>01</span>for</a>
+          <a href="#lesson-while"><span>02</span>while</a>
+          <a href="#lesson-break"><span>03</span>break</a>
+          <a href="#lesson-continue"><span>04</span>continue</a>
+          <a href="#questions"><span>05</span>問題10問</a>
+        </div>
+      </nav>
     </div>
   </header>
 
@@ -87,7 +103,7 @@
         <h2>最初にここだけ押さえる</h2>
       </div>
       <div class="basics-grid">
-        <article>
+        <article id="lesson-for">
           <h3>for</h3>
           <p>回数や順番を決めて繰り返すときに使います。Javaでは、丸かっこの中を<span class="term">(1)初期化式</span>、<span class="term">(2)条件式</span>、<span class="term">(3)更新式</span>の3つに分けて書きます。</p>
           <code>for (初期化式; 条件式; 更新式)</code>
@@ -97,7 +113,7 @@
             <li><b>更新式</b>：1回ごとに値を変える</li>
           </ul>
         </article>
-        <article>
+        <article id="lesson-while">
           <h3>while</h3>
           <p>条件式が<span class="term">trueの間</span>だけ、同じ処理を繰り返します。回数よりも「この条件を満たしている間」という考え方が中心です。</p>
           <code>while (条件式)</code>
@@ -107,7 +123,7 @@
             <li>falseになったら繰り返しを終える</li>
           </ul>
         </article>
-        <article>
+        <article id="lesson-break">
           <h3>break</h3>
           <p>繰り返しを<span class="term">その場で終了</span>します。たとえば「探している値が見つかったら、もう続けなくてよい」という場面で使います。</p>
           <code>break;</code>
@@ -117,7 +133,7 @@
             <li>終了後は繰り返しの次へ進む</li>
           </ul>
         </article>
-        <article>
+        <article id="lesson-continue">
           <h3>continue</h3>
           <p>繰り返し自体は続けたまま、<span class="term">今の1回分だけ</span>残りの処理を飛ばします。「条件に合わない回だけスキップする」と考えるとわかりやすいです。</p>
           <code>continue;</code>

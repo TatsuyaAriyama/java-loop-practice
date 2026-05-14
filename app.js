@@ -320,6 +320,8 @@ const unlockInput = document.querySelector(".unlock-input");
 const unlockButton = document.querySelector("#unlockButton");
 const unlockFeedback = document.querySelector("#unlockFeedback");
 const typeLogo = document.querySelector(".type-logo");
+const lessonToggle = document.querySelector("#lessonToggle");
+const lessonPanel = document.querySelector("#lessonPanel");
 let currentLevel = "beginner";
 
 levelButtons.forEach((button) => {
@@ -548,6 +550,12 @@ function startTypeLogo() {
   window.setTimeout(tick, 260);
 }
 
+function toggleLessonPanel(forceOpen) {
+  const shouldOpen = typeof forceOpen === "boolean" ? forceOpen : !lessonPanel.classList.contains("visible");
+  lessonPanel.classList.toggle("visible", shouldOpen);
+  lessonToggle.setAttribute("aria-expanded", String(shouldOpen));
+}
+
 function textNode(value) {
   return document.createTextNode(value);
 }
@@ -727,6 +735,16 @@ function renderQuestions() {
 
 renderQuestions();
 startTypeLogo();
+
+lessonToggle.addEventListener("click", () => {
+  toggleLessonPanel();
+});
+
+lessonPanel.addEventListener("click", (event) => {
+  if (event.target.closest("a")) {
+    toggleLessonPanel(false);
+  }
+});
 
 unlockButton.addEventListener("click", checkUnlock);
 
