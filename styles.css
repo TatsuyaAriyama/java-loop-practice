@@ -379,9 +379,14 @@ h1 {
 }
 
 .hint-box {
+  display: none;
   margin-top: 12px;
   border-color: rgba(200, 16, 46, 0.34);
   background: linear-gradient(180deg, #ffffff 0%, #fffafa 100%);
+}
+
+.hint-box.visible {
+  display: block;
 }
 
 .hint-box h4 {

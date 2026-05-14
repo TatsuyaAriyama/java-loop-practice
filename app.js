@@ -400,6 +400,13 @@ function toggleAnswer(card, button) {
   button.setAttribute("aria-expanded", String(visible));
 }
 
+function toggleHint(card, button) {
+  const box = card.querySelector(".hint-box");
+  const visible = box.classList.toggle("visible");
+  button.textContent = visible ? "ヒントを隠す" : "ヒントを表示";
+  button.setAttribute("aria-expanded", String(visible));
+}
+
 function resetQuestion(card) {
   card.querySelectorAll(".code-input").forEach((input) => {
     input.value = "";
@@ -407,6 +414,11 @@ function resetQuestion(card) {
   const feedback = card.querySelector(".feedback");
   feedback.className = "feedback";
   feedback.textContent = "";
+  const hintBox = card.querySelector(".hint-box");
+  const hintButton = card.querySelector('button[data-action="hint"]');
+  hintBox.classList.remove("visible");
+  hintButton.textContent = "ヒントを表示";
+  hintButton.setAttribute("aria-expanded", "false");
 }
 
 questions.forEach((question, index) => {
@@ -437,15 +449,16 @@ questions.forEach((question, index) => {
           <h4>考え方</h4>
           <p></p>
         </div>
-        <div class="hint-box">
-          <h4>ヒント</h4>
-        </div>
         <div class="button-row">
           <button class="action-button primary" type="button" data-action="check">入力をチェック</button>
+          <button class="action-button secondary" type="button" data-action="hint" aria-expanded="false">ヒントを表示</button>
           <button class="action-button secondary" type="button" data-action="answer" aria-expanded="false">解答を表示</button>
           <button class="action-button secondary" type="button" data-action="reset">リセット</button>
         </div>
         <p class="feedback" aria-live="polite"></p>
+        <div class="hint-box">
+          <h4>ヒント</h4>
+        </div>
         <div class="answer-box">
           <h4>解答例</h4>
           <pre></pre>
@@ -470,6 +483,7 @@ list.addEventListener("click", (event) => {
   const action = button.dataset.action;
 
   if (action === "check") checkQuestion(card);
+  if (action === "hint") toggleHint(card, button);
   if (action === "answer") toggleAnswer(card, button);
   if (action === "reset") resetQuestion(card);
 });
