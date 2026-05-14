@@ -105,6 +105,7 @@ signOutButton.addEventListener("click", async () => {
 
 onAuthStateChanged(auth, (user) => {
   const signedIn = Boolean(user);
+  document.body.classList.remove("auth-pending");
   authScreen.classList.toggle("hidden", signedIn);
   appShell.classList.toggle("visible", signedIn);
   appShell.setAttribute("aria-hidden", String(!signedIn));
