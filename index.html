@@ -31,25 +31,51 @@
       <div class="basics-grid">
         <article>
           <h3>for</h3>
-          <p>回数がだいたい決まっているときに使います。たとえば「1から5まで表示する」のような処理です。</p>
-          <code>for (最初; 続ける条件; 変化)</code>
+          <p>回数や順番を決めて繰り返すときに使います。Javaでは、丸かっこの中を<span class="term">(1)初期化式</span>、<span class="term">(2)条件式</span>、<span class="term">(3)更新式</span>の3つに分けて書きます。</p>
+          <code>for (初期化式; 条件式; 更新式)</code>
+          <ul>
+            <li><b>初期化式</b>：最初の値を決める</li>
+            <li><b>条件式</b>：続けるか判定する</li>
+            <li><b>更新式</b>：1回ごとに値を変える</li>
+          </ul>
         </article>
         <article>
           <h3>while</h3>
-          <p>条件が成り立つ間だけ続けます。「iが5以下の間は表示する」のように考えます。</p>
-          <code>while (続ける条件)</code>
+          <p>条件式が<span class="term">trueの間</span>だけ、同じ処理を繰り返します。回数よりも「この条件を満たしている間」という考え方が中心です。</p>
+          <code>while (条件式)</code>
+          <ul>
+            <li>条件式を先に確認する</li>
+            <li>trueなら中の処理を実行する</li>
+            <li>falseになったら繰り返しを終える</li>
+          </ul>
         </article>
         <article>
           <h3>break</h3>
-          <p>繰り返しを途中で完全に止めます。「4になったら終了」のような場面で使います。</p>
+          <p>繰り返しを<span class="term">その場で終了</span>します。たとえば「探している値が見つかったら、もう続けなくてよい」という場面で使います。</p>
           <code>break;</code>
+          <ul>
+            <li>一番内側の繰り返しを抜ける</li>
+            <li>breakより後の処理は実行しない</li>
+            <li>終了後は繰り返しの次へ進む</li>
+          </ul>
         </article>
         <article>
           <h3>continue</h3>
-          <p>その回だけ飛ばして、次の回へ進みます。「3だけ表示しない」のような場面で使います。</p>
+          <p>繰り返し自体は続けたまま、<span class="term">今の1回分だけ</span>残りの処理を飛ばします。「条件に合わない回だけスキップする」と考えるとわかりやすいです。</p>
           <code>continue;</code>
+          <ul>
+            <li>今の回だけを途中で終える</li>
+            <li>次の回の判定へ進む</li>
+            <li>除外したい値があるときに便利</li>
+          </ul>
         </article>
       </div>
+      <p class="source-note">
+        参考: Oracle Java Tutorials の
+        <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/for.html">for文</a>、
+        <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/while.html">while文</a>、
+        <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/branch.html">break / continue</a>
+      </p>
     </section>
 
     <section id="questions" class="questions-section">

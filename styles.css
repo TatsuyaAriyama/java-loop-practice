@@ -155,7 +155,7 @@ h1 {
 }
 
 .basics-grid article {
-  min-height: 210px;
+  min-height: 330px;
   padding: 22px;
   border-right: 1px solid var(--ink);
   border-bottom: 1px solid var(--ink);
@@ -169,9 +169,15 @@ h1 {
 }
 
 .basics-grid p {
+  min-height: 126px;
   color: #303030;
   font-size: 14px;
   line-height: 1.75;
+}
+
+.term {
+  color: var(--red);
+  font-weight: 800;
 }
 
 .basics-grid code {
@@ -181,6 +187,50 @@ h1 {
   padding-bottom: 3px;
   font-family: Menlo, Consolas, monospace;
   font-size: 13px;
+}
+
+.basics-grid ul {
+  margin: 16px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
+}
+
+.basics-grid li {
+  position: relative;
+  margin: 0 0 8px;
+  padding-left: 16px;
+  color: #272727;
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.basics-grid li::before {
+  position: absolute;
+  top: 0.68em;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  background: var(--red);
+  content: "";
+}
+
+.basics-grid b {
+  font-weight: 900;
+}
+
+.source-note {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.source-note a {
+  color: var(--red-dark);
+  font-weight: 800;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
 }
 
 .question-list {
