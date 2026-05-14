@@ -5,6 +5,12 @@ const questions = [
     prompt: "1、2、3、4、5を1行ずつ表示します。for文の3つの部品を考えましょう。",
     output: "1\n2\n3\n4\n5",
     explanation: "for文は「最初に何をするか」「いつまで続けるか」「1回終わったらどう変えるか」を1行にまとめます。ここではiを1から始め、5以下の間だけ続け、毎回1ずつ増やします。",
+    hints: [
+      "for文の形は for (初期化式; 条件式; 更新式) です。空欄はこの3つを左から順番に埋めます。",
+      "最初に表示したい数字は1なので、初期化式は int i = 1 の形になります。最初の空欄には 1 が入ります。",
+      "最後に表示したい数字は5です。5も表示したいので、条件式は i <= 5 と読みます。「iが5以下の間は続ける」という意味です。",
+      "1、2、3、4、5と1ずつ増やしたいので、更新式は i++ と書けます。i++ は「iを1増やす」という意味です。"
+    ],
     parts: [
       "class Main {\n  public static void main(String[] args) {\n    for (int i = ",
       { answer: "1", chars: 2 },
@@ -28,6 +34,12 @@ const questions = [
     prompt: "2、4、6、8、10のように、2ずつ増える数字だけを表示します。",
     output: "2\n4\n6\n8\n10",
     explanation: "最初を2にして、10以下の間だけ続けます。毎回2ずつ増やせば、偶数だけを順番に表示できます。",
+    hints: [
+      "表示したい最初の数字は2です。だから初期化式は int i = 2 から始めます。",
+      "表示したい最後の数字は10です。10も表示したいので、条件式は i <= 10 です。",
+      "2、4、6、8、10は毎回2ずつ増えています。1ずつではなく2ずつ進めるので、更新式は i += 2 と書けます。",
+      "i += 2 は「今のiに2を足して、またiに入れる」という意味です。i = i + 2 と同じ考え方です。"
+    ],
     parts: [
       "class Main {\n  public static void main(String[] args) {\n    for (int i = ",
       { answer: "2", chars: 2 },
@@ -51,6 +63,12 @@ const questions = [
     prompt: "1から10までを全部足して、最後に合計だけを表示します。",
     output: "55",
     explanation: "合計用の箱としてsumを用意します。繰り返しの中でsumにiを足していくと、最後には1から10までの合計が入っています。",
+    hints: [
+      "合計を入れる変数 sum は、まだ何も足していない状態から始めます。だから最初は 0 にします。",
+      "for文の中では、iが1、2、3...10と変わっていきます。このiを毎回sumに足せば合計が作れます。",
+      "sumにiを足す処理は sum += i と書けます。これは sum = sum + i と同じ意味です。",
+      "表示したいのは途中のiではなく、最後に完成した合計です。だからprintlnの中には sum を入れます。"
+    ],
     parts: [
       "class Main {\n  public static void main(String[] args) {\n    int sum = ",
       { answer: "0", chars: 2 },
@@ -78,6 +96,12 @@ const questions = [
     prompt: "forではなくwhileを使って、1から5まで表示します。",
     output: "1\n2\n3\n4\n5",
     explanation: "whileは条件だけを書く繰り返しです。iを先に用意し、表示したあとでiを1増やさないと、同じ数字のまま止まらなくなります。",
+    hints: [
+      "while文では、for文のように丸かっこの中へ初期化式と更新式をまとめて書きません。先に int i = 1; のように変数を用意します。",
+      "最初に表示したい数字は1なので、iの最初の値は1です。",
+      "5まで表示したいので、whileの条件は i <= 5 です。これは「iが5以下の間だけ中の処理をする」という意味です。",
+      "whileでは、iを増やす処理を書き忘れると同じ数字をずっと表示し続けます。表示したあとに i++ を書いて、次の数字へ進めます。"
+    ],
     parts: [
       "class Main {\n  public static void main(String[] args) {\n    int i = ",
       { answer: "1", chars: 2 },
@@ -104,6 +128,12 @@ const questions = [
     prompt: "5、4、3、2、1の順番に表示します。数字はだんだん小さくなります。",
     output: "5\n4\n3\n2\n1",
     explanation: "大きい数字から小さい数字へ進むときは、毎回1ずつ減らします。条件は「1以上の間だけ続ける」と読むと自然です。",
+    hints: [
+      "最初に表示したい数字は5です。だから count の最初の値は5にします。",
+      "最後に表示したい数字は1です。1も表示したいので、条件は count >= 1 と考えます。",
+      "カウントダウンは数字が小さくなる動きです。1回表示したら、countを1減らします。",
+      "count-- は「countを1減らす」という意味です。count = count - 1 と同じ考え方です。"
+    ],
     parts: [
       "class Main {\n  public static void main(String[] args) {\n    int count = ",
       { answer: "5", chars: 2 },
@@ -130,6 +160,12 @@ const questions = [
     prompt: "1から順番に表示します。ただし、iが4になったら繰り返しを終了します。",
     output: "1\n2\n3",
     explanation: "breakは繰り返しをその場で終わらせる命令です。iが4のときにbreakすると、4は表示されず、繰り返し全体が終了します。",
+    hints: [
+      "for文は1から10まで進む形ですが、今回は途中で止めます。止める条件は「iが4になったら」です。",
+      "Javaで「同じかどうか」を比べるときは = ではなく == を使います。だから条件は i == 4 になります。",
+      "if (i == 4) の中に、繰り返しを止める命令を書きます。",
+      "break; は「ここで繰り返しを終わる」という命令です。breakが実行されると、その下の System.out.println(i); には進まないので4は表示されません。"
+    ],
     parts: [
       "class Main {\n  public static void main(String[] args) {\n    for (int i = 1; i <= 10; i++) {\n      if (i == ",
       { answer: "4", chars: 2 },
@@ -155,6 +191,12 @@ const questions = [
     prompt: "1から5までのうち、3だけ表示しないようにします。",
     output: "1\n2\n4\n5",
     explanation: "continueは「この回の残りを飛ばして、次の回へ行く」命令です。iが3のときだけcontinueすれば、System.out.println(i)まで進みません。",
+    hints: [
+      "for文は1から5まで進みます。その中で、3の回だけ表示しないようにします。",
+      "「iが3かどうか」を調べる条件は i == 3 です。代入の = ではなく、比較の == を使います。",
+      "iが3のとき、System.out.println(i); まで進ませたくありません。そこで、その回だけ飛ばす命令を使います。",
+      "continue; は「今の回の残りを飛ばして、次の回へ進む」という意味です。3の回だけprintlnを通らないので、3だけ表示されません。"
+    ],
     parts: [
       "class Main {\n  public static void main(String[] args) {\n    for (int i = 1; i <= 5; i++) {\n      if (i == ",
       { answer: "3", chars: 2 },
@@ -180,6 +222,12 @@ const questions = [
     prompt: "1から9までのうち、奇数だけを表示します。偶数の回は飛ばします。",
     output: "1\n3\n5\n7\n9",
     explanation: "i % 2は、iを2で割った余りです。偶数は2で割り切れるので余りが0になります。偶数ならcontinueで表示を飛ばします。",
+    hints: [
+      "% は「割った余り」を求める記号です。たとえば 4 % 2 は0、5 % 2 は1になります。",
+      "偶数は2で割り切れる数字です。つまり、i % 2 == 0 ならiは偶数です。",
+      "今回は奇数だけ表示したいので、偶数のときは表示を飛ばします。",
+      "if (i % 2 == 0) の中に continue; を書くと、偶数の回だけSystem.out.println(i); を通らず、次の回へ進みます。"
+    ],
     parts: [
       "class Main {\n  public static void main(String[] args) {\n    for (int i = 1; i <= 9; i++) {\n      if (i % 2 == ",
       { answer: "0", chars: 2 },
@@ -205,6 +253,12 @@ const questions = [
     prompt: "1から順番に足していき、合計が10以上になったところで止めます。",
     output: "10",
     explanation: "sumに1、2、3、4と足すと、4を足した時点で10になります。そこでbreakを使うと、余計な数字を足さずに止められます。",
+    hints: [
+      "sumは合計を入れる変数です。for文の中で sum += i; があるので、iの値が毎回sumに足されます。",
+      "足され方を順番に見ると、0 + 1 = 1、1 + 2 = 3、3 + 3 = 6、6 + 4 = 10 になります。",
+      "止めたいタイミングは「sumが10以上になったら」です。条件式は sum >= 10 と書けます。",
+      "条件に当てはまったら、もう足し続ける必要はありません。if文の中に break; を書くと、そこでfor文を終了できます。"
+    ],
     parts: [
       "class Main {\n  public static void main(String[] args) {\n    int sum = 0;\n\n    for (int i = 1; i <= 10; i++) {\n      sum += i;\n\n      if (sum >= ",
       { answer: "10", chars: 3 },
@@ -234,6 +288,12 @@ const questions = [
     prompt: "3×1から3×5までを表示します。iが変わるたびに、3*iの結果も変わります。",
     output: "3 x 1 = 3\n3 x 2 = 6\n3 x 3 = 9\n3 x 4 = 12\n3 x 5 = 15",
     explanation: "同じ形の文章を何度も出すときもfor文が便利です。iを1から5まで動かし、3 * iを計算して文字とつなげます。",
+    hints: [
+      "3の段は、3に1、2、3、4、5をかけて作ります。だからiは1から始めます。",
+      "今回は3×5までなので、最後のiは5です。条件式は i <= 5 になります。",
+      "表示する文章のうち、\"3 x \" や \" = \" は文字としてそのまま出します。変わる部分は i と計算結果です。",
+      "計算結果は 3 * i で作れます。Javaではかけ算に × ではなく * を使います。"
+    ],
     parts: [
       "class Main {\n  public static void main(String[] args) {\n    for (int i = ",
       { answer: "1", chars: 2 },
@@ -292,6 +352,19 @@ function renderCode(parts, questionIndex) {
   });
 
   return code;
+}
+
+function renderHints(hints) {
+  const list = document.createElement("ol");
+  list.className = "hint-list";
+
+  hints.forEach((hint) => {
+    const item = document.createElement("li");
+    item.textContent = hint;
+    list.appendChild(item);
+  });
+
+  return list;
 }
 
 function checkQuestion(card) {
@@ -364,6 +437,9 @@ questions.forEach((question, index) => {
           <h4>考え方</h4>
           <p></p>
         </div>
+        <div class="hint-box">
+          <h4>ヒント</h4>
+        </div>
         <div class="button-row">
           <button class="action-button primary" type="button" data-action="check">入力をチェック</button>
           <button class="action-button secondary" type="button" data-action="answer" aria-expanded="false">解答を表示</button>
@@ -381,6 +457,7 @@ questions.forEach((question, index) => {
   card.querySelector(".code-panel").appendChild(renderCode(question.parts, index));
   card.querySelector(".output-box pre").textContent = question.output;
   card.querySelector(".explain-box p").textContent = question.explanation;
+  card.querySelector(".hint-box").appendChild(renderHints(question.hints));
   card.querySelector(".answer-box pre").textContent = question.answer;
   list.appendChild(card);
 });
