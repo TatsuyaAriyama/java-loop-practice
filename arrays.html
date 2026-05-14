@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Java 配列編</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
+    <div class="auth-shell">
+      <div class="auth-brand">
+        <p class="eyebrow">Java Output Practice</p>
+        <h1>ログイン</h1>
+        <p>メール、パスワード、またはGoogleアカウントで学習ページに入ります。</p>
+      </div>
+      <form class="auth-card" id="authForm">
+        <label>
+          <span>メールアドレス</span>
+          <input type="email" id="authEmail" autocomplete="email" required>
+        </label>
+        <label>
+          <span>パスワード</span>
+          <input type="password" id="authPassword" autocomplete="current-password" required minlength="6">
+        </label>
+        <button class="action-button primary auth-submit" type="submit">メールでログイン</button>
+        <button class="action-button secondary auth-create" type="button" id="createAccountButton">新規作成</button>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="google-button" type="button" id="googleLoginButton">
+          <span>G</span>
+          Googleアカウントでログイン
+        </button>
+        <p class="auth-message" id="authMessage" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell" aria-hidden="true">
+    <header class="site-header">
+      <div class="header-inner">
+        <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
+        <div class="header-actions">
+          <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
+          <a href="#arrayQuestions" class="primary-link">問題を始める</a>
+          <a href="#arrays" class="secondary-link">配列ガイドを見る</a>
+          <a href="index.html" class="secondary-link">繰り返し処理編へ</a>
+        </div>
+        <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
+          <div class="lesson-panel-head">
+            <p class="eyebrow">Lesson Index</p>
+            <h2>Lesson一覧</h2>
+            <p>学習したい編を選んでください。今後ここに新しいLessonを追加していきます。</p>
+          </div>
+          <div class="lesson-links">
+            <a href="index.html"><span>01</span>繰り返し処理編</a>
+            <a href="arrays.html" class="active"><span>02</span>配列編</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="arrays" class="arrays-section">
+        <div class="section-heading">
+          <p class="eyebrow">Array Lesson</p>
+          <h2>配列を理解する</h2>
+          <p>同じ種類の値をまとめて扱うための文法です。番号の考え方まで整理します。</p>
+        </div>
+
+        <div class="array-layout">
+          <div class="array-code">
+            <pre><code>int[] scores = {80, 90, 70};
+
+System.out.println(scores[0]); // 80
+System.out.println(scores.length); // 3</code></pre>
+          </div>
+          <div class="array-cards">
+            <article>
+              <span class="syntax-label">array</span>
+              <h3>配列は、同じ型の値を並べて入れる箱</h3>
+              <p><span class="term">int[] scores</span> は「int型の値を複数入れる配列」です。1つの変数名で、80、90、70のような複数の値をまとめて扱えます。</p>
+            </article>
+            <article>
+              <span class="syntax-label">index</span>
+              <h3>番号は0から始まる</h3>
+              <p>最初の値は <span class="term">scores[0]</span>、2番目は <span class="term">scores[1]</span> です。人間の「1番目」と、Javaの番号が1つずれる点が大事です。</p>
+            </article>
+            <article>
+              <span class="syntax-label">length</span>
+              <h3>lengthで要素数がわかる</h3>
+              <p><span class="term">scores.length</span> は配列の中に値がいくつあるかを表します。3個ならlengthは3で、最後の番号は <span class="term">length - 1</span> です。</p>
+            </article>
+            <article>
+              <span class="syntax-label">loop</span>
+              <h3>配列はfor文と相性がよい</h3>
+              <p><span class="term">for (int i = 0; i &lt; scores.length; i++)</span> と書くと、0番から最後まで順番に取り出せます。</p>
+            </article>
+            <article>
+              <span class="syntax-label">update</span>
+              <h3>値はあとから入れ替えられる</h3>
+              <p><span class="term">scores[1] = 95;</span> と書くと、1番の値を95に変更できます。配列名、番号、代入する値の順で読みます。</p>
+            </article>
+            <article>
+              <span class="syntax-label">bounds</span>
+              <h3>存在しない番号は使えない</h3>
+              <p>要素が3個の配列で使える番号は0、1、2です。<span class="term">scores[3]</span> のように範囲外を使うとエラーになります。</p>
+            </article>
+          </div>
+        </div>
+
+        <p class="source-note">
+          参考: Oracle Java Tutorials の
+          <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/arrays.html">Arrays</a>、
+          <a href="https://docs.oracle.com/javase/specs/jls/se21/html/jls-10.html">Java Language Specification: Arrays</a>
+        </p>
+      </section>
+
+      <section id="arrayQuestions" class="array-questions-section">
+        <div class="section-heading">
+          <p class="eyebrow">Array Output Practice</p>
+          <h2>配列の穴埋め問題10問</h2>
+          <p>配列の作成、取り出し、length、for文での処理を練習します。</p>
+        </div>
+        <div id="arrayQuestionList" class="question-list"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Java arrays / index・length・loop</p>
+      <button class="signout-button" type="button" id="signOutButton">ログアウト</button>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+  <script type="module" src="firebase-auth.js"></script>
+</body>
+</html>

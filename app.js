@@ -966,6 +966,8 @@ function resetQuestion(card) {
 }
 
 function renderQuestions() {
+  if (!list) return;
+
   list.textContent = "";
 
   questions.forEach((question, index) => {
@@ -1025,6 +1027,8 @@ function renderQuestions() {
 }
 
 function renderArrayQuestions() {
+  if (!arrayList) return;
+
   arrayList.textContent = "";
 
   arrayQuestions.forEach((question, index) => {
@@ -1084,26 +1088,32 @@ function renderArrayQuestions() {
 
 renderQuestions();
 renderArrayQuestions();
-startTypeLogo();
+if (typeLogo) {
+  startTypeLogo();
+}
 
-lessonToggle.addEventListener("click", () => {
-  toggleLessonPanel();
-});
+if (lessonToggle && lessonPanel) {
+  lessonToggle.addEventListener("click", () => {
+    toggleLessonPanel();
+  });
 
-lessonPanel.addEventListener("click", (event) => {
-  if (event.target.closest("a")) {
-    toggleLessonPanel(false);
-  }
-});
+  lessonPanel.addEventListener("click", (event) => {
+    if (event.target.closest("a")) {
+      toggleLessonPanel(false);
+    }
+  });
+}
 
-unlockButton.addEventListener("click", checkUnlock);
+if (unlockButton && unlockInput) {
+  unlockButton.addEventListener("click", checkUnlock);
 
-unlockInput.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    checkUnlock();
-  }
-});
+  unlockInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      checkUnlock();
+    }
+  });
+}
 
 levelButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -1117,13 +1127,17 @@ levelButtons.forEach((button) => {
   });
 });
 
-list.addEventListener("click", (event) => {
-  handleQuestionAction(event);
-});
+if (list) {
+  list.addEventListener("click", (event) => {
+    handleQuestionAction(event);
+  });
+}
 
-arrayList.addEventListener("click", (event) => {
-  handleQuestionAction(event);
-});
+if (arrayList) {
+  arrayList.addEventListener("click", (event) => {
+    handleQuestionAction(event);
+  });
+}
 
 function handleQuestionAction(event) {
   const button = event.target.closest("button[data-action]");

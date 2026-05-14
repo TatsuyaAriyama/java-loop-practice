@@ -367,7 +367,7 @@ h1 {
 
 .lesson-links {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .lesson-links a {
@@ -385,19 +385,16 @@ h1 {
   transition: background 160ms ease, color 160ms ease;
 }
 
-.lesson-links a:nth-child(3n) {
+.lesson-links a:nth-child(2n) {
   border-right: 0;
-}
-
-.lesson-links a:nth-last-child(-n + 3) {
-  border-bottom: 1px solid var(--line);
 }
 
 .lesson-links a:nth-last-child(-n + 2) {
   border-bottom: 0;
 }
 
-.lesson-links a:hover {
+.lesson-links a:hover,
+.lesson-links a.active {
   background: #fff8f8;
   color: var(--red);
 }
@@ -1001,22 +998,6 @@ h1 {
 
   .lesson-links {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .lesson-links a:nth-child(3n) {
-    border-right: 1px solid var(--line);
-  }
-
-  .lesson-links a:nth-child(2n) {
-    border-right: 0;
-  }
-
-  .lesson-links a:nth-last-child(-n + 3) {
-    border-bottom: 1px solid var(--line);
-  }
-
-  .lesson-links a:nth-last-child(-n + 2) {
-    border-bottom: 0;
   }
 
   .syntax-layout,
