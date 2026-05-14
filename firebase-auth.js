@@ -100,11 +100,23 @@ googleLoginButton.addEventListener("click", async () => {
 });
 
 signOutButton.addEventListener("click", async () => {
+  try {
+    localStorage.removeItem("java-output-practice-auth");
+  } catch {}
   await signOut(auth);
 });
 
 onAuthStateChanged(auth, (user) => {
   const signedIn = Boolean(user);
+  try {
+    if (signedIn) {
+      localStorage.setItem("java-output-practice-auth", "signed-in");
+    } else {
+      localStorage.removeItem("java-output-practice-auth");
+    }
+  } catch {}
+
+  document.documentElement.classList.toggle("auth-optimistic", signedIn);
   document.body.classList.remove("auth-pending");
   authScreen.classList.toggle("hidden", signedIn);
   appShell.classList.toggle("visible", signedIn);

@@ -4,6 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Java 繰り返し処理編</title>
+  <script>
+    try {
+      if (localStorage.getItem("java-output-practice-auth") === "signed-in") {
+        document.documentElement.classList.add("auth-optimistic");
+      }
+    } catch {}
+  </script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="auth-pending">

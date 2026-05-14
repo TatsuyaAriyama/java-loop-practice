@@ -38,6 +38,14 @@ body.auth-pending .app-shell {
   display: none;
 }
 
+html.auth-optimistic body.auth-pending .app-shell {
+  display: block;
+}
+
+html.auth-optimistic body.auth-pending .auth-screen {
+  display: none;
+}
+
 .auth-screen {
   min-height: 100vh;
   background:
