@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Java 繰り返し処理 穴埋め演習</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <p class="eyebrow">Java Output Practice</p>
+      <h1>繰り返し処理を、穴埋めで書けるようにする。</h1>
+      <p class="lead">
+        <span>for</span>、<span>while</span>、<span>break</span>、<span>continue</span>を、知識ゼロからでも手で動かせるようにする10問です。
+        赤い空欄に入力して、出力の流れを確かめましょう。
+      </p>
+      <div class="header-actions">
+        <a href="#questions" class="primary-link">問題を始める</a>
+        <a href="#basics" class="secondary-link">先に要点を見る</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="basics" class="basics-section">
+      <div class="section-heading">
+        <p class="eyebrow">Before Coding</p>
+        <h2>最初にここだけ押さえる</h2>
+      </div>
+      <div class="basics-grid">
+        <article>
+          <h3>for</h3>
+          <p>回数がだいたい決まっているときに使います。たとえば「1から5まで表示する」のような処理です。</p>
+          <code>for (最初; 続ける条件; 変化)</code>
+        </article>
+        <article>
+          <h3>while</h3>
+          <p>条件が成り立つ間だけ続けます。「iが5以下の間は表示する」のように考えます。</p>
+          <code>while (続ける条件)</code>
+        </article>
+        <article>
+          <h3>break</h3>
+          <p>繰り返しを途中で完全に止めます。「4になったら終了」のような場面で使います。</p>
+          <code>break;</code>
+        </article>
+        <article>
+          <h3>continue</h3>
+          <p>その回だけ飛ばして、次の回へ進みます。「3だけ表示しない」のような場面で使います。</p>
+          <code>continue;</code>
+        </article>
+      </div>
+    </section>
+
+    <section id="questions" class="questions-section">
+      <div class="section-heading">
+        <p class="eyebrow">10 Questions</p>
+        <h2>穴埋め問題</h2>
+        <p>赤い入力欄にコードを入れてください。答えは最初は見えません。</p>
+      </div>
+      <div id="questionList" class="question-list"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Java loops / for・while・break・continue</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
