@@ -323,6 +323,8 @@ const unlockFeedback = document.querySelector("#unlockFeedback");
 const typeLogo = document.querySelector(".type-logo");
 const lessonToggles = [...document.querySelectorAll(".lesson-toggle")];
 const lessonPanel = document.querySelector("#lessonPanel");
+const arrayTopicCards = [...document.querySelectorAll(".array-topic-card")];
+const arrayDeepDive = document.querySelector("#arrayDeepDive");
 let currentLevel = "beginner";
 
 levelButtons.forEach((button) => {
@@ -809,6 +811,99 @@ const arrayQuestions = [
   }
 ];
 
+const arrayDeepDives = {
+  array: {
+    eyebrow: "array",
+    title: "配列は、値をまとめるための箱。でも、何でも入る箱ではない。",
+    body: [
+      "配列は、同じ型の値を順番に並べて持つ仕組みです。intの配列ならintだけ、Stringの配列ならStringだけ。ここを曖昧にすると、コードはすぐに読みにくくなります。",
+      "たとえば int[] scores = {80, 90, 70}; は「scoresという名前で、intの値を3つ持つ」という意味です。変数が3つあるのではなく、1つの配列の中に3つの部屋があると考えてください。",
+      "では質問です。点数が100人分あるとき、score1、score2、score3...と100個の変数を作りますか。作れなくはありません。でも、その瞬間に処理は破綻します。だから配列を使います。"
+    ],
+    checks: [
+      "配列名は複数形にすると読みやすい。scores、names、numbersなど。",
+      "配列に入る値は同じ型にそろえる。",
+      "配列は「まとめて持つ」だけでなく、for文でまとめて処理するために使う。"
+    ],
+    code: "int[] scores = {80, 90, 70};\nString[] names = {\"Aoi\", \"Ren\", \"Mio\"};"
+  },
+  index: {
+    eyebrow: "index",
+    title: "インデックスは0から始まる。ここで1つズレる人が多い。",
+    body: [
+      "配列の番号は0から始まります。最初の値は[0]、2番目の値は[1]です。人間の感覚では1番目から数えるので、ここは意識して切り替える必要があります。",
+      "scores[0] と書くと、scores配列の最初の値を取り出します。scores[1] は2番目。scores[2] は3番目です。",
+      "ここで問いです。3個の配列の最後の番号は何でしょう。3ではありません。0、1、2なので、最後は2です。このズレに気づけるかどうかが配列の第一関門です。"
+    ],
+    checks: [
+      "最初の要素は array[0]。",
+      "2番目の要素は array[1]。",
+      "要素が3個なら、最後の番号は2。"
+    ],
+    code: "int[] scores = {80, 90, 70};\nSystem.out.println(scores[0]); // 80\nSystem.out.println(scores[1]); // 90"
+  },
+  length: {
+    eyebrow: "length",
+    title: "lengthは個数。最後の番号ではない。",
+    body: [
+      "scores.length は、配列の中に値がいくつあるかを表します。3個ならlengthは3です。ただし、最後のインデックスは3ではありません。",
+      "なぜなら番号は0から始まるからです。個数が3なら、番号は0、1、2。つまり最後の番号は length - 1 です。",
+      "ここを間違えると、最後の要素を取ろうとして範囲外エラーになります。lengthは安全にループを書くための基準です。最後の番号そのものではない、と強く覚えてください。"
+    ],
+    checks: [
+      "array.length は要素数。",
+      "最後のインデックスは array.length - 1。",
+      "for文では i < array.length と書くと範囲外になりにくい。"
+    ],
+    code: "String[] fruits = {\"apple\", \"banana\", \"orange\"};\nSystem.out.println(fruits.length); // 3\nSystem.out.println(fruits[fruits.length - 1]); // orange"
+  },
+  loop: {
+    eyebrow: "loop",
+    title: "配列を全部見るなら、for文の出番。",
+    body: [
+      "配列の強さは、値をまとめて持てることだけではありません。for文で先頭から最後までまとめて処理できることにあります。",
+      "基本形は for (int i = 0; i < array.length; i++) です。iを0から始め、lengthより小さい間だけ続けます。これで0番から最後まで、ちょうどよく回れます。",
+      "ここで考えてください。もし i <= array.length と書いたらどうなるでしょう。最後に存在しない番号へ進みます。だから条件式は < です。<=ではありません。"
+    ],
+    checks: [
+      "配列ループは i = 0 から始める。",
+      "条件は i < array.length が基本。",
+      "取り出す値は array[i]。arrayではない。"
+    ],
+    code: "int[] scores = {80, 90, 70};\nfor (int i = 0; i < scores.length; i++) {\n  System.out.println(scores[i]);\n}"
+  },
+  update: {
+    eyebrow: "update",
+    title: "配列の値は、番号を指定して入れ替える。",
+    body: [
+      "配列の中身は、あとから変更できます。scores[1] = 95; と書けば、1番の部屋に入っている値を95に入れ替えます。",
+      "大切なのは、配列名、インデックス、代入する値の3つです。どの配列の、どの場所を、何に変えるのか。曖昧にしないでください。",
+      "ここで注意です。scores[1]は2番目の値です。1番目ではありません。更新処理は目に見えにくいバグを作りやすいので、番号の確認を必ず入れましょう。"
+    ],
+    checks: [
+      "更新は array[index] = newValue; の形。",
+      "indexは0から始まる。",
+      "更新後に同じindexを表示すると、新しい値が出る。"
+    ],
+    code: "int[] scores = {80, 70, 60};\nscores[1] = 95;\nSystem.out.println(scores[1]); // 95"
+  },
+  bounds: {
+    eyebrow: "bounds",
+    title: "範囲外アクセスは、配列で最もよくある失敗。",
+    body: [
+      "配列には使える番号の範囲があります。要素が3個なら、使える番号は0、1、2だけです。scores[3]は存在しません。",
+      "存在しない番号を使うと、Javaはエラーを出します。これは意地悪ではありません。存在しない部屋を開けようとしているから止めてくれているのです。",
+      "では、どう避けるか。基本は length を使うことです。最後まで回すなら i < scores.length。最後の値を取るなら scores.length - 1。この2つを外さなければ、大きな事故はかなり減ります。"
+    ],
+    checks: [
+      "要素数3なら、使える番号は0、1、2。",
+      "array[array.length] は範囲外。",
+      "最後は array[array.length - 1]。"
+    ],
+    code: "int[] scores = {80, 90, 70};\nSystem.out.println(scores[2]); // OK\n// System.out.println(scores[3]); // 範囲外"
+  }
+};
+
 function normalize(value) {
   return value.replace(/\s+/g, "");
 }
@@ -1090,6 +1185,60 @@ function renderArrayQuestions() {
   });
 }
 
+function renderArrayDeepDive(topicKey) {
+  if (!arrayDeepDive || !arrayDeepDives[topicKey]) return;
+
+  const topic = arrayDeepDives[topicKey];
+  arrayDeepDive.textContent = "";
+
+  const eyebrow = document.createElement("p");
+  eyebrow.className = "eyebrow";
+  eyebrow.textContent = topic.eyebrow;
+
+  const title = document.createElement("h3");
+  title.textContent = topic.title;
+
+  const body = document.createElement("div");
+  body.className = "deep-body";
+  topic.body.forEach((paragraph) => {
+    const text = document.createElement("p");
+    text.textContent = paragraph;
+    body.appendChild(text);
+  });
+
+  const checks = document.createElement("div");
+  checks.className = "deep-checks";
+  const checksTitle = document.createElement("h4");
+  checksTitle.textContent = "ここを外さない";
+  const checksList = document.createElement("ul");
+  topic.checks.forEach((check) => {
+    const item = document.createElement("li");
+    item.textContent = check;
+    checksList.appendChild(item);
+  });
+  checks.append(checksTitle, checksList);
+
+  const code = document.createElement("pre");
+  const codeInner = document.createElement("code");
+  codeInner.textContent = topic.code;
+  code.appendChild(codeInner);
+
+  arrayDeepDive.append(eyebrow, title, body, checks, code);
+}
+
+function activateArrayTopic(card) {
+  if (!card) return;
+
+  arrayTopicCards.forEach((topicCard) => {
+    const active = topicCard === card;
+    topicCard.classList.toggle("active", active);
+    topicCard.setAttribute("aria-expanded", String(active));
+  });
+
+  renderArrayDeepDive(card.dataset.arrayTopic);
+  arrayDeepDive.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
 renderQuestions();
 renderArrayQuestions();
 if (typeLogo) {
@@ -1159,6 +1308,20 @@ if (list) {
 if (arrayList) {
   arrayList.addEventListener("click", (event) => {
     handleQuestionAction(event);
+  });
+}
+
+if (arrayTopicCards.length > 0 && arrayDeepDive) {
+  arrayTopicCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      activateArrayTopic(card);
+    });
+
+    card.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      activateArrayTopic(card);
+    });
   });
 }
 

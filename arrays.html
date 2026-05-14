@@ -75,37 +75,43 @@ System.out.println(scores[0]); // 80
 System.out.println(scores.length); // 3</code></pre>
           </div>
           <div class="array-cards">
-            <article>
+            <article class="array-topic-card" data-array-topic="array" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">array</span>
               <h3>配列は、同じ型の値を並べて入れる箱</h3>
               <p><span class="term">int[] scores</span> は「int型の値を複数入れる配列」です。1つの変数名で、80、90、70のような複数の値をまとめて扱えます。</p>
             </article>
-            <article>
+            <article class="array-topic-card" data-array-topic="index" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">index</span>
               <h3>番号は0から始まる</h3>
               <p>最初の値は <span class="term">scores[0]</span>、2番目は <span class="term">scores[1]</span> です。人間の「1番目」と、Javaの番号が1つずれる点が大事です。</p>
             </article>
-            <article>
+            <article class="array-topic-card" data-array-topic="length" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">length</span>
               <h3>lengthで要素数がわかる</h3>
               <p><span class="term">scores.length</span> は配列の中に値がいくつあるかを表します。3個ならlengthは3で、最後の番号は <span class="term">length - 1</span> です。</p>
             </article>
-            <article>
+            <article class="array-topic-card" data-array-topic="loop" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">loop</span>
               <h3>配列はfor文と相性がよい</h3>
               <p><span class="term">for (int i = 0; i &lt; scores.length; i++)</span> と書くと、0番から最後まで順番に取り出せます。</p>
             </article>
-            <article>
+            <article class="array-topic-card" data-array-topic="update" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">update</span>
               <h3>値はあとから入れ替えられる</h3>
               <p><span class="term">scores[1] = 95;</span> と書くと、1番の値を95に変更できます。配列名、番号、代入する値の順で読みます。</p>
             </article>
-            <article>
+            <article class="array-topic-card" data-array-topic="bounds" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">bounds</span>
               <h3>存在しない番号は使えない</h3>
               <p>要素が3個の配列で使える番号は0、1、2です。<span class="term">scores[3]</span> のように範囲外を使うとエラーになります。</p>
             </article>
           </div>
+        </div>
+
+        <div class="array-deep-dive" id="arrayDeepDive" aria-live="polite">
+          <p class="eyebrow">Click a Card</p>
+          <h3>カードを押すと、ここに深掘り解説が表示されます。</h3>
+          <p>配列は「なんとなく使える」状態が危険です。番号、長さ、更新、範囲外。この4つを曖昧にすると、すぐにエラーやズレにつながります。</p>
         </div>
 
         <p class="source-note">
