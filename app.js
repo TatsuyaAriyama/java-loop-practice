@@ -319,6 +319,7 @@ const questionsSection = document.querySelector("#questions");
 const unlockInput = document.querySelector(".unlock-input");
 const unlockButton = document.querySelector("#unlockButton");
 const unlockFeedback = document.querySelector("#unlockFeedback");
+const typeLogo = document.querySelector(".type-logo");
 let currentLevel = "beginner";
 
 levelButtons.forEach((button) => {
@@ -526,6 +527,27 @@ function normalizeCode(value) {
     .replace(/\s+/g, "");
 }
 
+function startTypeLogo() {
+  const text = "JAVA OUTPUT PRACTICE";
+  let index = 0;
+
+  const tick = () => {
+    typeLogo.textContent = text.slice(0, index);
+    index += 1;
+
+    if (index <= text.length) {
+      window.setTimeout(tick, 58);
+      return;
+    }
+
+    window.setTimeout(() => {
+      typeLogo.classList.add("done");
+    }, 900);
+  };
+
+  window.setTimeout(tick, 260);
+}
+
 function textNode(value) {
   return document.createTextNode(value);
 }
@@ -704,6 +726,7 @@ function renderQuestions() {
 }
 
 renderQuestions();
+startTypeLogo();
 
 unlockButton.addEventListener("click", checkUnlock);
 

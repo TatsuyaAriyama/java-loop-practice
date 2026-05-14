@@ -60,6 +60,42 @@ main,
   text-transform: uppercase;
 }
 
+.type-logo {
+  min-height: 18px;
+  font-family: Menlo, Consolas, "Courier New", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.type-logo::after {
+  display: inline-block;
+  width: 7px;
+  height: 1.15em;
+  margin-left: 4px;
+  background: var(--red);
+  vertical-align: -0.18em;
+  content: "";
+  animation: caretBlink 900ms steps(1) infinite;
+}
+
+.type-logo.done::after {
+  opacity: 0;
+  animation: none;
+}
+
+@keyframes caretBlink {
+  0%,
+  48% {
+    opacity: 1;
+  }
+
+  49%,
+  100% {
+    opacity: 0;
+  }
+}
+
 h1,
 h2,
 h3,
