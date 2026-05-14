@@ -11,6 +11,16 @@
       }
     } catch {}
   </script>
+  <style>
+    body.auth-pending .auth-screen,
+    body.auth-pending .app-shell {
+      display: none !important;
+    }
+
+    html.auth-optimistic body.auth-pending .app-shell {
+      display: block !important;
+    }
+  </style>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="auth-pending">

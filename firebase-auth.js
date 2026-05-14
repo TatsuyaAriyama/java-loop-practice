@@ -118,6 +118,7 @@ onAuthStateChanged(auth, (user) => {
 
   document.documentElement.classList.toggle("auth-optimistic", signedIn);
   document.body.classList.remove("auth-pending");
+  authScreen.classList.toggle("ready", !signedIn);
   authScreen.classList.toggle("hidden", signedIn);
   appShell.classList.toggle("visible", signedIn);
   appShell.setAttribute("aria-hidden", String(!signedIn));

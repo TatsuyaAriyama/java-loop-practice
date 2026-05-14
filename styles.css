@@ -52,9 +52,13 @@ html.auth-optimistic body.auth-pending .auth-screen {
     linear-gradient(90deg, var(--red) 0 72px, transparent 72px),
     #111111;
   color: #ffffff;
-  display: grid;
+  display: none;
   place-items: center;
   padding: 32px 20px 32px 96px;
+}
+
+.auth-screen.ready {
+  display: grid;
 }
 
 .auth-screen.hidden {
