@@ -57,7 +57,9 @@
           <a href="#lesson-while"><span>02</span>while</a>
           <a href="#lesson-break"><span>03</span>break</a>
           <a href="#lesson-continue"><span>04</span>continue</a>
-          <a href="#questions"><span>05</span>問題10問</a>
+          <a href="#questions"><span>05</span>繰り返し問題10問</a>
+          <a href="#arrays"><span>06</span>配列</a>
+          <a href="#arrayQuestions"><span>07</span>配列問題10問</a>
         </div>
       </nav>
     </div>
@@ -179,6 +181,70 @@
         <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/while.html">while文</a>、
         <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/branch.html">break / continue</a>
       </p>
+    </section>
+
+    <section id="arrays" class="arrays-section">
+      <div class="section-heading">
+        <p class="eyebrow">Array Lesson</p>
+        <h2>配列を理解する</h2>
+        <p>同じ種類の値をまとめて扱うための文法です。番号の考え方まで整理します。</p>
+      </div>
+
+      <div class="array-layout">
+        <div class="array-code">
+          <pre><code>int[] scores = {80, 90, 70};
+
+System.out.println(scores[0]); // 80
+System.out.println(scores.length); // 3</code></pre>
+        </div>
+        <div class="array-cards">
+          <article>
+            <span class="syntax-label">array</span>
+            <h3>配列は、同じ型の値を並べて入れる箱</h3>
+            <p><span class="term">int[] scores</span> は「int型の値を複数入れる配列」です。1つの変数名で、80、90、70のような複数の値をまとめて扱えます。</p>
+          </article>
+          <article>
+            <span class="syntax-label">index</span>
+            <h3>番号は0から始まる</h3>
+            <p>最初の値は <span class="term">scores[0]</span>、2番目は <span class="term">scores[1]</span> です。人間の「1番目」と、Javaの番号が1つずれる点が大事です。</p>
+          </article>
+          <article>
+            <span class="syntax-label">length</span>
+            <h3>lengthで要素数がわかる</h3>
+            <p><span class="term">scores.length</span> は配列の中に値がいくつあるかを表します。3個ならlengthは3で、最後の番号は <span class="term">length - 1</span> です。</p>
+          </article>
+          <article>
+            <span class="syntax-label">loop</span>
+            <h3>配列はfor文と相性がよい</h3>
+            <p><span class="term">for (int i = 0; i &lt; scores.length; i++)</span> と書くと、0番から最後まで順番に取り出せます。</p>
+          </article>
+          <article>
+            <span class="syntax-label">update</span>
+            <h3>値はあとから入れ替えられる</h3>
+            <p><span class="term">scores[1] = 95;</span> と書くと、1番の値を95に変更できます。配列名、番号、代入する値の順で読みます。</p>
+          </article>
+          <article>
+            <span class="syntax-label">bounds</span>
+            <h3>存在しない番号は使えない</h3>
+            <p>要素が3個の配列で使える番号は0、1、2です。<span class="term">scores[3]</span> のように範囲外を使うとエラーになります。</p>
+          </article>
+        </div>
+      </div>
+
+      <p class="source-note">
+        参考: Oracle Java Tutorials の
+        <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/arrays.html">Arrays</a>、
+        <a href="https://docs.oracle.com/javase/specs/jls/se21/html/jls-10.html">Java Language Specification: Arrays</a>
+      </p>
+    </section>
+
+    <section id="arrayQuestions" class="array-questions-section">
+      <div class="section-heading">
+        <p class="eyebrow">Array Output Practice</p>
+        <h2>配列の穴埋め問題10問</h2>
+        <p>配列の作成、取り出し、length、for文での処理を練習します。</p>
+      </div>
+      <div id="arrayQuestionList" class="question-list"></div>
     </section>
 
     <section id="questions" class="questions-section locked">

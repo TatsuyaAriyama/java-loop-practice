@@ -314,6 +314,7 @@ const questions = [
 ];
 
 const list = document.querySelector("#questionList");
+const arrayList = document.querySelector("#arrayQuestionList");
 const levelButtons = [...document.querySelectorAll(".difficulty-tab")];
 const questionsSection = document.querySelector("#questions");
 const unlockInput = document.querySelector(".unlock-input");
@@ -517,6 +518,296 @@ questions.forEach((question, index) => {
     intermediate: intermediateData[index]
   };
 });
+
+const arrayQuestions = [
+  {
+    title: "最初の要素を表示する",
+    concept: "array",
+    prompt: "配列fruitsの最初の値を表示します。",
+    output: "apple",
+    explanation: "配列は0番から数えます。最初の要素はfruits[0]です。",
+    hints: [
+      "String[] は文字列を複数入れる配列です。",
+      "配列の最初は1ではなく0です。最初の値を取り出すには [0] を使います。",
+      "printlnの中には、表示したい配列の要素を入れます。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    String[] fruits = {\"apple\", \"banana\", \"orange\"};\n    System.out.println(",
+      { answer: "fruits[0]", accepts: ["fruits[0]"], chars: 10 },
+      ");\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    String[] fruits = {"apple", "banana", "orange"};
+    System.out.println(fruits[0]);
+  }
+}`
+  },
+  {
+    title: "配列の長さを表示する",
+    concept: "array",
+    prompt: "scoresに入っている値の個数を表示します。",
+    output: "4",
+    explanation: "配列の要素数は.lengthで調べられます。scores.lengthは4です。",
+    hints: [
+      "配列の中身が何個あるかは、自分で数えなくても .length でわかります。",
+      "scoresの長さを知りたいので、配列名のあとに .length を付けます。",
+      "lengthには丸かっこを付けません。scores.length の形です。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int[] scores = {80, 90, 70, 60};\n    System.out.println(",
+      { answer: "scores.length", accepts: ["scores.length"], chars: 14 },
+      ");\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int[] scores = {80, 90, 70, 60};
+    System.out.println(scores.length);
+  }
+}`
+  },
+  {
+    title: "最後の要素を表示する",
+    concept: "array",
+    prompt: "配列の最後に入っている値を表示します。",
+    output: "orange",
+    explanation: "長さが3の配列で使える番号は0、1、2です。最後の番号はlength - 1で表せます。",
+    hints: [
+      "fruitsには3個の値がありますが、最後の番号は3ではありません。",
+      "配列は0番から始まるので、最後の番号は 配列の長さ - 1 です。",
+      "最後の要素は fruits[fruits.length - 1] の形で取り出せます。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    String[] fruits = {\"apple\", \"banana\", \"orange\"};\n    System.out.println(",
+      { answer: "fruits[fruits.length - 1]", accepts: ["fruits[fruits.length - 1]", "fruits[fruits.length-1]"], chars: 27 },
+      ");\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    String[] fruits = {"apple", "banana", "orange"};
+    System.out.println(fruits[fruits.length - 1]);
+  }
+}`
+  },
+  {
+    title: "配列を順番に表示する",
+    concept: "array / for",
+    prompt: "配列namesの中身を、上から順番に表示します。",
+    output: "Aoi\nRen\nMio",
+    explanation: "0番からlengthより小さい番号までfor文で動かすと、配列を先頭から最後まで取り出せます。",
+    hints: [
+      "配列を全部見るときは、iを0から始めます。",
+      "iは最後の番号まで動けばよいので、条件は i < names.length です。",
+      "表示する値はnamesそのものではなく、今の番号の要素 names[i] です。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    String[] names = {\"Aoi\", \"Ren\", \"Mio\"};\n\n    for (int i = ",
+      { answer: "0", chars: 2 },
+      "; i < ",
+      { answer: "names.length", accepts: ["names.length"], chars: 13 },
+      "; i++) {\n      System.out.println(",
+      { answer: "names[i]", accepts: ["names[i]"], chars: 9 },
+      ");\n    }\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    String[] names = {"Aoi", "Ren", "Mio"};
+
+    for (int i = 0; i < names.length; i++) {
+      System.out.println(names[i]);
+    }
+  }
+}`
+  },
+  {
+    title: "配列の合計を求める",
+    concept: "array / sum",
+    prompt: "numbersの合計を求めて表示します。",
+    output: "15",
+    explanation: "合計用の変数sumを0から始め、配列の各要素を順番に足します。",
+    hints: [
+      "合計を入れる変数は0から始めます。",
+      "for文で0番から最後まで取り出し、sumにnumbers[i]を足します。",
+      "最後に表示するのは、完成したsumです。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int[] numbers = {2, 4, 6, 3};\n    int sum = ",
+      { answer: "0", chars: 2 },
+      ";\n\n    for (int i = 0; i < numbers.length; i++) {\n      ",
+      { answer: "sum += numbers[i]", accepts: ["sum += numbers[i]", "sum=sum+numbers[i]", "sum = sum + numbers[i]"], chars: 18 },
+      ";\n    }\n\n    System.out.println(",
+      { answer: "sum", chars: 5 },
+      ");\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int[] numbers = {2, 4, 6, 3};
+    int sum = 0;
+
+    for (int i = 0; i < numbers.length; i++) {
+      sum += numbers[i];
+    }
+
+    System.out.println(sum);
+  }
+}`
+  },
+  {
+    title: "配列の値を更新する",
+    concept: "array / update",
+    prompt: "scoresの2番目の値を95に変更してから表示します。",
+    output: "95",
+    explanation: "2番目の要素はインデックス1です。scores[1] = 95で値を入れ替えます。",
+    hints: [
+      "人間の2番目は、Javaのインデックスでは1番です。",
+      "配列の値を変更するときは 配列名[番号] = 新しい値; と書きます。",
+      "変更したあと、同じ番号の要素をprintlnで表示します。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int[] scores = {80, 70, 60};\n    ",
+      { answer: "scores[1]", accepts: ["scores[1]"], chars: 10 },
+      " = ",
+      { answer: "95", chars: 3 },
+      ";\n    System.out.println(",
+      { answer: "scores[1]", accepts: ["scores[1]"], chars: 10 },
+      ");\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int[] scores = {80, 70, 60};
+    scores[1] = 95;
+    System.out.println(scores[1]);
+  }
+}`
+  },
+  {
+    title: "偶数だけ数える",
+    concept: "array / condition",
+    prompt: "numbersの中に偶数が何個あるかを表示します。",
+    output: "3",
+    explanation: "偶数は2で割った余りが0です。条件に当てはまった回だけcountを増やします。",
+    hints: [
+      "個数を数える変数countは0から始めます。",
+      "numbers[i] % 2 == 0 なら、その要素は偶数です。",
+      "偶数を見つけたらcountを1増やします。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int[] numbers = {1, 2, 4, 7, 8};\n    int count = 0;\n\n    for (int i = 0; i < numbers.length; i++) {\n      if (",
+      { answer: "numbers[i] % 2 == 0", accepts: ["numbers[i] % 2 == 0", "numbers[i]%2==0"], chars: 20 },
+      ") {\n        ",
+      { answer: "count++", accepts: ["count++", "++count", "count += 1", "count=count+1", "count = count + 1"], chars: 8 },
+      ";\n      }\n    }\n\n    System.out.println(count);\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int[] numbers = {1, 2, 4, 7, 8};
+    int count = 0;
+
+    for (int i = 0; i < numbers.length; i++) {
+      if (numbers[i] % 2 == 0) {
+        count++;
+      }
+    }
+
+    System.out.println(count);
+  }
+}`
+  },
+  {
+    title: "最大値を探す",
+    concept: "array / max",
+    prompt: "scoresの中で一番大きい値を表示します。",
+    output: "90",
+    explanation: "最初の要素を仮の最大値にして、より大きい値を見つけたらmaxを更新します。",
+    hints: [
+      "最大値を探すときは、まず0番の値を仮の最大値にします。",
+      "for文で配列を順番に見て、今の値がmaxより大きいか比べます。",
+      "大きい値を見つけたら、maxにその値を入れ直します。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int[] scores = {70, 90, 65, 80};\n    int max = ",
+      { answer: "scores[0]", accepts: ["scores[0]"], chars: 10 },
+      ";\n\n    for (int i = 0; i < scores.length; i++) {\n      if (scores[i] > ",
+      { answer: "max", chars: 5 },
+      ") {\n        max = ",
+      { answer: "scores[i]", accepts: ["scores[i]"], chars: 10 },
+      ";\n      }\n    }\n\n    System.out.println(max);\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int[] scores = {70, 90, 65, 80};
+    int max = scores[0];
+
+    for (int i = 0; i < scores.length; i++) {
+      if (scores[i] > max) {
+        max = scores[i];
+      }
+    }
+
+    System.out.println(max);
+  }
+}`
+  },
+  {
+    title: "平均点を求める",
+    concept: "array / average",
+    prompt: "scoresの平均を整数で表示します。",
+    output: "80",
+    explanation: "合計を求めてから、配列の要素数で割ると平均になります。",
+    hints: [
+      "平均は 合計 ÷ 個数 です。",
+      "合計はfor文でsumに足して作ります。",
+      "個数はscores.lengthでわかるので、sum / scores.lengthを表示します。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    int[] scores = {70, 80, 90};\n    int sum = 0;\n\n    for (int i = 0; i < scores.length; i++) {\n      sum += ",
+      { answer: "scores[i]", accepts: ["scores[i]"], chars: 10 },
+      ";\n    }\n\n    System.out.println(",
+      { answer: "sum / scores.length", accepts: ["sum / scores.length", "sum/scores.length"], chars: 20 },
+      ");\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    int[] scores = {70, 80, 90};
+    int sum = 0;
+
+    for (int i = 0; i < scores.length; i++) {
+      sum += scores[i];
+    }
+
+    System.out.println(sum / scores.length);
+  }
+}`
+  },
+  {
+    title: "番号つきで表示する",
+    concept: "array / output",
+    prompt: "namesを1番、2番、3番のように番号つきで表示します。",
+    output: "1: Aoi\n2: Ren\n3: Mio",
+    explanation: "配列のインデックスは0から始まりますが、表示用の番号はi + 1にすると1から始まります。",
+    hints: [
+      "iは0、1、2と動きます。",
+      "表示では1、2、3にしたいので、番号部分は i + 1 を使います。",
+      "文字列、番号、配列の要素を + でつなげます。"
+    ],
+    parts: [
+      "class Main {\n  public static void main(String[] args) {\n    String[] names = {\"Aoi\", \"Ren\", \"Mio\"};\n\n    for (int i = 0; i < names.length; i++) {\n      System.out.println(",
+      { answer: "i + 1", accepts: ["i + 1", "i+1"], chars: 6 },
+      " + \": \" + ",
+      { answer: "names[i]", accepts: ["names[i]"], chars: 9 },
+      ");\n    }\n  }\n}"
+    ],
+    answer: `class Main {
+  public static void main(String[] args) {
+    String[] names = {"Aoi", "Ren", "Mio"};
+
+    for (int i = 0; i < names.length; i++) {
+      System.out.println(i + 1 + ": " + names[i]);
+    }
+  }
+}`
+  }
+];
 
 function normalize(value) {
   return value.replace(/\s+/g, "");
@@ -733,7 +1024,66 @@ function renderQuestions() {
   });
 }
 
+function renderArrayQuestions() {
+  arrayList.textContent = "";
+
+  arrayQuestions.forEach((question, index) => {
+    const card = document.createElement("article");
+    card.className = "question-card";
+
+    card.innerHTML = `
+      <div class="question-top">
+        <div class="question-number">A${index + 1}</div>
+        <div class="question-copy">
+          <h3>${question.title}</h3>
+          <p>${question.prompt}</p>
+        </div>
+      </div>
+      <div class="question-body">
+        <div class="code-panel">
+          <div class="panel-title">
+            <span>配列コード</span>
+            <span class="concept">${question.concept}</span>
+          </div>
+        </div>
+        <div class="side-panel">
+          <div class="output-box">
+            <h4>目標の出力</h4>
+            <pre></pre>
+          </div>
+          <div class="explain-box">
+            <h4>考え方</h4>
+            <p></p>
+          </div>
+          <div class="button-row">
+            <button class="action-button primary" type="button" data-action="check">入力をチェック</button>
+            <button class="action-button secondary" type="button" data-action="hint" aria-expanded="false">ヒントを表示</button>
+            <button class="action-button secondary" type="button" data-action="answer" aria-expanded="false">解答を表示</button>
+            <button class="action-button secondary" type="button" data-action="reset">リセット</button>
+          </div>
+          <p class="feedback" aria-live="polite"></p>
+          <div class="hint-box">
+            <h4>ヒント</h4>
+          </div>
+          <div class="answer-box">
+            <h4>解答例</h4>
+            <pre></pre>
+          </div>
+        </div>
+      </div>
+    `;
+
+    card.querySelector(".code-panel").appendChild(renderCode(question.parts, index));
+    card.querySelector(".output-box pre").textContent = question.output;
+    card.querySelector(".explain-box p").textContent = question.explanation;
+    card.querySelector(".hint-box").appendChild(renderHints(question.hints));
+    card.querySelector(".answer-box pre").textContent = question.answer;
+    arrayList.appendChild(card);
+  });
+}
+
 renderQuestions();
+renderArrayQuestions();
 startTypeLogo();
 
 lessonToggle.addEventListener("click", () => {
@@ -768,6 +1118,14 @@ levelButtons.forEach((button) => {
 });
 
 list.addEventListener("click", (event) => {
+  handleQuestionAction(event);
+});
+
+arrayList.addEventListener("click", (event) => {
+  handleQuestionAction(event);
+});
+
+function handleQuestionAction(event) {
   const button = event.target.closest("button[data-action]");
   if (!button) return;
 
@@ -778,4 +1136,4 @@ list.addEventListener("click", (event) => {
   if (action === "hint") toggleHint(card, button);
   if (action === "answer") toggleAnswer(card, button);
   if (action === "reset") resetQuestion(card);
-});
+}
