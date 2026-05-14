@@ -20,12 +20,71 @@
       </p>
       <div class="header-actions">
         <a href="#questions" class="primary-link">問題を始める</a>
+        <a href="#syntax" class="secondary-link">文法ガイドを見る</a>
         <a href="#basics" class="secondary-link">先に要点を見る</a>
       </div>
     </div>
   </header>
 
   <main>
+    <section id="syntax" class="syntax-section">
+      <div class="section-heading">
+        <p class="eyebrow">Java Syntax Guide</p>
+        <h2>コードの外枠を理解する</h2>
+        <p>問題で何度も出てくる形を、知識ゼロでも読めるように分解します。</p>
+      </div>
+
+      <div class="syntax-layout">
+        <div class="syntax-code">
+          <pre><code>class Main {
+  public static void main(String[] args) {
+    // ここに処理を書く
+    System.out.println("Hello");
+  }
+}</code></pre>
+        </div>
+
+        <div class="syntax-cards">
+          <article>
+            <span class="syntax-label">class Main</span>
+            <h3>クラスは、Javaのコードを入れる大きな箱</h3>
+            <p>Javaでは、処理をいきなり外に書かず、基本的に<span class="term">class</span>の中へ書きます。ここでは練習用の箱の名前を<span class="term">Main</span>にしています。</p>
+          </article>
+          <article>
+            <span class="syntax-label">main method</span>
+            <h3>mainメソッドは、プログラムのスタート地点</h3>
+            <p><span class="term">public static void main(String[] args)</span>は、Javaアプリを実行するときに最初に呼ばれる特別な形です。今は「ここから始まる合図」と覚えれば大丈夫です。</p>
+          </article>
+          <article>
+            <span class="syntax-label">{ }</span>
+            <h3>波かっこは、範囲を表す</h3>
+            <p><span class="term">{</span>から<span class="term">}</span>までが、ひとまとまりの範囲です。classの波かっこの中にmainメソッドがあり、mainメソッドの波かっこの中に実際の処理を書きます。</p>
+          </article>
+          <article>
+            <span class="syntax-label">;</span>
+            <h3>セミコロンは、文の終わりの印</h3>
+            <p><span class="term">System.out.println(i);</span>のように、1つの命令の終わりには<span class="term">;</span>を付けます。日本語の「。」に近い役割です。</p>
+          </article>
+          <article>
+            <span class="syntax-label">// comment</span>
+            <h3>コメントは、実行されないメモ</h3>
+            <p><span class="term">//</span>から右側はコメントです。人間が読むためのメモで、Javaは実行するときに無視します。</p>
+          </article>
+          <article>
+            <span class="syntax-label">println</span>
+            <h3>printlnは、画面に表示して改行する命令</h3>
+            <p><span class="term">System.out.println(...)</span>は、かっこの中の値を画面に出して、最後に改行します。問題の「目標の出力」は、この命令で作ります。</p>
+          </article>
+        </div>
+      </div>
+
+      <p class="source-note">
+        参考: Oracle Java Tutorials の
+        <a href="https://docs.oracle.com/javase/tutorial/getStarted/application/index.html">Hello Worldアプリケーション</a>、
+        <a href="https://docs.oracle.com/javase/tutorial/java/javaOO/index.html">Classes and Objects</a>
+      </p>
+    </section>
+
     <section id="basics" class="basics-section">
       <div class="section-heading">
         <p class="eyebrow">Before Coding</p>
