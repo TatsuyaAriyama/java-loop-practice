@@ -111,10 +111,16 @@ onAuthStateChanged(auth, (user) => {
   try {
     if (signedIn) {
       localStorage.setItem("java-output-practice-auth", "signed-in");
+      localStorage.setItem("java-output-practice-auth-scope", user.uid);
     } else {
       localStorage.removeItem("java-output-practice-auth");
+      localStorage.removeItem("java-output-practice-auth-scope");
     }
   } catch {}
+
+  window.dispatchEvent(new CustomEvent("java-practice-auth-ready", {
+    detail: { uid: signedIn ? user.uid : "local" }
+  }));
 
   document.documentElement.classList.toggle("auth-optimistic", signedIn);
   document.body.classList.remove("auth-pending");

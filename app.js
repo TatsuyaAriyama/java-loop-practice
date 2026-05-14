@@ -1205,9 +1205,20 @@ const lessonMeta = [
 ];
 
 const progressPrefix = "java-output-practice-progress";
+const loopUnlockKey = "java-output-practice-loop-unlocked";
+const authScopeKey = "java-output-practice-auth-scope";
+let progressScope = "local";
+
+try {
+  progressScope = localStorage.getItem(authScopeKey) || "local";
+} catch {}
 
 function progressKey(lessonId) {
   return `${progressPrefix}:${lessonId}`;
+}
+
+function scopedLoopUnlockKey() {
+  return `${loopUnlockKey}:${progressScope}`;
 }
 
 function readCompletedQuestions(lessonId) {
@@ -1263,6 +1274,39 @@ function updateLessonProgress() {
       }
     });
   });
+}
+
+function hasLoopUnlock() {
+  try {
+    return localStorage.getItem(scopedLoopUnlockKey()) === "true" || localStorage.getItem(loopUnlockKey) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function saveLoopUnlock() {
+  try {
+    localStorage.setItem(scopedLoopUnlockKey(), "true");
+  } catch {}
+}
+
+function applyLoopUnlock({ scroll = false } = {}) {
+  if (!questionsSection) return;
+
+  questionsSection.classList.remove("locked");
+
+  if (unlockInput && unlockInput.value.trim() === "") {
+    unlockInput.value = 'System.out.println("Hello");';
+  }
+
+  if (unlockFeedback) {
+    unlockFeedback.className = "unlock-feedback ok";
+    unlockFeedback.textContent = "このアカウントでは問題が開かれた状態です。";
+  }
+
+  if (scroll) {
+    questionsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 }
 
 function normalize(value) {
@@ -1360,10 +1404,8 @@ function checkUnlock() {
   const correct = value === 'System.out.println("Hello");';
 
   if (correct) {
-    questionsSection.classList.remove("locked");
-    unlockFeedback.className = "unlock-feedback ok";
-    unlockFeedback.textContent = "OKです。下の問題が開きました。";
-    document.querySelector("#questions").scrollIntoView({ behavior: "smooth", block: "start" });
+    saveLoopUnlock();
+    applyLoopUnlock({ scroll: true });
     return;
   }
 
@@ -1683,6 +1725,15 @@ renderQuestions();
 renderArrayQuestions();
 renderConditionalQuestions();
 updateLessonProgress();
+if (hasLoopUnlock()) {
+  applyLoopUnlock();
+}
+window.addEventListener("java-practice-auth-ready", (event) => {
+  progressScope = event.detail?.uid || "local";
+  if (hasLoopUnlock()) {
+    applyLoopUnlock();
+  }
+});
 if (typeLogo) {
   startTypeLogo();
 }
