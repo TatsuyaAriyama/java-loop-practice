@@ -27,13 +27,17 @@
       </div>
 
       <div class="syntax-layout">
-        <div class="syntax-code">
+        <div class="syntax-code unlock-challenge">
           <pre><code>class Main {
   public static void main(String[] args) {
     // ここに処理を書く
-    System.out.println("Hello");
+    <input class="unlock-input" type="text" spellcheck="false" autocomplete="off" aria-label="問題を開くためのコード入力">
   }
 }</code></pre>
+          <div class="unlock-actions">
+            <button class="action-button primary" type="button" id="unlockButton">問題を開く</button>
+            <p class="unlock-feedback" id="unlockFeedback" aria-live="polite">ヒント: Hello と表示する1行を書きます。</p>
+          </div>
         </div>
 
         <div class="syntax-cards">
@@ -132,11 +136,15 @@
       </p>
     </section>
 
-    <section id="questions" class="questions-section">
+    <section id="questions" class="questions-section locked">
       <div class="section-heading">
         <p class="eyebrow">10 Questions</p>
         <h2>穴埋め問題</h2>
         <p>赤い入力欄にコードを入れてください。答えは最初は見えません。</p>
+      </div>
+      <div class="locked-panel">
+        <h3>最初のコードを書いたら開きます</h3>
+        <p>文法ガイドの黒いコード欄に、Helloを表示する1行を書いてください。</p>
       </div>
       <div class="difficulty-panel" aria-label="難易度選択">
         <div>

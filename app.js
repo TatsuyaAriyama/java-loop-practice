@@ -315,6 +315,10 @@ const questions = [
 
 const list = document.querySelector("#questionList");
 const levelButtons = [...document.querySelectorAll(".difficulty-tab")];
+const questionsSection = document.querySelector("#questions");
+const unlockInput = document.querySelector(".unlock-input");
+const unlockButton = document.querySelector("#unlockButton");
+const unlockFeedback = document.querySelector("#unlockFeedback");
 let currentLevel = "beginner";
 
 levelButtons.forEach((button) => {
@@ -515,6 +519,13 @@ function normalize(value) {
   return value.replace(/\s+/g, "");
 }
 
+function normalizeCode(value) {
+  return value
+    .replace(/[“”]/g, "\"")
+    .replace(/[；]/g, ";")
+    .replace(/\s+/g, "");
+}
+
 function textNode(value) {
   return document.createTextNode(value);
 }
@@ -561,6 +572,22 @@ function renderHints(hints) {
   });
 
   return list;
+}
+
+function checkUnlock() {
+  const value = normalizeCode(unlockInput.value);
+  const correct = value === 'System.out.println("Hello");';
+
+  if (correct) {
+    questionsSection.classList.remove("locked");
+    unlockFeedback.className = "unlock-feedback ok";
+    unlockFeedback.textContent = "OKです。下の問題が開きました。";
+    document.querySelector("#questions").scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
+  unlockFeedback.className = "unlock-feedback no";
+  unlockFeedback.textContent = 'まだ違います。System.out.println("Hello"); の形で、最後に ; を付けます。';
 }
 
 function checkQuestion(card) {
@@ -677,6 +704,15 @@ function renderQuestions() {
 }
 
 renderQuestions();
+
+unlockButton.addEventListener("click", checkUnlock);
+
+unlockInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    checkUnlock();
+  }
+});
 
 levelButtons.forEach((button) => {
   button.addEventListener("click", () => {
