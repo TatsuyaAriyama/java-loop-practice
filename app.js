@@ -1036,13 +1036,256 @@ function buildTraceaHints(question, parts) {
   }));
 }
 
+const prerequisiteCatalog = [
+  {
+    label: "変数",
+    terms: ["int ", "String ", "boolean ", "sum", "count", "score", "i"],
+    description: "値に名前を付けて入れておく箱です。中身は処理の途中で変わることがあります。",
+    defaultStatus: "理解済み",
+    pitfall: "変数の値が、どの行で変わったのか追えない"
+  },
+  {
+    label: "int型",
+    terms: ["int ", "int[]"],
+    description: "整数を扱うための型です。小数ではなく、1、20、0のような数を入れます。",
+    defaultStatus: "理解済み",
+    pitfall: "intに入っている値を、文字ではなく数として追えない"
+  },
+  {
+    label: "String型",
+    terms: ["String ", "String[]"],
+    description: "文字列を扱う型です。Javaでは文字列をダブルクォーテーションで囲みます。",
+    defaultStatus: "理解済み",
+    pitfall: "文字列と変数名の違いが曖昧になる"
+  },
+  {
+    label: "boolean型",
+    terms: ["boolean", "true", "false"],
+    description: "trueかfalseのどちらかだけを入れる型です。条件式の結果もbooleanになります。",
+    defaultStatus: "理解済み",
+    pitfall: "trueとfalseを文字列として読んでしまう"
+  },
+  {
+    label: "for文",
+    terms: ["for ("],
+    description: "回数や範囲が決まっている繰り返しでよく使います。初期化式、条件式、更新式の3つを見ます。",
+    defaultStatus: "初見注意",
+    pitfall: "初期化式、条件式、更新式の役割が混ざる"
+  },
+  {
+    label: "while文",
+    terms: ["while ("],
+    description: "条件がtrueの間だけ処理を繰り返します。更新を書き忘れると終わらない処理になります。",
+    defaultStatus: "初見注意",
+    pitfall: "条件は見ているのに、変数を更新し忘れる"
+  },
+  {
+    label: "if文",
+    terms: ["if ("],
+    description: "条件式がtrueのときだけ、中の処理を実行する構文です。",
+    defaultStatus: "初見注意",
+    pitfall: "条件がtrueのときだけ通る、という流れを見失う"
+  },
+  {
+    label: "else",
+    terms: ["else"],
+    description: "ifの条件がfalseだったときに進む出口です。",
+    defaultStatus: "復習推奨",
+    pitfall: "ifに入らなかった場合の流れを読み飛ばす"
+  },
+  {
+    label: "break",
+    terms: ["break"],
+    description: "繰り返し処理をその場で完全に終了します。次の回には進みません。",
+    defaultStatus: "初見注意",
+    pitfall: "break後も繰り返しが続くと思ってしまう"
+  },
+  {
+    label: "continue",
+    terms: ["continue"],
+    description: "その回の残りだけを飛ばし、次の回へ進みます。繰り返し全体は終わりません。",
+    defaultStatus: "初見注意",
+    pitfall: "continueとbreakの違いが曖昧になる"
+  },
+  {
+    label: "比較演算子",
+    terms: [">=", "<=", "==", "!=", ">", "<"],
+    description: "値を比べて、結果をtrueかfalseにする記号です。例: i < 5 は「iが5より小さいか」です。",
+    defaultStatus: "復習推奨",
+    pitfall: "境界の値を含むのか、含まないのかを間違える"
+  },
+  {
+    label: "代入演算子",
+    terms: [" = "],
+    description: "右側の値を左側の変数へ入れる記号です。比較の==とは意味が違います。",
+    defaultStatus: "理解済み",
+    pitfall: "=を「同じ」という意味で読んでしまう"
+  },
+  {
+    label: "+=",
+    terms: ["+="],
+    description: "値を足してから代入する演算子です。x += 1; は x = x + 1; と同じ意味です。",
+    defaultStatus: "復習推奨",
+    pitfall: "+= が何を足して、どこへ戻しているのか分からない"
+  },
+  {
+    label: "++",
+    terms: ["++"],
+    description: "変数の値を1増やします。i++ は i = i + 1 とほぼ同じ役割です。",
+    defaultStatus: "復習推奨",
+    pitfall: "iが増えるタイミングを見落とす"
+  },
+  {
+    label: "--",
+    terms: ["--"],
+    description: "変数の値を1減らします。カウントダウンや逆順の処理で使います。",
+    defaultStatus: "復習推奨",
+    pitfall: "値が増えるのか減るのかを逆に読んでしまう"
+  },
+  {
+    label: "%",
+    terms: ["%"],
+    description: "割った余りを求める演算子です。偶数判定では i % 2 == 0 がよく出ます。",
+    defaultStatus: "復習推奨",
+    pitfall: "%を割り算そのものだと思ってしまう"
+  },
+  {
+    label: "配列",
+    terms: ["[]", "{", ".length"],
+    description: "同じ型の値を順番にまとめて入れる仕組みです。番号を使って中身を取り出します。",
+    defaultStatus: "初見注意",
+    pitfall: "配列名と、配列の中の1つの値を区別できない"
+  },
+  {
+    label: "index",
+    terms: ["[0]", "[1]", "[i]", "i - 1"],
+    description: "配列の番号です。Javaの配列は0番から始まります。",
+    defaultStatus: "復習推奨",
+    pitfall: "最初の要素を1番だと思ってしまう"
+  },
+  {
+    label: "length",
+    terms: [".length", "length - 1"],
+    description: "配列の要素数を表します。最後の番号は length - 1 です。",
+    defaultStatus: "復習推奨",
+    pitfall: "lengthを最後の番号そのものだと思ってしまう"
+  },
+  {
+    label: "論理演算子",
+    terms: ["&&", "||", "!"],
+    description: "複数の条件を組み合わせたり、true/falseを反転したりする記号です。",
+    defaultStatus: "復習推奨",
+    pitfall: "左右どちらの条件まで必要か分からなくなる"
+  },
+  {
+    label: "System.out.println",
+    terms: ["System.out.println"],
+    description: "画面に値を表示する命令です。丸かっこの中に表示したいものを書きます。",
+    defaultStatus: "理解済み",
+    pitfall: "最終的に何を表示しているのかを見落とす"
+  }
+];
+
+const lessonPrerequisiteLabels = {
+  loops: ["変数", "int型", "比較演算子", "System.out.println"],
+  arrays: ["変数", "配列", "index", "System.out.println"],
+  conditionals: ["変数", "if文", "比較演算子", "System.out.println"],
+  booleans: ["boolean型", "比較演算子", "System.out.println"]
+};
+
+const prerequisitePriority = {
+  loops: ["for文", "while文", "break", "continue", "比較演算子", "+=", "++", "--", "%", "変数", "int型", "System.out.println"],
+  arrays: ["配列", "index", "length", "for文", "if文", "比較演算子", "+=", "++", "変数", "int型", "String型", "System.out.println"],
+  conditionals: ["if文", "else", "比較演算子", "論理演算子", "boolean型", "変数", "int型", "System.out.println"],
+  booleans: ["boolean型", "比較演算子", "論理演算子", "if文", "変数", "System.out.println"]
+};
+
+function getProblemSource(problem) {
+  return `${problem.title || ""}\n${problem.prompt || ""}\n${problem.concept || ""}\n${getStaticCode(problem.parts || [])}\n${problem.answer || ""}`;
+}
+
+function findPrerequisite(label) {
+  return prerequisiteCatalog.find((item) => item.label === label);
+}
+
+function statusForPrerequisite(item, source, level) {
+  if (level === "intermediate" && item.defaultStatus === "初見注意") return "復習推奨";
+  if (item.label === "for文" && source.includes("for (")) return level === "beginner" ? "初見注意" : "復習推奨";
+  if (item.label === "配列" && source.includes("[]")) return level === "beginner" ? "初見注意" : "復習推奨";
+  return item.defaultStatus;
+}
+
+function joinJapaneseList(items) {
+  if (items.length <= 1) return items.join("");
+  if (items.length === 2) return `${items[0]}と${items[1]}`;
+  return `${items.slice(0, -1).join("、")}と${items[items.length - 1]}`;
+}
+
+function buildPrerequisiteSupport(problem, lessonId, level = "beginner") {
+  const source = getProblemSource(problem);
+  const labels = new Set();
+
+  prerequisiteCatalog.forEach((item) => {
+    if (item.terms.some((term) => source.includes(term))) {
+      labels.add(item.label);
+    }
+  });
+
+  (lessonPrerequisiteLabels[lessonId] || []).forEach((label) => {
+    labels.add(label);
+  });
+
+  const prerequisites = [...labels]
+    .sort((a, b) => {
+      const priority = prerequisitePriority[lessonId] || [];
+      const aIndex = priority.includes(a) ? priority.indexOf(a) : priority.length;
+      const bIndex = priority.includes(b) ? priority.indexOf(b) : priority.length;
+      return aIndex - bIndex;
+    })
+    .map(findPrerequisite)
+    .filter(Boolean)
+    .slice(0, 6)
+    .map((item) => ({
+      label: item.label,
+      status: statusForPrerequisite(item, source, level),
+      description: item.description
+    }));
+
+  const focusLabels = prerequisites
+    .filter((item) => item.status !== "理解済み")
+    .slice(0, 2)
+    .map((item) => item.label);
+
+  const commonPitfalls = prerequisiteCatalog
+    .filter((item) => prerequisites.some((entry) => entry.label === item.label))
+    .sort((a, b) => {
+      const aStatus = prerequisites.find((entry) => entry.label === a.label)?.status;
+      const bStatus = prerequisites.find((entry) => entry.label === b.label)?.status;
+      return Number(aStatus === "理解済み") - Number(bStatus === "理解済み");
+    })
+    .map((item) => item.pitfall)
+    .filter(Boolean)
+    .slice(0, 3);
+
+  return {
+    prerequisites,
+    traceaNote: focusLabels.length > 0
+      ? `この問題では、${joinJapaneseList(focusLabels)}を理解している前提で進みます。不安なら、先にタグを押して意味を確認してみましょう。`
+      : "この問題は基本の読み方を確認する問題です。答えを急がず、変数と表示される値の関係を見ていきましょう。",
+    commonPitfalls
+  };
+}
+
 questions.forEach((question, index) => {
   const beginnerHints = buildTraceaHints(question, question.parts);
   const intermediateHints = buildTraceaHints(question, intermediateData[index].parts);
+  const beginnerSupport = buildPrerequisiteSupport(question, "loops", "beginner");
+  const intermediateSupport = buildPrerequisiteSupport(intermediateData[index], "loops", "intermediate");
+  Object.assign(question, beginnerSupport);
   question.hints = beginnerHints;
   question.levels = {
-    beginner: { parts: question.parts, hints: beginnerHints },
-    intermediate: { ...intermediateData[index], hints: intermediateHints }
+    beginner: { parts: question.parts, hints: beginnerHints, ...beginnerSupport },
+    intermediate: { ...intermediateData[index], hints: intermediateHints, ...intermediateSupport }
   };
 });
 
@@ -2265,18 +2508,23 @@ arrayQuestions.forEach((question, index) => {
   const beginnerHints = buildTraceaHints(question, question.parts);
   const intermediate = arrayIntermediateData[index];
   const intermediateHints = buildTraceaHints(intermediate, intermediate.parts);
+  const beginnerSupport = buildPrerequisiteSupport(question, "arrays", "beginner");
+  const intermediateSupport = buildPrerequisiteSupport(intermediate, "arrays", "intermediate");
+  Object.assign(question, beginnerSupport);
   question.hints = beginnerHints;
   question.levels = {
-    beginner: { parts: question.parts, hints: beginnerHints },
-    intermediate: { ...intermediate, hints: intermediateHints }
+    beginner: { parts: question.parts, hints: beginnerHints, ...beginnerSupport },
+    intermediate: { ...intermediate, hints: intermediateHints, ...intermediateSupport }
   };
 });
 
 conditionalQuestions.forEach((question) => {
+  Object.assign(question, buildPrerequisiteSupport(question, "conditionals", "beginner"));
   question.hints = buildTraceaHints(question, question.parts);
 });
 
 booleanQuestions.forEach((question) => {
+  Object.assign(question, buildPrerequisiteSupport(question, "booleans", "beginner"));
   question.hints = buildTraceaHints(question, question.parts);
 });
 
@@ -3004,6 +3252,90 @@ function renderTraceableParagraph(text, hints) {
   return paragraph;
 }
 
+function statusClass(status) {
+  if (status === "理解済み") return "understood";
+  if (status === "復習推奨") return "review";
+  return "caution";
+}
+
+function renderPrerequisitePanel(problem) {
+  const panel = document.createElement("section");
+  panel.className = "prerequisite-panel";
+  panel.setAttribute("aria-label", "この問題に必要な前提知識");
+
+  const head = document.createElement("div");
+  head.className = "prerequisite-head";
+
+  const title = document.createElement("h4");
+  title.textContent = "この問題に必要な前提知識";
+
+  const lead = document.createElement("p");
+  lead.textContent = "タグを押すと、用語や記号の短い説明を確認できます。";
+  head.append(title, lead);
+
+  const tags = document.createElement("div");
+  tags.className = "prerequisite-tags";
+
+  (problem.prerequisites || []).forEach((item) => {
+    const button = document.createElement("button");
+    button.className = `prerequisite-tag ${statusClass(item.status)}`;
+    button.type = "button";
+    button.dataset.action = "prerequisite";
+    button.setAttribute("aria-expanded", "false");
+
+    const label = document.createElement("span");
+    label.className = "prerequisite-label";
+    label.textContent = item.label;
+
+    const status = document.createElement("span");
+    status.className = "prerequisite-status";
+    status.textContent = item.status;
+
+    const description = document.createElement("span");
+    description.className = "prerequisite-description";
+    description.textContent = item.description;
+
+    button.append(label, status, description);
+    tags.appendChild(button);
+  });
+
+  const note = document.createElement("p");
+  note.className = "prerequisite-note";
+  note.textContent = problem.traceaNote || "Tracea: まずは必要な知識を確認して、問題文を落ち着いて読みましょう。";
+
+  const pitfalls = document.createElement("details");
+  pitfalls.className = "pitfall-box";
+
+  const summary = document.createElement("summary");
+  summary.textContent = "詰まりやすいポイント";
+  pitfalls.appendChild(summary);
+
+  const list = document.createElement("ul");
+  (problem.commonPitfalls || []).forEach((pitfall) => {
+    const item = document.createElement("li");
+    item.textContent = pitfall;
+    list.appendChild(item);
+  });
+  pitfalls.appendChild(list);
+
+  panel.append(head, tags, note, pitfalls);
+  return panel;
+}
+
+function togglePrerequisite(button) {
+  const panel = button.closest(".prerequisite-panel");
+  const active = !button.classList.contains("active");
+
+  panel?.querySelectorAll(".prerequisite-tag.active").forEach((tag) => {
+    if (tag === button) return;
+    tag.classList.remove("active");
+    tag.setAttribute("aria-expanded", "false");
+  });
+
+  button.classList.toggle("active", active);
+  button.setAttribute("aria-expanded", String(active));
+}
+
 function createInput(blank, questionIndex, blankIndex) {
   const input = document.createElement("input");
   input.className = "code-input";
@@ -3186,6 +3518,7 @@ function renderQuestions() {
             <h3>${view.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
+          <div class="prerequisite-slot"></div>
           <div class="tracea-prompt"></div>
         </div>
       </div>
@@ -3227,6 +3560,7 @@ function renderQuestions() {
     `;
 
     card.dataset.traceaStep = "0";
+    card.querySelector(".prerequisite-slot").appendChild(renderPrerequisitePanel(view));
     card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(view.prompt, view.hints));
     card.querySelector(".code-panel").appendChild(renderCode(level.parts, index, level.hints));
     card.querySelector(".output-box pre").textContent = view.output;
@@ -3260,6 +3594,7 @@ function renderArrayQuestions() {
             <h3>${view.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
+          <div class="prerequisite-slot"></div>
           <div class="tracea-prompt"></div>
         </div>
       </div>
@@ -3301,6 +3636,7 @@ function renderArrayQuestions() {
     `;
 
     card.dataset.traceaStep = "0";
+    card.querySelector(".prerequisite-slot").appendChild(renderPrerequisitePanel(view));
     card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(view.prompt, view.hints));
     card.querySelector(".code-panel").appendChild(renderCode(view.parts, index, view.hints));
     card.querySelector(".output-box pre").textContent = view.output;
@@ -3331,6 +3667,7 @@ function renderConditionalQuestions() {
             <h3>${question.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
+          <div class="prerequisite-slot"></div>
           <div class="tracea-prompt"></div>
         </div>
       </div>
@@ -3372,6 +3709,7 @@ function renderConditionalQuestions() {
     `;
 
     card.dataset.traceaStep = "0";
+    card.querySelector(".prerequisite-slot").appendChild(renderPrerequisitePanel(question));
     card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(question.prompt, question.hints));
     card.querySelector(".code-panel").appendChild(renderCode(question.parts, index, question.hints));
     card.querySelector(".output-box pre").textContent = question.output;
@@ -3402,6 +3740,7 @@ function renderBooleanQuestions() {
             <h3>${question.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
+          <div class="prerequisite-slot"></div>
           <div class="tracea-prompt"></div>
         </div>
       </div>
@@ -3443,6 +3782,7 @@ function renderBooleanQuestions() {
     `;
 
     card.dataset.traceaStep = "0";
+    card.querySelector(".prerequisite-slot").appendChild(renderPrerequisitePanel(question));
     card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(question.prompt, question.hints));
     card.querySelector(".code-panel").appendChild(renderCode(question.parts, index, question.hints));
     card.querySelector(".output-box pre").textContent = question.output;
@@ -3658,6 +3998,11 @@ function handleQuestionAction(event) {
 
   const card = button.closest(".question-card");
   const action = button.dataset.action;
+
+  if (action === "prerequisite") {
+    togglePrerequisite(button);
+    return;
+  }
 
   if (action === "check") checkQuestion(card);
   if (action === "tracea") advanceTracea(card);
