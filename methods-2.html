@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Trace Room</title>
+  <title>Java メソッド(2)</title>
   <script>
     try {
       if (localStorage.getItem("java-output-practice-auth") === "signed-in") {
@@ -55,13 +55,13 @@
   <div class="app-shell" id="appShell" aria-hidden="true">
     <header class="site-header">
       <div class="header-inner">
-        <p class="lesson-current">Trace Room</p>
+        <p class="lesson-current">Java クラス・メソッド編 / Lesson03 メソッド(2)</p>
         <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
         <div class="header-actions">
           <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
-          <a href="trace-room.html" class="primary-link">Trace Room</a>
-          <a href="index.html" class="secondary-link">繰り返し処理へ</a>
-          <a href="arrays.html" class="secondary-link">配列へ</a>
+          <a href="trace-room.html" class="secondary-link">Trace Room</a>
+          <a href="#methodGuide" class="primary-link">深く読む</a>
+          <a href="classes.html" class="secondary-link">クラスへ</a>
         </div>
         <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
           <div class="lesson-panel-head">
@@ -70,27 +70,27 @@
             <p>学習したい大きな編を開いて、Lessonを選んでください。</p>
           </div>
           <div class="lesson-groups">
-            <section class="lesson-group open" data-lesson-group="control">
-              <button class="lesson-group-toggle" type="button" aria-expanded="true">
+            <section class="lesson-group" data-lesson-group="control">
+              <button class="lesson-group-toggle" type="button" aria-expanded="false">
                 <span>Java 制御構文編</span>
                 <small>4 Lessons</small>
               </button>
               <div class="lesson-links">
-                <a href="index.html" data-lesson-link="loops"><span>01</span><b>繰り返し処理</b><small class="lesson-check">0/20</small></a>
-                <a href="arrays.html" data-lesson-link="arrays"><span>02</span><b>配列</b><small class="lesson-check">0/20</small></a>
+                <a href="index.html" data-lesson-link="loops"><span>01</span><b>繰り返し処理</b><small class="lesson-check">0/10</small></a>
+                <a href="arrays.html" data-lesson-link="arrays"><span>02</span><b>配列</b><small class="lesson-check">0/10</small></a>
                 <a href="conditionals.html" data-lesson-link="conditionals"><span>03</span><b>条件分岐</b><small class="lesson-check">0/10</small></a>
                 <a href="booleans.html" data-lesson-link="booleans"><span>04</span><b>真偽値と条件式</b><small class="lesson-check">0/10</small></a>
               </div>
             </section>
-            <section class="lesson-group" data-lesson-group="class-method">
-              <button class="lesson-group-toggle" type="button" aria-expanded="false">
+            <section class="lesson-group open" data-lesson-group="class-method">
+              <button class="lesson-group-toggle" type="button" aria-expanded="true">
                 <span>Java クラス・メソッド編</span>
                 <small>3 Lessons</small>
               </button>
               <div class="lesson-links">
                 <a href="classes.html" data-lesson-link="classes"><span>01</span><b>クラス</b><small>Guide</small></a>
                 <a href="methods-1.html" data-lesson-link="methods-1"><span>02</span><b>メソッド(1)</b><small>Guide</small></a>
-                <a href="methods-2.html" data-lesson-link="methods-2"><span>03</span><b>メソッド(2)</b><small>Guide</small></a>
+                <a href="methods-2.html" class="active" data-lesson-link="methods-2"><span>03</span><b>メソッド(2)</b><small>Guide</small></a>
               </div>
             </section>
             <section class="lesson-group" data-lesson-group="oop-basic">
@@ -108,26 +108,58 @@
     </header>
 
     <main>
-      <section class="trace-room-section" aria-labelledby="traceRoomTitle">
+      <section id="methodGuide" class="syntax-section">
         <div class="section-heading">
-          <p class="eyebrow">Trace Room</p>
-          <h2 id="traceRoomTitle">Trace Room</h2>
-          <p>今、同じ空間で学習しているメンバー</p>
+          <p class="eyebrow">Method Lesson 2</p>
+          <h2>メソッドを分けると、コードの意図が見える</h2>
+          <p>static、スコープ、オーバーロード、分割の考え方を扱います。</p>
         </div>
 
-        <div class="trace-room-board">
-          <div class="trace-room-copy">
-            <p class="eyebrow">Room Status</p>
-            <h3>ひとりで解いていても、同じ部屋に視線があります。</h3>
-            <p>Traceaはこの部屋の案内役です。学習者の一覧には、画面上で普段見えている範囲の情報だけを表示します。</p>
+        <div class="syntax-layout">
+          <div class="syntax-code">
+            <pre><code>class Main {
+  public static void main(String[] args) {
+    int price = total(1200, 3);
+    System.out.println(label(price));
+  }
+
+  static int total(int price, int count) {
+    return price * count;
+  }
+
+  static String label(int value) {
+    return "total: " + value;
+  }
+}</code></pre>
           </div>
-          <div class="trace-room-list" id="traceRoomList" aria-live="polite"></div>
+          <div class="syntax-cards">
+            <article>
+              <span class="syntax-label">static</span>
+              <h3>staticは、インスタンスを作らず呼べる印</h3>
+              <p>練習では <span class="term">main</span> から直接呼びたいので、補助メソッドにも <span class="term">static</span> を付けます。まずは「同じクラス内で直接呼ぶため」と読めば十分です。</p>
+            </article>
+            <article>
+              <span class="syntax-label">scope</span>
+              <h3>変数には、使える範囲がある</h3>
+              <p><span class="term">total</span> の中で作った変数は、基本的にそのメソッドの外では使えません。どこで宣言した変数なのかを見る癖が大事です。</p>
+            </article>
+            <article>
+              <span class="syntax-label">overload</span>
+              <h3>同じ名前でも、引数が違えば別メソッド</h3>
+              <p>Javaでは、同じ名前のメソッドを複数作れる場合があります。見分ける鍵は、引数の数や型です。</p>
+            </article>
+            <article>
+              <span class="syntax-label">design</span>
+              <h3>メソッド分割は、読む順番を作る</h3>
+              <p>長い処理を小さく分けると、コードに見出しが付きます。何を計算するのか、何を表示用に整えるのか、役割ごとに分けるのが基本です。</p>
+            </article>
+          </div>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <p>Trace Room / members learning now</p>
+      <p>Java methods / static・scope・design</p>
       <button class="signout-button" type="button" id="signOutButton">ログアウト</button>
     </footer>
   </div>
