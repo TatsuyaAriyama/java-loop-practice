@@ -341,184 +341,454 @@ levelButtons.forEach((button) => {
 
 const intermediateData = [
   {
-    parts: [
+    "title": "3から15まで、3の倍数だけ表示する",
+    "concept": "for / step",
+    "prompt": "3、6、9、12、15を1行ずつ表示します。開始値、終了条件、増え方をまとまりで書きます。",
+    "output": "3\n6\n9\n12\n15",
+    "explanation": "中級ではfor文の部品を小さく分けず、初期化式・条件式・更新式を自分で組み立てます。3から始め、15以下の間だけ続け、毎回3ずつ増やします。",
+    "parts": [
       "class Main {\n  public static void main(String[] args) {\n    for (",
-      { answer: "int i = 1", accepts: ["int i = 1", "int i=1"], chars: 10 },
+      {
+        "answer": "int i = 3",
+        "accepts": [
+          "int i = 3",
+          "int i=3"
+        ],
+        "chars": 10
+      },
       "; ",
-      { answer: "i <= 5", accepts: ["i <= 5", "i<=5"], chars: 7 },
+      {
+        "answer": "i <= 15",
+        "accepts": [
+          "i <= 15",
+          "i<=15"
+        ],
+        "chars": 8
+      },
       "; ",
-      { answer: "i++", accepts: ["i++", "++i", "i += 1", "i=i+1", "i = i + 1"], chars: 6 },
-      ") {\n      System.out.println(",
-      { answer: "i", chars: 2 },
-      ");\n    }\n  }\n}"
-    ],
-    hints: [
-      "for文は for (初期化式; 条件式; 更新式) の順番で書きます。中級では、初期化式を int i = 1 のようにまとまりで書きます。",
-      "目標の出力は1から5です。始まりは1、終わりは5、増え方は1ずつです。",
-      "printlnの中には、今の回で表示したい値を入れます。今回は繰り返しで変わる変数を表示します。"
-    ]
-  },
-  {
-    parts: [
-      "class Main {\n  public static void main(String[] args) {\n    for (",
-      { answer: "int i = 2", accepts: ["int i = 2", "int i=2"], chars: 10 },
-      "; ",
-      { answer: "i <= 10", accepts: ["i <= 10", "i<=10"], chars: 8 },
-      "; ",
-      { answer: "i += 2", accepts: ["i += 2", "i=i+2", "i = i + 2"], chars: 8 },
-      ") {\n      System.out.println(",
-      { answer: "i", chars: 2 },
-      ");\n    }\n  }\n}"
-    ],
-    hints: [
-      "2、4、6、8、10は、始まりが2で、最後が10です。",
-      "偶数を順番に出したいので、毎回1ではなく2ずつ増やします。",
-      "表示する値は、for文の中で変化している変数です。printlnの中にその変数を入れます。"
-    ]
-  },
-  {
-    parts: [
-      "class Main {\n  public static void main(String[] args) {\n    int ",
-      { answer: "sum", chars: 5 },
-      " = ",
-      { answer: "0", chars: 2 },
-      ";\n\n    for (",
-      { answer: "int i = 1", accepts: ["int i = 1", "int i=1"], chars: 10 },
-      "; ",
-      { answer: "i <= 10", accepts: ["i <= 10", "i<=10"], chars: 8 },
-      "; ",
-      { answer: "i++", accepts: ["i++", "++i", "i += 1", "i=i+1", "i = i + 1"], chars: 6 },
+      {
+        "answer": "i += 3",
+        "accepts": [
+          "i += 3",
+          "i=i+3",
+          "i = i + 3"
+        ],
+        "chars": 8
+      },
       ") {\n      ",
-      { answer: "sum += i", accepts: ["sum += i", "sum=sum+i", "sum = sum + i"], chars: 10 },
-      ";\n    }\n\n    System.out.println(",
-      { answer: "sum", chars: 5 },
-      ");\n  }\n}"
-    ],
-    hints: [
-      "合計を作るには、足した結果を覚えておく変数が必要です。よく使う名前はsumです。",
-      "合計は0から始めて、1から10までのiを順番に足していきます。",
-      "繰り返しの中では、sumにiを足して更新します。表示するのは最後に完成したsumです。"
-    ]
-  },
-  {
-    parts: [
-      "class Main {\n  public static void main(String[] args) {\n    int i = ",
-      { answer: "1", chars: 2 },
-      ";\n\n    while (",
-      { answer: "i <= 5", accepts: ["i <= 5", "i<=5"], chars: 7 },
-      ") {\n      System.out.println(",
-      { answer: "i", chars: 2 },
-      ");\n      ",
-      { answer: "i++", accepts: ["i++", "++i", "i += 1", "i=i+1", "i = i + 1"], chars: 6 },
+      {
+        "answer": "System.out.println(i)",
+        "accepts": [
+          "System.out.println(i)"
+        ],
+        "chars": 23
+      },
       ";\n    }\n  }\n}"
     ],
-    hints: [
-      "while文では、繰り返しの前に変数を用意します。今回は1から始めます。",
-      "whileの丸かっこには、続ける条件だけを書きます。5まで表示したいので、5以下の間続けます。",
-      "表示したあとに変数を増やさないと、同じ値のまま止まらなくなります。"
-    ]
+    "answer": "class Main {\n  public static void main(String[] args) {\n    for (int i = 3; i <= 15; i += 3) {\n      System.out.println(i);\n    }\n  }\n}"
   },
   {
-    parts: [
-      "class Main {\n  public static void main(String[] args) {\n    int count = ",
-      { answer: "5", chars: 2 },
-      ";\n\n    while (",
-      { answer: "count >= 1", accepts: ["count >= 1", "count>=1"], chars: 11 },
-      ") {\n      System.out.println(",
-      { answer: "count", chars: 6 },
-      ");\n      ",
-      { answer: "count--", accepts: ["count--", "--count", "count -= 1", "count=count-1", "count = count - 1"], chars: 9 },
-      ";\n    }\n  }\n}"
-    ],
-    hints: [
-      "カウントダウンは、最初を大きい数字にして、毎回小さくします。",
-      "最後に1も表示したいので、条件は1以上の間続ける形にします。",
-      "表示したあと、countを1減らします。増やすのではなく減らす点に注意します。"
-    ]
-  },
-  {
-    parts: [
-      "class Main {\n  public static void main(String[] args) {\n    for (int i = 1; i <= 10; i++) {\n      if (",
-      { answer: "i == 4", accepts: ["i == 4", "i==4"], chars: 7 },
-      ") {\n        ",
-      { answer: "break", chars: 7 },
-      ";\n      }\n\n      System.out.println(",
-      { answer: "i", chars: 2 },
-      ");\n    }\n  }\n}"
-    ],
-    hints: [
-      "途中で完全に止めたいときはbreakを使います。",
-      "止めるタイミングは、iが4になったときです。同じかどうかの比較には == を使います。",
-      "breakをprintlnより前に置くと、4は表示されずに繰り返しが終了します。"
-    ]
-  },
-  {
-    parts: [
-      "class Main {\n  public static void main(String[] args) {\n    for (int i = 1; i <= 5; i++) {\n      if (",
-      { answer: "i == 3", accepts: ["i == 3", "i==3"], chars: 7 },
-      ") {\n        ",
-      { answer: "continue", chars: 10 },
-      ";\n      }\n\n      System.out.println(",
-      { answer: "i", chars: 2 },
-      ");\n    }\n  }\n}"
-    ],
-    hints: [
-      "繰り返し自体は続けて、特定の回だけ表示しないときはcontinueを使います。",
-      "飛ばしたい値は3です。条件には、iが3かどうかを調べる式を書きます。",
-      "continueをprintlnより前に置くと、その回だけ表示処理に進みません。"
-    ]
-  },
-  {
-    parts: [
-      "class Main {\n  public static void main(String[] args) {\n    for (int i = 1; i <= 9; i++) {\n      if (",
-      { answer: "i % 2 == 0", accepts: ["i % 2 == 0", "i%2==0"], chars: 11 },
-      ") {\n        ",
-      { answer: "continue", chars: 10 },
-      ";\n      }\n\n      System.out.println(",
-      { answer: "i", chars: 2 },
-      ");\n    }\n  }\n}"
-    ],
-    hints: [
-      "奇数だけ表示するには、偶数の回を飛ばすと考えると書きやすいです。",
-      "% は余りを調べる記号です。2で割った余りが0なら偶数です。",
-      "偶数だとわかった回だけcontinueで飛ばせば、printlnには奇数だけが届きます。"
-    ]
-  },
-  {
-    parts: [
-      "class Main {\n  public static void main(String[] args) {\n    int sum = 0;\n\n    for (int i = 1; i <= 10; i++) {\n      ",
-      { answer: "sum += i", accepts: ["sum += i", "sum=sum+i", "sum = sum + i"], chars: 10 },
-      ";\n\n      if (",
-      { answer: "sum >= 10", accepts: ["sum >= 10", "sum>=10"], chars: 10 },
-      ") {\n        ",
-      { answer: "break", chars: 7 },
+    "title": "1から20までのうち、偶数だけ合計する",
+    "concept": "for / if / sum",
+    "prompt": "1から20まで調べ、偶数だけsumに足して、最後に合計を表示します。",
+    "output": "110",
+    "explanation": "全部足すのではなく、条件に合う値だけを足します。i % 2 == 0で偶数を判定し、そのときだけsum += iを実行します。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    int sum = ",
+      {
+        "answer": "0",
+        "chars": 2
+      },
+      ";\n\n    for (int i = 1; i <= 20; i++) {\n      ",
+      {
+        "answer": "if (i % 2 == 0)",
+        "accepts": [
+          "if (i % 2 == 0)",
+          "if(i%2==0)"
+        ],
+        "chars": 17
+      },
+      " {\n        ",
+      {
+        "answer": "sum += i",
+        "accepts": [
+          "sum += i",
+          "sum=sum+i",
+          "sum = sum + i"
+        ],
+        "chars": 10
+      },
       ";\n      }\n    }\n\n    System.out.println(",
-      { answer: "sum", chars: 5 },
+      {
+        "answer": "sum",
+        "chars": 5
+      },
       ");\n  }\n}"
     ],
-    hints: [
-      "まずsumにiを足します。足したあとで、合計が止める条件に届いたか確認します。",
-      "止める条件は「sumが10以上」です。ちょうど10も含めるので >= を使います。",
-      "条件を満たしたらbreakします。最後に表示するのは、止まった時点のsumです。"
-    ]
+    "answer": "class Main {\n  public static void main(String[] args) {\n    int sum = 0;\n\n    for (int i = 1; i <= 20; i++) {\n      if (i % 2 == 0) {\n        sum += i;\n      }\n    }\n\n    System.out.println(sum);\n  }\n}"
   },
   {
-    parts: [
-      "class Main {\n  public static void main(String[] args) {\n    for (",
-      { answer: "int i = 1", accepts: ["int i = 1", "int i=1"], chars: 10 },
-      "; ",
-      { answer: "i <= 5", accepts: ["i <= 5", "i<=5"], chars: 7 },
-      "; ",
-      { answer: "i++", accepts: ["i++", "++i", "i += 1", "i=i+1", "i = i + 1"], chars: 6 },
-      ") {\n      System.out.println(",
-      { answer: "\"3 x \" + i + \" = \" + 3 * i", accepts: ["\"3 x \" + i + \" = \" + 3 * i", "\"3 x \"+i+\" = \"+3*i", "\"3 x \" + i + \" = \" + i * 3", "\"3 x \"+i+\" = \"+i*3"], chars: 28 },
-      ");\n    }\n  }\n}"
+    "title": "合計が30を超える最初の数を表示する",
+    "concept": "while / break",
+    "prompt": "1から順番に足し、合計が30を超えた瞬間のiを表示して止めます。",
+    "output": "8",
+    "explanation": "sumにiを足したあとで、sum > 30になったかを確認します。条件を満たしたらiを表示してbreakします。更新の位置も重要です。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    int i = 1;\n    int sum = 0;\n\n    while (",
+      {
+        "answer": "true",
+        "accepts": [
+          "true"
+        ],
+        "chars": 5
+      },
+      ") {\n      ",
+      {
+        "answer": "sum += i",
+        "accepts": [
+          "sum += i",
+          "sum=sum+i",
+          "sum = sum + i"
+        ],
+        "chars": 10
+      },
+      ";\n\n      if (",
+      {
+        "answer": "sum > 30",
+        "accepts": [
+          "sum > 30",
+          "sum>30"
+        ],
+        "chars": 9
+      },
+      ") {\n        System.out.println(",
+      {
+        "answer": "i",
+        "chars": 2
+      },
+      ");\n        ",
+      {
+        "answer": "break",
+        "accepts": [
+          "break"
+        ],
+        "chars": 7
+      },
+      ";\n      }\n\n      i++;\n    }\n  }\n}"
     ],
-    hints: [
-      "3の段は、iを1から5まで変化させて、3とiをかけます。",
-      "文字と変数をつなげるときは + を使います。\"3 x \"、i、\" = \"、計算結果を順番につなげます。",
-      "Javaのかけ算は * です。3 * i または i * 3 で計算できます。"
-    ]
+    "answer": "class Main {\n  public static void main(String[] args) {\n    int i = 1;\n    int sum = 0;\n\n    while (true) {\n      sum += i;\n\n      if (sum > 30) {\n        System.out.println(i);\n        break;\n      }\n\n      i++;\n    }\n  }\n}"
+  },
+  {
+    "title": "5回だけHelloを表示するwhile文を書く",
+    "concept": "while / counter",
+    "prompt": "while文でHelloを5回表示します。回数を数える変数を自分で更新します。",
+    "output": "Hello\nHello\nHello\nHello\nHello",
+    "explanation": "whileは条件しか自動では見ません。countを用意し、表示したあとでcount++しないと回数が進みません。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    int count = ",
+      {
+        "answer": "0",
+        "chars": 2
+      },
+      ";\n\n    while (",
+      {
+        "answer": "count < 5",
+        "accepts": [
+          "count < 5",
+          "count<5"
+        ],
+        "chars": 10
+      },
+      ") {\n      ",
+      {
+        "answer": "System.out.println(\"Hello\")",
+        "accepts": [
+          "System.out.println(\"Hello\")"
+        ],
+        "chars": 30
+      },
+      ";\n      ",
+      {
+        "answer": "count++",
+        "accepts": [
+          "count++",
+          "++count",
+          "count += 1",
+          "count=count+1",
+          "count = count + 1"
+        ],
+        "chars": 8
+      },
+      ";\n    }\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    int count = 0;\n\n    while (count < 5) {\n      System.out.println(\"Hello\");\n      count++;\n    }\n  }\n}"
+  },
+  {
+    "title": "3の倍数は飛ばして、合計を作る",
+    "concept": "continue / sum",
+    "prompt": "1から10までのうち、3の倍数だけ足さずに飛ばします。最後に合計を表示します。",
+    "output": "37",
+    "explanation": "3、6、9をcontinueで飛ばします。continueが実行されると、その回ではsum += iまで進みません。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    int sum = 0;\n\n    for (int i = 1; i <= 10; i++) {\n      if (",
+      {
+        "answer": "i % 3 == 0",
+        "accepts": [
+          "i % 3 == 0",
+          "i%3==0"
+        ],
+        "chars": 11
+      },
+      ") {\n        ",
+      {
+        "answer": "continue",
+        "accepts": [
+          "continue"
+        ],
+        "chars": 10
+      },
+      ";\n      }\n\n      ",
+      {
+        "answer": "sum += i",
+        "accepts": [
+          "sum += i",
+          "sum=sum+i",
+          "sum = sum + i"
+        ],
+        "chars": 10
+      },
+      ";\n    }\n\n    System.out.println(sum);\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    int sum = 0;\n\n    for (int i = 1; i <= 10; i++) {\n      if (i % 3 == 0) {\n        continue;\n      }\n\n      sum += i;\n    }\n\n    System.out.println(sum);\n  }\n}"
+  },
+  {
+    "title": "最初に7で割り切れる数で止める",
+    "concept": "break / modulo",
+    "prompt": "20から40まで調べ、最初に7で割り切れる数を表示して繰り返しを終えます。",
+    "output": "21",
+    "explanation": "条件に合う最初の値だけが必要なので、表示したらbreakします。breakがなければ28、35も表示されてしまいます。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    for (",
+      {
+        "answer": "int i = 20",
+        "accepts": [
+          "int i = 20",
+          "int i=20"
+        ],
+        "chars": 11
+      },
+      "; ",
+      {
+        "answer": "i <= 40",
+        "accepts": [
+          "i <= 40",
+          "i<=40"
+        ],
+        "chars": 8
+      },
+      "; i++) {\n      if (",
+      {
+        "answer": "i % 7 == 0",
+        "accepts": [
+          "i % 7 == 0",
+          "i%7==0"
+        ],
+        "chars": 11
+      },
+      ") {\n        System.out.println(i);\n        ",
+      {
+        "answer": "break",
+        "accepts": [
+          "break"
+        ],
+        "chars": 7
+      },
+      ";\n      }\n    }\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    for (int i = 20; i <= 40; i++) {\n      if (i % 7 == 0) {\n        System.out.println(i);\n        break;\n      }\n    }\n  }\n}"
+  },
+  {
+    "title": "奇数だけを横に連結する",
+    "concept": "for / String",
+    "prompt": "1から9までの奇数を、文字列resultに連結して最後に表示します。",
+    "output": "13579",
+    "explanation": "表示を毎回行うのではなく、resultに文字としてためてから最後に表示します。偶数の回はcontinueで飛ばします。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    String result = ",
+      {
+        "answer": "\"\"",
+        "accepts": [
+          "\"\""
+        ],
+        "chars": 4
+      },
+      ";\n\n    for (int i = 1; i <= 9; i++) {\n      if (",
+      {
+        "answer": "i % 2 == 0",
+        "accepts": [
+          "i % 2 == 0",
+          "i%2==0"
+        ],
+        "chars": 11
+      },
+      ") {\n        continue;\n      }\n\n      ",
+      {
+        "answer": "result += i",
+        "accepts": [
+          "result += i",
+          "result=result+i",
+          "result = result + i"
+        ],
+        "chars": 12
+      },
+      ";\n    }\n\n    System.out.println(",
+      {
+        "answer": "result",
+        "chars": 7
+      },
+      ");\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    String result = \"\";\n\n    for (int i = 1; i <= 9; i++) {\n      if (i % 2 == 0) {\n        continue;\n      }\n\n      result += i;\n    }\n\n    System.out.println(result);\n  }\n}"
+  },
+  {
+    "title": "二重ループで座標を表示する",
+    "concept": "nested for",
+    "prompt": "行rowを1から2、列colを1から3まで動かし、全ての組み合わせを表示します。",
+    "output": "1-1\n1-2\n1-3\n2-1\n2-2\n2-3",
+    "explanation": "外側のループが1回進む間に、内側のループは最初から最後まで回ります。二重ループの基本が見えているかを確認する問題です。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    for (",
+      {
+        "answer": "int row = 1",
+        "accepts": [
+          "int row = 1",
+          "int row=1"
+        ],
+        "chars": 12
+      },
+      "; row <= 2; row++) {\n      for (",
+      {
+        "answer": "int col = 1",
+        "accepts": [
+          "int col = 1",
+          "int col=1"
+        ],
+        "chars": 12
+      },
+      "; ",
+      {
+        "answer": "col <= 3",
+        "accepts": [
+          "col <= 3",
+          "col<=3"
+        ],
+        "chars": 9
+      },
+      "; col++) {\n        ",
+      {
+        "answer": "System.out.println(row + \"-\" + col)",
+        "accepts": [
+          "System.out.println(row + \"-\" + col)",
+          "System.out.println(row+\"-\"+col)"
+        ],
+        "chars": 39
+      },
+      ";\n      }\n    }\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    for (int row = 1; row <= 2; row++) {\n      for (int col = 1; col <= 3; col++) {\n        System.out.println(row + \"-\" + col);\n      }\n    }\n  }\n}"
+  },
+  {
+    "title": "whileで数字を反転して表示する",
+    "concept": "while / digit",
+    "prompt": "numberの下1桁を取り出しながら、321を123の順に表示します。",
+    "output": "123",
+    "explanation": "% 10で下1桁を取り出し、/ 10で最後の桁を落とします。whileの条件でnumberが0より大きい間だけ続けます。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    int number = 321;\n\n    while (",
+      {
+        "answer": "number > 0",
+        "accepts": [
+          "number > 0",
+          "number>0"
+        ],
+        "chars": 11
+      },
+      ") {\n      int digit = ",
+      {
+        "answer": "number % 10",
+        "accepts": [
+          "number % 10",
+          "number%10"
+        ],
+        "chars": 12
+      },
+      ";\n      System.out.print(",
+      {
+        "answer": "digit",
+        "chars": 6
+      },
+      ");\n      ",
+      {
+        "answer": "number /= 10",
+        "accepts": [
+          "number /= 10",
+          "number=number/10",
+          "number = number / 10"
+        ],
+        "chars": 13
+      },
+      ";\n    }\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    int number = 321;\n\n    while (number > 0) {\n      int digit = number % 10;\n      System.out.print(digit);\n      number /= 10;\n    }\n  }\n}"
+  },
+  {
+    "title": "条件に合う個数を数えて途中終了する",
+    "concept": "count / break",
+    "prompt": "1から順番に調べ、4の倍数を3個見つけた時点で、最後に見つけた数を表示して止めます。",
+    "output": "12",
+    "explanation": "条件に合った回だけcountを増やします。countが3になった瞬間に表示してbreakすると、必要なところで止められます。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    int count = 0;\n\n    for (int i = 1; i <= 50; i++) {\n      if (",
+      {
+        "answer": "i % 4 == 0",
+        "accepts": [
+          "i % 4 == 0",
+          "i%4==0"
+        ],
+        "chars": 11
+      },
+      ") {\n        ",
+      {
+        "answer": "count++",
+        "accepts": [
+          "count++",
+          "++count",
+          "count += 1",
+          "count=count+1",
+          "count = count + 1"
+        ],
+        "chars": 8
+      },
+      ";\n\n        if (",
+      {
+        "answer": "count == 3",
+        "accepts": [
+          "count == 3",
+          "count==3"
+        ],
+        "chars": 11
+      },
+      ") {\n          System.out.println(i);\n          ",
+      {
+        "answer": "break",
+        "accepts": [
+          "break"
+        ],
+        "chars": 7
+      },
+      ";\n        }\n      }\n    }\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    int count = 0;\n\n    for (int i = 1; i <= 50; i++) {\n      if (i % 4 == 0) {\n        count++;\n\n        if (count == 3) {\n          System.out.println(i);\n          break;\n        }\n      }\n    }\n  }\n}"
   }
 ];
 
@@ -1606,8 +1876,396 @@ const booleanQuestions = [
   }
 ];
 
-arrayQuestions.forEach((question) => {
-  question.hints = buildTraceaHints(question, question.parts);
+const arrayIntermediateData = [
+  {
+    "title": "100点以上のスコアだけ表示する",
+    "concept": "array / filter",
+    "prompt": "scoresの中から100以上の値だけを表示します。条件に合わない値は何もしません。",
+    "output": "120\n105",
+    "explanation": "配列を順番に見て、条件に合う要素だけを表示します。配列の全件走査とif文の組み合わせが基本です。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    int[] scores = {80, 120, 95, 105};\n\n    for (",
+      {
+        "answer": "int i = 0",
+        "accepts": [
+          "int i = 0",
+          "int i=0"
+        ],
+        "chars": 10
+      },
+      "; ",
+      {
+        "answer": "i < scores.length",
+        "accepts": [
+          "i < scores.length",
+          "i<scores.length"
+        ],
+        "chars": 17
+      },
+      "; i++) {\n      if (",
+      {
+        "answer": "scores[i] >= 100",
+        "accepts": [
+          "scores[i] >= 100",
+          "scores[i]>=100"
+        ],
+        "chars": 17
+      },
+      ") {\n        ",
+      {
+        "answer": "System.out.println(scores[i])",
+        "accepts": [
+          "System.out.println(scores[i])"
+        ],
+        "chars": 30
+      },
+      ";\n      }\n    }\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    int[] scores = {80, 120, 95, 105};\n\n    for (int i = 0; i < scores.length; i++) {\n      if (scores[i] >= 100) {\n        System.out.println(scores[i]);\n      }\n    }\n  }\n}"
+  },
+  {
+    "title": "偶数番目の要素だけ合計する",
+    "concept": "array / index",
+    "prompt": "0番、2番、4番の要素だけを合計して表示します。インデックスの増やし方を考えます。",
+    "output": "15",
+    "explanation": "配列の値ではなく、番号の進め方がポイントです。iを2ずつ増やせば、0、2、4だけを取り出せます。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    int[] numbers = {3, 8, 5, 10, 7};\n    int sum = 0;\n\n    for (",
+      {
+        "answer": "int i = 0",
+        "accepts": [
+          "int i = 0",
+          "int i=0"
+        ],
+        "chars": 10
+      },
+      "; ",
+      {
+        "answer": "i < numbers.length",
+        "accepts": [
+          "i < numbers.length",
+          "i<numbers.length"
+        ],
+        "chars": 18
+      },
+      "; ",
+      {
+        "answer": "i += 2",
+        "accepts": [
+          "i += 2",
+          "i=i+2",
+          "i = i + 2"
+        ],
+        "chars": 8
+      },
+      ") {\n      ",
+      {
+        "answer": "sum += numbers[i]",
+        "accepts": [
+          "sum += numbers[i]",
+          "sum=sum+numbers[i]",
+          "sum = sum + numbers[i]"
+        ],
+        "chars": 18
+      },
+      ";\n    }\n\n    System.out.println(sum);\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    int[] numbers = {3, 8, 5, 10, 7};\n    int sum = 0;\n\n    for (int i = 0; i < numbers.length; i += 2) {\n      sum += numbers[i];\n    }\n\n    System.out.println(sum);\n  }\n}"
+  },
+  {
+    "title": "4文字以上の名前を数える",
+    "concept": "array / String",
+    "prompt": "namesの中から、4文字以上の名前が何個あるか数えます。",
+    "output": "2",
+    "explanation": "Stringの長さはlength()で調べます。配列のlengthとは書き方が違う点に注意します。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    String[] names = {\"Aoi\", \"Ren\", \"Sora\", \"Mina\"};\n    int count = 0;\n\n    for (int i = 0; i < names.length; i++) {\n      if (",
+      {
+        "answer": "names[i].length() >= 4",
+        "accepts": [
+          "names[i].length() >= 4",
+          "names[i].length()>=4"
+        ],
+        "chars": 23
+      },
+      ") {\n        ",
+      {
+        "answer": "count++",
+        "accepts": [
+          "count++",
+          "++count",
+          "count += 1",
+          "count=count+1",
+          "count = count + 1"
+        ],
+        "chars": 8
+      },
+      ";\n      }\n    }\n\n    System.out.println(",
+      {
+        "answer": "count",
+        "chars": 6
+      },
+      ");\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    String[] names = {\"Aoi\", \"Ren\", \"Sora\", \"Mina\"};\n    int count = 0;\n\n    for (int i = 0; i < names.length; i++) {\n      if (names[i].length() >= 4) {\n        count++;\n      }\n    }\n\n    System.out.println(count);\n  }\n}"
+  },
+  {
+    "title": "最後の偶数を探す",
+    "concept": "array / search",
+    "prompt": "numbersを最後まで調べ、最後に見つかった偶数を表示します。",
+    "output": "8",
+    "explanation": "偶数を見つけるたびにlastEvenを更新します。最後まで走査したあと、残った値が最後の偶数です。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    int[] numbers = {3, 4, 7, 10, 5, 8, 9};\n    int lastEven = 0;\n\n    for (int i = 0; i < numbers.length; i++) {\n      if (",
+      {
+        "answer": "numbers[i] % 2 == 0",
+        "accepts": [
+          "numbers[i] % 2 == 0",
+          "numbers[i]%2==0"
+        ],
+        "chars": 20
+      },
+      ") {\n        ",
+      {
+        "answer": "lastEven = numbers[i]",
+        "accepts": [
+          "lastEven = numbers[i]",
+          "lastEven=numbers[i]"
+        ],
+        "chars": 22
+      },
+      ";\n      }\n    }\n\n    System.out.println(",
+      {
+        "answer": "lastEven",
+        "chars": 9
+      },
+      ");\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    int[] numbers = {3, 4, 7, 10, 5, 8, 9};\n    int lastEven = 0;\n\n    for (int i = 0; i < numbers.length; i++) {\n      if (numbers[i] % 2 == 0) {\n        lastEven = numbers[i];\n      }\n    }\n\n    System.out.println(lastEven);\n  }\n}"
+  },
+  {
+    "title": "マイナスを0として合計する",
+    "concept": "array / normalize",
+    "prompt": "負の値は0として扱い、0以上の値だけ合計します。",
+    "output": "13",
+    "explanation": "配列の値をそのまま足すのではなく、条件で足すかどうかを決めます。データの補正に近い考え方です。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    int[] values = {5, -2, 8, -1};\n    int sum = 0;\n\n    for (int i = 0; i < values.length; i++) {\n      if (",
+      {
+        "answer": "values[i] >= 0",
+        "accepts": [
+          "values[i] >= 0",
+          "values[i]>=0"
+        ],
+        "chars": 15
+      },
+      ") {\n        ",
+      {
+        "answer": "sum += values[i]",
+        "accepts": [
+          "sum += values[i]",
+          "sum=sum+values[i]",
+          "sum = sum + values[i]"
+        ],
+        "chars": 17
+      },
+      ";\n      }\n    }\n\n    System.out.println(sum);\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    int[] values = {5, -2, 8, -1};\n    int sum = 0;\n\n    for (int i = 0; i < values.length; i++) {\n      if (values[i] >= 0) {\n        sum += values[i];\n      }\n    }\n\n    System.out.println(sum);\n  }\n}"
+  },
+  {
+    "title": "カンマ区切りの文字列を作る",
+    "concept": "array / join",
+    "prompt": "namesをAoi,Ren,Mioの形で表示します。最後に余計なカンマを付けません。",
+    "output": "Aoi,Ren,Mio",
+    "explanation": "最後の要素だけ扱いを変える問題です。i > 0 のときだけ先にカンマを足すと、末尾の余計なカンマを避けられます。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    String[] names = {\"Aoi\", \"Ren\", \"Mio\"};\n    String result = \"\";\n\n    for (int i = 0; i < names.length; i++) {\n      if (",
+      {
+        "answer": "i > 0",
+        "accepts": [
+          "i > 0",
+          "i>0"
+        ],
+        "chars": 6
+      },
+      ") {\n        ",
+      {
+        "answer": "result += \",\"",
+        "accepts": [
+          "result += \",\"",
+          "result=result+\",\"",
+          "result = result + \",\""
+        ],
+        "chars": 14
+      },
+      ";\n      }\n      ",
+      {
+        "answer": "result += names[i]",
+        "accepts": [
+          "result += names[i]",
+          "result=result+names[i]",
+          "result = result + names[i]"
+        ],
+        "chars": 19
+      },
+      ";\n    }\n\n    System.out.println(result);\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    String[] names = {\"Aoi\", \"Ren\", \"Mio\"};\n    String result = \"\";\n\n    for (int i = 0; i < names.length; i++) {\n      if (i > 0) {\n        result += \",\";\n      }\n      result += names[i];\n    }\n\n    System.out.println(result);\n  }\n}"
+  },
+  {
+    "title": "最大値のインデックスを表示する",
+    "concept": "array / max index",
+    "prompt": "scoresの最大値そのものではなく、最大値がある番号を表示します。",
+    "output": "1",
+    "explanation": "最大値とその場所を一緒に更新します。値だけ追うと、どこにあったかを失います。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    int[] scores = {70, 95, 80, 90};\n    int max = scores[0];\n    int maxIndex = 0;\n\n    for (int i = 1; i < scores.length; i++) {\n      if (",
+      {
+        "answer": "scores[i] > max",
+        "accepts": [
+          "scores[i] > max",
+          "scores[i]>max"
+        ],
+        "chars": 16
+      },
+      ") {\n        ",
+      {
+        "answer": "max = scores[i]",
+        "accepts": [
+          "max = scores[i]",
+          "max=scores[i]"
+        ],
+        "chars": 16
+      },
+      ";\n        ",
+      {
+        "answer": "maxIndex = i",
+        "accepts": [
+          "maxIndex = i",
+          "maxIndex=i"
+        ],
+        "chars": 13
+      },
+      ";\n      }\n    }\n\n    System.out.println(maxIndex);\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    int[] scores = {70, 95, 80, 90};\n    int max = scores[0];\n    int maxIndex = 0;\n\n    for (int i = 1; i < scores.length; i++) {\n      if (scores[i] > max) {\n        max = scores[i];\n        maxIndex = i;\n      }\n    }\n\n    System.out.println(maxIndex);\n  }\n}"
+  },
+  {
+    "title": "前の値より大きい回数を数える",
+    "concept": "array / compare",
+    "prompt": "隣り合う値を比べ、後ろの値が前より大きい回数を数えます。",
+    "output": "3",
+    "explanation": "iとi-1を同時に使います。0番には前の値がないので、iは1から始めます。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    int[] numbers = {2, 5, 4, 8, 9};\n    int count = 0;\n\n    for (int i = ",
+      {
+        "answer": "1",
+        "chars": 2
+      },
+      "; ",
+      {
+        "answer": "i < numbers.length",
+        "accepts": [
+          "i < numbers.length",
+          "i<numbers.length"
+        ],
+        "chars": 18
+      },
+      "; i++) {\n      if (",
+      {
+        "answer": "numbers[i] > numbers[i - 1]",
+        "accepts": [
+          "numbers[i] > numbers[i - 1]",
+          "numbers[i]>numbers[i-1]"
+        ],
+        "chars": 29
+      },
+      ") {\n        count++;\n      }\n    }\n\n    System.out.println(count);\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    int[] numbers = {2, 5, 4, 8, 9};\n    int count = 0;\n\n    for (int i = 1; i < numbers.length; i++) {\n      if (numbers[i] > numbers[i - 1]) {\n        count++;\n      }\n    }\n\n    System.out.println(count);\n  }\n}"
+  },
+  {
+    "title": "配列を逆順に表示する",
+    "concept": "array / reverse loop",
+    "prompt": "配列の最後から最初へ向かって、値を1行ずつ表示します。",
+    "output": "30\n20\n10",
+    "explanation": "最後のインデックスはlength - 1です。そこから0まで、iを1ずつ減らします。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    int[] numbers = {10, 20, 30};\n\n    for (",
+      {
+        "answer": "int i = numbers.length - 1",
+        "accepts": [
+          "int i = numbers.length - 1",
+          "int i=numbers.length-1"
+        ],
+        "chars": 28
+      },
+      "; ",
+      {
+        "answer": "i >= 0",
+        "accepts": [
+          "i >= 0",
+          "i>=0"
+        ],
+        "chars": 7
+      },
+      "; ",
+      {
+        "answer": "i--",
+        "accepts": [
+          "i--",
+          "--i",
+          "i -= 1",
+          "i=i-1",
+          "i = i - 1"
+        ],
+        "chars": 5
+      },
+      ") {\n      System.out.println(",
+      {
+        "answer": "numbers[i]",
+        "accepts": [
+          "numbers[i]"
+        ],
+        "chars": 10
+      },
+      ");\n    }\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    int[] numbers = {10, 20, 30};\n\n    for (int i = numbers.length - 1; i >= 0; i--) {\n      System.out.println(numbers[i]);\n    }\n  }\n}"
+  },
+  {
+    "title": "2つの配列の差を合計する",
+    "concept": "array / pair",
+    "prompt": "beforeとafterの同じ番号を比べ、差分の合計を表示します。",
+    "output": "15",
+    "explanation": "同じインデックスで2つの配列を見る問題です。before[i]とafter[i]を対応させて読みます。",
+    "parts": [
+      "class Main {\n  public static void main(String[] args) {\n    int[] before = {10, 20, 30};\n    int[] after = {15, 18, 42};\n    int total = 0;\n\n    for (int i = 0; i < before.length; i++) {\n      ",
+      {
+        "answer": "total += after[i] - before[i]",
+        "accepts": [
+          "total += after[i] - before[i]",
+          "total=total+after[i]-before[i]",
+          "total = total + after[i] - before[i]"
+        ],
+        "chars": 30
+      },
+      ";\n    }\n\n    System.out.println(total);\n  }\n}"
+    ],
+    "answer": "class Main {\n  public static void main(String[] args) {\n    int[] before = {10, 20, 30};\n    int[] after = {15, 18, 42};\n    int total = 0;\n\n    for (int i = 0; i < before.length; i++) {\n      total += after[i] - before[i];\n    }\n\n    System.out.println(total);\n  }\n}"
+  }
+];
+
+arrayQuestions.forEach((question, index) => {
+  const beginnerHints = buildTraceaHints(question, question.parts);
+  const intermediate = arrayIntermediateData[index];
+  const intermediateHints = buildTraceaHints(intermediate, intermediate.parts);
+  question.hints = beginnerHints;
+  question.levels = {
+    beginner: { parts: question.parts, hints: beginnerHints },
+    intermediate: { ...intermediate, hints: intermediateHints }
+  };
 });
 
 conditionalQuestions.forEach((question) => {
@@ -1896,8 +2554,8 @@ const topicDeepDives = {
 };
 
 const lessonMeta = [
-  { id: "loops", total: questions.length },
-  { id: "arrays", total: arrayQuestions.length },
+  { id: "loops", total: questions.length * 2 },
+  { id: "arrays", total: arrayQuestions.length * 2 },
   { id: "conditionals", total: conditionalQuestions.length },
   { id: "booleans", total: booleanQuestions.length }
 ];
@@ -1936,8 +2594,13 @@ function writeCompletedQuestions(lessonId, completed) {
   }
 }
 
-function isQuestionComplete(lessonId, questionIndex) {
-  return readCompletedQuestions(lessonId).has(questionIndex);
+function questionProgressKey(questionIndex, level = "beginner") {
+  return `${level}:${questionIndex}`;
+}
+
+function isQuestionComplete(lessonId, questionIndex, level = "beginner") {
+  const completed = readCompletedQuestions(lessonId);
+  return completed.has(questionProgressKey(questionIndex, level)) || (level === "beginner" && completed.has(questionIndex));
 }
 
 function updateQuestionCompletion(card, completed) {
@@ -1951,17 +2614,29 @@ function updateQuestionCompletion(card, completed) {
 function markQuestionComplete(card) {
   const lessonId = card.dataset.lesson;
   const questionIndex = Number(card.dataset.questionIndex);
+  const level = card.dataset.level || "beginner";
   if (!lessonId || Number.isNaN(questionIndex)) return;
 
   const completed = readCompletedQuestions(lessonId);
-  completed.add(questionIndex);
+  completed.add(questionProgressKey(questionIndex, level));
   writeCompletedQuestions(lessonId, completed);
   updateQuestionCompletion(card, true);
   updateLessonProgress();
 }
 
 function getCompletedCount(lesson) {
-  return Math.min(readCompletedQuestions(lesson.id).size, lesson.total);
+  const completed = readCompletedQuestions(lesson.id);
+  const normalized = new Set();
+
+  completed.forEach((item) => {
+    if (typeof item === "number") {
+      normalized.add(questionProgressKey(item, "beginner"));
+      return;
+    }
+    normalized.add(String(item));
+  });
+
+  return Math.min(normalized.size, lesson.total);
 }
 
 function getTotalCompletedExercises() {
@@ -2325,10 +3000,12 @@ function renderQuestions() {
 
   questions.forEach((question, index) => {
     const level = question.levels[currentLevel];
+    const view = { ...question, ...level };
     const card = document.createElement("article");
-    const completed = isQuestionComplete("loops", index);
+    const completed = isQuestionComplete("loops", index, currentLevel);
     card.className = `question-card${completed ? " completed" : ""}`;
     card.dataset.lesson = "loops";
+    card.dataset.level = currentLevel;
     card.dataset.questionIndex = String(index);
 
     card.innerHTML = `
@@ -2336,7 +3013,7 @@ function renderQuestions() {
         <div class="question-number">Q${index + 1}</div>
         <div class="question-copy">
           <div class="question-title-line">
-            <h3>${question.title}</h3>
+            <h3>${view.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
           <div class="tracea-prompt"></div>
@@ -2346,7 +3023,7 @@ function renderQuestions() {
         <div class="code-panel">
           <div class="panel-title">
             <span>穴埋めコード</span>
-            <span class="concept">${question.concept} / ${currentLevel === "beginner" ? "初級" : "中級"}</span>
+            <span class="concept">${view.concept} / ${currentLevel === "beginner" ? "初級" : "中級"}</span>
           </div>
         </div>
         <div class="side-panel">
@@ -2380,11 +3057,11 @@ function renderQuestions() {
     `;
 
     card.dataset.traceaStep = "0";
-    card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(question.prompt, level.hints));
+    card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(view.prompt, view.hints));
     card.querySelector(".code-panel").appendChild(renderCode(level.parts, index, level.hints));
-    card.querySelector(".output-box pre").textContent = question.output;
-    card.querySelector(".explain-box p").textContent = question.explanation;
-    card.querySelector(".answer-box pre").textContent = question.answer;
+    card.querySelector(".output-box pre").textContent = view.output;
+    card.querySelector(".explain-box p").textContent = view.explanation;
+    card.querySelector(".answer-box pre").textContent = view.answer;
     updateTraceaState(card);
     list.appendChild(card);
   });
@@ -2396,10 +3073,13 @@ function renderArrayQuestions() {
   arrayList.textContent = "";
 
   arrayQuestions.forEach((question, index) => {
+    const level = question.levels?.[currentLevel] || question.levels?.beginner || question;
+    const view = { ...question, ...level };
     const card = document.createElement("article");
-    const completed = isQuestionComplete("arrays", index);
+    const completed = isQuestionComplete("arrays", index, currentLevel);
     card.className = `question-card${completed ? " completed" : ""}`;
     card.dataset.lesson = "arrays";
+    card.dataset.level = currentLevel;
     card.dataset.questionIndex = String(index);
 
     card.innerHTML = `
@@ -2407,7 +3087,7 @@ function renderArrayQuestions() {
         <div class="question-number">A${index + 1}</div>
         <div class="question-copy">
           <div class="question-title-line">
-            <h3>${question.title}</h3>
+            <h3>${view.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
           <div class="tracea-prompt"></div>
@@ -2417,7 +3097,7 @@ function renderArrayQuestions() {
         <div class="code-panel">
           <div class="panel-title">
             <span>配列コード</span>
-            <span class="concept">${question.concept}</span>
+            <span class="concept">${view.concept} / ${currentLevel === "beginner" ? "初級" : "中級"}</span>
           </div>
         </div>
         <div class="side-panel">
@@ -2451,11 +3131,11 @@ function renderArrayQuestions() {
     `;
 
     card.dataset.traceaStep = "0";
-    card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(question.prompt, question.hints));
-    card.querySelector(".code-panel").appendChild(renderCode(question.parts, index, question.hints));
-    card.querySelector(".output-box pre").textContent = question.output;
-    card.querySelector(".explain-box p").textContent = question.explanation;
-    card.querySelector(".answer-box pre").textContent = question.answer;
+    card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(view.prompt, view.hints));
+    card.querySelector(".code-panel").appendChild(renderCode(view.parts, index, view.hints));
+    card.querySelector(".output-box pre").textContent = view.output;
+    card.querySelector(".explain-box p").textContent = view.explanation;
+    card.querySelector(".answer-box pre").textContent = view.answer;
     updateTraceaState(card);
     arrayList.appendChild(card);
   });
@@ -2751,6 +3431,7 @@ levelButtons.forEach((button) => {
       levelButton.setAttribute("aria-pressed", String(active));
     });
     renderQuestions();
+    renderArrayQuestions();
   });
 });
 
