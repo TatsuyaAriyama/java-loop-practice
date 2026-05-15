@@ -344,7 +344,19 @@ const userAvatarOptions = [
   { value: "()", label: "Method" },
   { value: ";", label: "Semi" },
   { value: "if", label: "If" },
-  { value: "for", label: "For" }
+  { value: "for", label: "For" },
+  { value: "==", label: "Equal" },
+  { value: "++", label: "Increment" },
+  { value: "%", label: "Modulo" },
+  { value: "&&", label: "And" },
+  { value: "!", label: "Not" },
+  { value: "+=", label: "Add Assign" },
+  { value: "int", label: "Integer" },
+  { value: "new", label: "New" },
+  { value: "try", label: "Try" },
+  { value: "API", label: "API" },
+  { value: "DB", label: "Database" },
+  { value: "git", label: "Git" }
 ];
 
 try {
