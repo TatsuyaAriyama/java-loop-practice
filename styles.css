@@ -1136,13 +1136,14 @@ h1 {
 .code-box {
   margin: 0;
   padding: 18px 18px 20px;
-  overflow-x: auto;
+  overflow-x: hidden;
   background: var(--soft);
   color: var(--ink);
   font-family: Menlo, Consolas, "Courier New", monospace;
   font-size: 14px;
   line-height: 1.86;
-  white-space: pre;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
 .code-input {
@@ -1216,7 +1217,7 @@ h1 {
 
 .tracea-status {
   min-height: 22px;
-  margin: 0;
+  margin: 0 0 10px;
   color: #333333;
   font-size: 13px;
   font-weight: 750;
@@ -1243,6 +1244,7 @@ h1 {
 .tracea-mark {
   position: relative;
   border-radius: 6px;
+  isolation: isolate;
   transition: background 180ms ease, box-shadow 180ms ease, outline-color 180ms ease, color 180ms ease;
 }
 
@@ -1272,36 +1274,69 @@ h1 {
   outline-offset: 2px;
 }
 
-.tracea-bubble {
+.tracea-pin {
   display: none;
-  max-width: min(300px, calc(100vw - 48px));
-  margin-left: 8px;
-  border: 1px solid rgba(200, 16, 46, 0.45);
-  padding: 5px 8px;
+  min-width: 18px;
+  height: 18px;
+  margin-left: 4px;
+  border: 1px solid var(--red);
   background: #ffffff;
-  color: #1f1f1f;
-  box-shadow: 0 10px 24px rgba(20, 20, 20, 0.08);
-  font-family: var(--font-sans);
-  font-size: 11.5px;
-  font-weight: 850;
-  line-height: 1.55;
-  vertical-align: 2px;
-  white-space: normal;
-}
-
-.tracea-mark.is-visible .tracea-bubble {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  animation: traceaBubble 240ms ease both;
-}
-
-.tracea-name {
   color: var(--red);
   font-family: Menlo, Consolas, "Courier New", monospace;
   font-size: 10px;
   font-weight: 900;
-  white-space: nowrap;
+  line-height: 16px;
+  text-align: center;
+  vertical-align: text-top;
+}
+
+.tracea-mark.is-visible .tracea-pin {
+  display: inline-block;
+  animation: traceaBubble 240ms ease both;
+}
+
+.tracea-notes {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tracea-notes:empty {
+  display: none;
+}
+
+.tracea-notes li {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 8px;
+  align-items: start;
+  border-top: 1px solid rgba(200, 16, 46, 0.16);
+  padding-top: 8px;
+  animation: traceaBubble 220ms ease both;
+}
+
+.tracea-notes span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--red);
+  color: var(--red);
+  background: #ffffff;
+  font-family: Menlo, Consolas, "Courier New", monospace;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.tracea-notes p {
+  margin: 0;
+  color: #262626;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.65;
 }
 
 @keyframes traceaAppear {
@@ -1665,13 +1700,6 @@ h1 {
 
   .code-input {
     font-size: 12.5px;
-  }
-
-  .tracea-bubble {
-    max-width: min(240px, calc(100vw - 40px));
-    margin-left: 6px;
-    padding: 5px 7px;
-    font-size: 11px;
   }
 
   .tracea-mark.is-visible.tracea-circle {

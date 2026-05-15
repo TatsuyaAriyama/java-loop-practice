@@ -2116,12 +2116,14 @@ function createTraceaMark(hint, index) {
   const mark = document.createElement("span");
   mark.className = `tracea-mark tracea-${hint.styleType}`;
   mark.dataset.traceaStep = String(index + 1);
+  mark.dataset.traceaMessage = hint.message;
+  mark.dataset.traceaTarget = hint.targetText;
   mark.textContent = hint.targetText;
 
-  const bubble = document.createElement("span");
-  bubble.className = "tracea-bubble";
-  bubble.innerHTML = `<span class="tracea-name">Tracea</span>${hint.message}`;
-  mark.appendChild(bubble);
+  const pin = document.createElement("span");
+  pin.className = "tracea-pin";
+  pin.textContent = String(index + 1);
+  mark.appendChild(pin);
 
   return mark;
 }
@@ -2248,6 +2250,7 @@ function updateTraceaState(card) {
   const askButton = card.querySelector('button[data-action="tracea"]');
   const resetButton = card.querySelector('button[data-action="tracea-reset"]');
   const status = card.querySelector(".tracea-status");
+  const notes = card.querySelector(".tracea-notes");
 
   card.querySelectorAll(".tracea-mark").forEach((mark) => {
     mark.classList.toggle("is-visible", Number(mark.dataset.traceaStep) <= step);
@@ -2272,6 +2275,22 @@ function updateTraceaState(card) {
     } else {
       status.textContent = "Tracea: もう少しだけ、視線を進めてみましょう。";
     }
+  }
+
+  if (notes) {
+    notes.textContent = "";
+    [...card.querySelectorAll(".tracea-mark")]
+      .filter((mark) => Number(mark.dataset.traceaStep) <= step)
+      .sort((a, b) => Number(a.dataset.traceaStep) - Number(b.dataset.traceaStep))
+      .forEach((mark) => {
+        const item = document.createElement("li");
+        const number = document.createElement("span");
+        const message = document.createElement("p");
+        number.textContent = mark.dataset.traceaStep;
+        message.textContent = mark.dataset.traceaMessage;
+        item.append(number, message);
+        notes.appendChild(item);
+      });
   }
 }
 
@@ -2350,6 +2369,7 @@ function renderQuestions() {
           <div class="tracea-panel">
             <h4>Tracea</h4>
             <p class="tracea-status" aria-live="polite">Traceaは、答えではなく見る場所を示します。</p>
+            <ol class="tracea-notes" aria-live="polite"></ol>
           </div>
           <div class="answer-box">
             <h4>解答例</h4>
@@ -2420,6 +2440,7 @@ function renderArrayQuestions() {
           <div class="tracea-panel">
             <h4>Tracea</h4>
             <p class="tracea-status" aria-live="polite">Traceaは、答えではなく見る場所を示します。</p>
+            <ol class="tracea-notes" aria-live="polite"></ol>
           </div>
           <div class="answer-box">
             <h4>解答例</h4>
@@ -2490,6 +2511,7 @@ function renderConditionalQuestions() {
           <div class="tracea-panel">
             <h4>Tracea</h4>
             <p class="tracea-status" aria-live="polite">Traceaは、答えではなく見る場所を示します。</p>
+            <ol class="tracea-notes" aria-live="polite"></ol>
           </div>
           <div class="answer-box">
             <h4>解答例</h4>
@@ -2560,6 +2582,7 @@ function renderBooleanQuestions() {
           <div class="tracea-panel">
             <h4>Tracea</h4>
             <p class="tracea-status" aria-live="polite">Traceaは、答えではなく見る場所を示します。</p>
+            <ol class="tracea-notes" aria-live="polite"></ol>
           </div>
           <div class="answer-box">
             <h4>解答例</h4>
