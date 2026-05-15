@@ -55,25 +55,42 @@
   <div class="app-shell" id="appShell" aria-hidden="true">
     <header class="site-header">
       <div class="header-inner">
-        <p class="lesson-current">Lesson04 真偽値と条件式</p>
+        <p class="lesson-current">Java 制御構文編 / Lesson04 真偽値と条件式</p>
         <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
         <div class="header-actions">
           <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
           <a href="#booleanQuestions" class="primary-link">問題を始める</a>
           <a href="#booleans" class="secondary-link">真偽値ガイドを見る</a>
-          <a href="conditionals.html" class="secondary-link">条件分岐編へ</a>
+          <a href="conditionals.html" class="secondary-link">条件分岐へ</a>
         </div>
         <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
           <div class="lesson-panel-head">
             <p class="eyebrow">Lesson Index</p>
             <h2>Lesson一覧</h2>
-            <p>学習したい編を選んでください。正解数に応じてチェックが更新されます。</p>
+            <p>学習したい大きな編を開いて、Lessonを選んでください。</p>
           </div>
-          <div class="lesson-links">
-            <a href="index.html" data-lesson-link="loops"><span>01</span><b>繰り返し処理編</b><small class="lesson-check">0/10</small></a>
-            <a href="arrays.html" data-lesson-link="arrays"><span>02</span><b>配列編</b><small class="lesson-check">0/10</small></a>
-            <a href="conditionals.html" data-lesson-link="conditionals"><span>03</span><b>条件分岐編</b><small class="lesson-check">0/10</small></a>
-            <a href="booleans.html" class="active" data-lesson-link="booleans"><span>04</span><b>真偽値と条件式</b><small class="lesson-check">0/10</small></a>
+          <div class="lesson-groups">
+            <section class="lesson-group open" data-lesson-group="control">
+              <button class="lesson-group-toggle" type="button" aria-expanded="true">
+                <span>Java 制御構文編</span>
+                <small>4 Lessons</small>
+              </button>
+              <div class="lesson-links">
+                <a href="index.html" data-lesson-link="loops"><span>01</span><b>繰り返し処理</b><small class="lesson-check">0/10</small></a>
+                <a href="arrays.html" data-lesson-link="arrays"><span>02</span><b>配列</b><small class="lesson-check">0/10</small></a>
+                <a href="conditionals.html" data-lesson-link="conditionals"><span>03</span><b>条件分岐</b><small class="lesson-check">0/10</small></a>
+                <a href="booleans.html" class="active" data-lesson-link="booleans"><span>04</span><b>真偽値と条件式</b><small class="lesson-check">0/10</small></a>
+              </div>
+            </section>
+            <section class="lesson-group" data-lesson-group="class-method">
+              <button class="lesson-group-toggle" type="button" aria-expanded="false">
+                <span>Java クラス・メソッド編</span>
+                <small>準備中</small>
+              </button>
+              <div class="lesson-links">
+                <a href="#" class="disabled" aria-disabled="true"><span>01</span><b>準備中</b><small>近日追加</small></a>
+              </div>
+            </section>
           </div>
         </nav>
       </div>

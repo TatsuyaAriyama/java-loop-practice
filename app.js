@@ -2326,6 +2326,20 @@ if (lessonPanel && lessonToggles.length > 0) {
   });
 
   lessonPanel.addEventListener("click", (event) => {
+    const groupToggle = event.target.closest(".lesson-group-toggle");
+    if (groupToggle) {
+      const group = groupToggle.closest(".lesson-group");
+      const open = !group.classList.contains("open");
+      group.classList.toggle("open", open);
+      groupToggle.setAttribute("aria-expanded", String(open));
+      return;
+    }
+
+    if (event.target.closest("a.disabled")) {
+      event.preventDefault();
+      return;
+    }
+
     if (event.target.closest("a")) {
       toggleLessonPanel(false);
     }
