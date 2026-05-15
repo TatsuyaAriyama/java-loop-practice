@@ -332,6 +332,7 @@ const traceRoomList = document.querySelector("#traceRoomList");
 let currentLevel = "beginner";
 let currentUserName = "User";
 let currentDisplayName = "User";
+let remoteTraceRoomUsers = [];
 
 try {
   currentUserName = localStorage.getItem("java-output-practice-auth-name") || "User";
@@ -2737,15 +2738,41 @@ function formatActiveTime(date) {
   }
 }
 
+function notifyLearningStatus() {
+  window.dispatchEvent(new CustomEvent("java-practice-learning-status", {
+    detail: { status: getCurrentLearningStatus() }
+  }));
+}
+
+function normalizeTraceRoomUser(user) {
+  const displayName = user.displayName || "Learner";
+  const activeDate = user.lastActive ? new Date(user.lastActive) : null;
+
+  return {
+    userName: user.userName || `@${displayName.replace(/\s+/g, "") || "Learner"}`,
+    displayName,
+    avatar: user.avatar || getAvatarLetter(displayName),
+    role: user.role || "Learner",
+    status: user.status || "Java学習中",
+    lastActive: user.lastActive === "常時オンライン" ? user.lastActive : formatActiveTime(activeDate),
+    online: Boolean(user.online),
+    mentor: Boolean(user.mentor),
+    badge: user.badge
+  };
+}
+
 function getTraceRoomUsers() {
+  if (remoteTraceRoomUsers.length > 0) {
+    return remoteTraceRoomUsers.map(normalizeTraceRoomUser);
+  }
+
   const users = [];
 
   try {
     if (localStorage.getItem("java-output-practice-auth") === "signed-in") {
-      const name = localStorage.getItem("java-output-practice-auth-name") || currentUserName || "User";
-      const displayName = localStorage.getItem("java-output-practice-auth-display-name") || name;
+      const displayName = localStorage.getItem("java-output-practice-auth-display-name") || currentDisplayName || "Learner";
       users.push({
-        userName: `@${name}`,
+        userName: `@${displayName.replace(/\s+/g, "") || "Learner"}`,
         displayName,
         avatar: getAvatarLetter(displayName),
         role: "Learner",
@@ -3494,6 +3521,7 @@ renderConditionalQuestions();
 renderBooleanQuestions();
 ensureUserSummary();
 updateLessonProgress();
+notifyLearningStatus();
 renderTraceRoom();
 if (hasLoopUnlock()) {
   applyLoopUnlock();
@@ -3503,10 +3531,15 @@ window.addEventListener("java-practice-auth-ready", (event) => {
   currentUserName = event.detail?.name || "User";
   currentDisplayName = event.detail?.displayName || currentUserName;
   updateUserSummary();
+  notifyLearningStatus();
   renderTraceRoom();
   if (hasLoopUnlock()) {
     applyLoopUnlock();
   }
+});
+window.addEventListener("java-practice-trace-users", (event) => {
+  remoteTraceRoomUsers = Array.isArray(event.detail?.users) ? event.detail.users : [];
+  renderTraceRoom();
 });
 if (typeLogo) {
   startTypeLogo();
