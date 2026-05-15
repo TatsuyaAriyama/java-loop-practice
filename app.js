@@ -323,11 +323,17 @@ const unlockInput = document.querySelector(".unlock-input");
 const unlockButton = document.querySelector("#unlockButton");
 const unlockFeedback = document.querySelector("#unlockFeedback");
 const typeLogo = document.querySelector(".type-logo");
+const headerInner = document.querySelector(".header-inner");
 const lessonToggles = [...document.querySelectorAll(".lesson-toggle")];
 const lessonPanel = document.querySelector("#lessonPanel");
 const topicCards = [...document.querySelectorAll(".topic-card")];
 const arrayDeepDive = document.querySelector("#arrayDeepDive");
 let currentLevel = "beginner";
+let currentUserName = "User";
+
+try {
+  currentUserName = localStorage.getItem("java-output-practice-auth-name") || "User";
+} catch {}
 
 levelButtons.forEach((button) => {
   button.setAttribute("aria-pressed", String(button.dataset.level === currentLevel));
@@ -1699,9 +1705,67 @@ function markQuestionComplete(card) {
   updateLessonProgress();
 }
 
+function getCompletedCount(lesson) {
+  return Math.min(readCompletedQuestions(lesson.id).size, lesson.total);
+}
+
+function getTotalCompletedExercises() {
+  return lessonMeta.reduce((total, lesson) => total + getCompletedCount(lesson), 0);
+}
+
+function getCompletedLessonCount() {
+  return lessonMeta.filter((lesson) => getCompletedCount(lesson) >= lesson.total).length;
+}
+
+function updateUserSummary() {
+  const panel = document.querySelector(".user-summary");
+  if (!panel) return;
+
+  const name = panel.querySelector("[data-user-name]");
+  const avatar = panel.querySelector(".user-avatar");
+  const exerciseCount = panel.querySelector("[data-total-cleared]");
+  const lessonCount = panel.querySelector("[data-lessons-cleared]");
+
+  if (name) name.textContent = currentUserName;
+  if (avatar) avatar.textContent = (currentUserName.trim().charAt(0) || "U").toUpperCase();
+  if (exerciseCount) exerciseCount.textContent = String(getTotalCompletedExercises());
+  if (lessonCount) lessonCount.textContent = `${getCompletedLessonCount()}/${lessonMeta.length}`;
+}
+
+function ensureUserSummary() {
+  if (!headerInner || document.querySelector(".user-summary")) return;
+
+  const panel = document.createElement("section");
+  panel.className = "user-summary";
+  panel.setAttribute("aria-label", "ユーザー情報");
+  panel.innerHTML = `
+    <div class="user-summary-head">
+      <span class="user-avatar" aria-hidden="true">U</span>
+      <div>
+        <p class="user-label">User</p>
+        <p class="user-name" data-user-name>User</p>
+      </div>
+    </div>
+    <div class="user-metrics">
+      <div>
+        <span data-total-cleared>0</span>
+        <small>総演習クリア数</small>
+      </div>
+      <div>
+        <span data-lessons-cleared>0/${lessonMeta.length}</span>
+        <small>修了レッスン数</small>
+      </div>
+    </div>
+  `;
+
+  const actions = headerInner.querySelector(".header-actions");
+  headerInner.insertBefore(panel, actions);
+  updateUserSummary();
+}
+
 function updateLessonProgress() {
   lessonMeta.forEach((lesson) => {
-    const completedCount = readCompletedQuestions(lesson.id).size;
+    const completedCount = getCompletedCount(lesson);
     const isComplete = completedCount >= lesson.total;
     document.querySelectorAll(`[data-lesson-link="${lesson.id}"]`).forEach((link) => {
       link.classList.toggle("lesson-complete", isComplete);
@@ -1711,6 +1775,7 @@ function updateLessonProgress() {
       }
     });
   });
+  updateUserSummary();
 }
 
 function hasLoopUnlock() {
@@ -2236,12 +2301,15 @@ renderQuestions();
 renderArrayQuestions();
 renderConditionalQuestions();
 renderBooleanQuestions();
+ensureUserSummary();
 updateLessonProgress();
 if (hasLoopUnlock()) {
   applyLoopUnlock();
 }
 window.addEventListener("java-practice-auth-ready", (event) => {
   progressScope = event.detail?.uid || "local";
+  currentUserName = event.detail?.name || "User";
+  updateUserSummary();
   if (hasLoopUnlock()) {
     applyLoopUnlock();
   }

@@ -275,6 +275,86 @@ main,
   animation: none;
 }
 
+.user-summary {
+  width: min(360px, 100%);
+  margin: 12px 0 18px;
+  border: 1px solid var(--ink);
+  background: #ffffff;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.user-summary-head {
+  min-width: 0;
+  border-right: 1px solid var(--line);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--red);
+  color: var(--red);
+  display: inline-grid;
+  place-items: center;
+  font-family: Menlo, Consolas, "Courier New", monospace;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.user-label {
+  margin: 0 0 3px;
+  color: var(--red);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.user-name {
+  margin: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 78px);
+}
+
+.user-metrics div {
+  padding: 10px 8px;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.user-metrics div + div {
+  border-left: 1px solid var(--line);
+}
+
+.user-metrics span {
+  color: var(--red);
+  font-family: Menlo, Consolas, "Courier New", monospace;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.user-metrics small {
+  color: #343434;
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
 @keyframes caretBlink {
   0%,
   48% {
@@ -1311,6 +1391,19 @@ h1 {
   .eyebrow {
     margin-bottom: 14px;
     font-size: 11px;
+  }
+
+  .user-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .user-summary-head {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .user-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   h1 {

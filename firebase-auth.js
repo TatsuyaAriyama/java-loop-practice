@@ -110,16 +110,22 @@ onAuthStateChanged(auth, (user) => {
   const signedIn = Boolean(user);
   try {
     if (signedIn) {
+      const userName = user.displayName || user.email?.split("@")[0] || "User";
       localStorage.setItem("java-output-practice-auth", "signed-in");
       localStorage.setItem("java-output-practice-auth-scope", user.uid);
+      localStorage.setItem("java-output-practice-auth-name", userName);
     } else {
       localStorage.removeItem("java-output-practice-auth");
       localStorage.removeItem("java-output-practice-auth-scope");
+      localStorage.removeItem("java-output-practice-auth-name");
     }
   } catch {}
 
   window.dispatchEvent(new CustomEvent("java-practice-auth-ready", {
-    detail: { uid: signedIn ? user.uid : "local" }
+    detail: {
+      uid: signedIn ? user.uid : "local",
+      name: signedIn ? (user.displayName || user.email?.split("@")[0] || "User") : "User"
+    }
   }));
 
   document.documentElement.classList.toggle("auth-optimistic", signedIn);
