@@ -2891,86 +2891,86 @@ const classMethodTopicDeepDives = {
   "method-basic": {
     eyebrow: "method",
     title: "メソッドは、処理に名前を付ける。",
-    body: ["メソッドは、何度も使う処理や意味を持つ処理をひとまとまりにしたものです。呼び出す側は greet(); のように名前を書くことで、その中の処理を実行します。", "大事なのは、メソッドを作る場所と呼ぶ場所を分けて見ることです。mainの中に呼び出し、mainの外に定義。この位置関係をまず押さえましょう。"],
-    checks: ["呼び出しは 名前(); の形。", "定義は main の外に置く。", "処理の意味が名前に出る。"],
-    code: "static void greet() {\n  System.out.println(\"Hello\");\n}\n\ngreet();"
+    body: ["メソッドは、処理のまとまりに名前を付けたものです。長いコードの中にある「何をしているのか」を、名前で読めるようにするために使います。", "最初に見るべき場所は2つです。1つ目は main の中にある呼び出し、2つ目は main の外にある定義です。greet(); と書かれた瞬間、Javaは下にある static void greet() の中身を実行しに行きます。", "ここで大事なのは、メソッド名はただの飾りではないということです。showScore なら点数を表示する、add なら足す。この名前から処理の意味を予測できると、コードを読む速度が一気に上がります。"],
+    checks: ["呼び出しは 名前(); の形で読む。", "定義は main の外に置かれることが多い。", "メソッド名から、処理の目的を推測する。", "呼び出されたら、そのメソッドの中へ処理が移る。"],
+    code: "class Main {\n  public static void main(String[] args) {\n    greet(); // ここで呼ぶ\n  }\n\n  static void greet() { // ここに処理を書く\n    System.out.println(\"Hello\");\n  }\n}"
   },
   "method-parameter": {
     eyebrow: "parameter",
     title: "引数は、メソッドへ渡す材料。",
-    body: ["String name のように書くと、メソッドは外から文字列を受け取れます。呼び出す側の greet(\"Aoi\") と、受け取る側の String name を対応させて読みます。", "値そのものと変数名は違います。\"Aoi\" が渡され、メソッド内では name という名前で使える。この変換を落ち着いて追いましょう。"],
-    checks: ["定義側は 型 + 名前。", "呼び出し側は実際の値。", "順番が対応する。"],
-    code: "static void greet(String name) {\n  System.out.println(name);\n}"
+    body: ["引数は、メソッドの外から中へ渡す材料です。料理でいう材料のように、メソッドは受け取った値を使って処理を進めます。", "定義側では String name のように「型」と「名前」をセットで書きます。呼び出し側では greet(\"Aoi\") のように実際の値を渡します。この2つは同じ場所に見えませんが、順番でつながっています。", "\"Aoi\" はメソッドの中に入ると name という変数名で扱われます。ここを混同すると、「Aoiという変数があるのか」と誤読しやすくなります。値と、受け取った後の名前を分けて見ましょう。"],
+    checks: ["定義側は 型 + 変数名。", "呼び出し側は実際に渡す値。", "複数の引数は左から順番に対応する。", "渡した値は、メソッド内では別の変数名で使われる。"],
+    code: "static void greet(String name) {\n  System.out.println(\"Hello \" + name);\n}\n\ngreet(\"Aoi\"); // name に \"Aoi\" が入る"
   },
   "method-return": {
     eyebrow: "return",
     title: "戻り値は、外へ返す結果。",
-    body: ["return a + b; は、計算結果を呼び出し元へ返します。返ってきた値は、変数に入れたり println に直接入れたりできます。", "戻り値の型にも注目です。static int add と書いたなら、returnする結果もintとして扱える値である必要があります。"],
-    checks: ["returnで外へ返す。", "戻り値の型と結果を合わせる。", "呼び出し式は値として使える。"],
-    code: "static int add(int a, int b) {\n  return a + b;\n}"
+    body: ["戻り値は、メソッドが呼び出し元へ返す結果です。計算だけして終わるのではなく、その結果を外側で使えるようにするために return を使います。", "static int add と書いてあるなら、このメソッドは int 型の値を返す約束をしています。だから return a + b; の結果も int として扱える値になります。型の約束と return の中身が合っているか、必ず見ます。", "戻ってきた値は、普通の値と同じように使えます。int result = add(3, 4); の右側は、最終的に 7 という値になると考えてください。ここまで追えると、メソッドの出力問題はかなり安定します。"],
+    checks: ["return の右側が、呼び出し元へ返る。", "メソッド名の前にある型が、戻り値の型。", "戻り値は変数に入れたり、printlnへ直接渡したりできる。", "returnが実行されると、そのメソッドの処理はそこで終わる。"],
+    code: "static int add(int a, int b) {\n  return a + b;\n}\n\nint result = add(3, 4);\nSystem.out.println(result); // 7"
   },
   "method-void": {
     eyebrow: "void",
     title: "voidは、値を返さないという宣言。",
-    body: ["voidメソッドは、表示する、更新する、処理を実行するなど、結果の値を外へ返さないときに使います。", "returnで値を返すメソッドと混ぜないこと。System.out.printlnをしているからといって、値を返しているわけではありません。"],
-    checks: ["voidは戻り値なし。", "表示とreturnは別。", "呼び出しだけで処理が動く。"],
-    code: "static void show(String text) {\n  System.out.println(text);\n}"
+    body: ["void は「このメソッドは値を返しません」という宣言です。画面に表示する、データを更新する、何かの処理を実行する。そういう目的なら、結果の値を外へ返さなくても成り立ちます。", "初心者が混乱しやすいのは、System.out.println と return の違いです。println は画面に出す命令です。return は呼び出し元へ値を返す命令です。画面に表示していても、値を返しているとは限りません。", "voidメソッドは、呼び出した瞬間に中の処理が実行されます。呼び出し式を int result = show(); のように値として使うことはできません。ここを間違えると、戻り値があるメソッドとの区別が崩れます。"],
+    checks: ["void は戻り値なし。", "println は表示、return は値を返す。", "voidメソッドの呼び出しは、値として代入できない。", "表示だけを担当する処理と相性がよい。"],
+    code: "static void show(String text) {\n  System.out.println(text); // 表示するだけ\n}\n\nshow(\"Java\");"
   },
   "method-static": {
     eyebrow: "static",
     title: "staticは、mainから直接呼ぶための印。",
-    body: ["このサイトの初級問題では、mainも補助メソッドも同じクラスの中に置きます。そのとき補助メソッドにstaticを付けると、mainから直接呼べます。", "今は深追いしすぎなくて大丈夫です。まずは static void show、static int add のように、mainから呼ぶ補助メソッドに付いている印として見ましょう。"],
-    checks: ["mainはstatic。", "同じクラス内の補助メソッドにもstatic。", "まずは呼び出せる形を覚える。"],
-    code: "public static void main(String[] args) {\n  show();\n}\nstatic void show() { }"
+    body: ["static は少し奥が深い言葉ですが、初級ではまず「mainから直接呼ぶための印」と考えれば十分です。mainメソッドは static なので、同じクラス内で呼ぶ補助メソッドにも static を付けると扱いやすくなります。", "たとえば main の中で show(); と呼びたいなら、下に static void show() を用意します。static が抜けると、今の段階では呼び出し方が変わり、エラーの原因になります。", "この先オブジェクト指向に進むと static の意味はもっと広がります。ただ、ここでは深追いしすぎません。まずは、練習用の main から補助メソッドを呼ぶときの合図として読めることが大切です。"],
+    checks: ["main は static メソッド。", "mainから直接呼ぶ補助メソッドにも static を付ける。", "static の深い意味は、オブジェクト指向で改めて扱う。", "今は「呼び出せる形」を優先して覚える。"],
+    code: "class Main {\n  public static void main(String[] args) {\n    show();\n  }\n\n  static void show() {\n    System.out.println(\"Menu\");\n  }\n}"
   },
   "method-scope": {
     eyebrow: "scope",
     title: "変数は、宣言した場所の中で使う。",
-    body: ["メソッドの中で作った変数は、基本的にそのメソッドの外から直接使えません。必要ならreturnで返すか、引数として渡します。", "どこで宣言された変数か。これを見落とすと、突然その名前が使えなくなったように見えます。コードを読むときは波かっこの範囲まで見ましょう。"],
-    checks: ["変数は使える範囲がある。", "メソッドをまたぐならreturnや引数。", "波かっこを見て範囲を読む。"],
-    code: "static int total(int a, int b) {\n  int sum = a + b;\n  return sum;\n}"
+    body: ["スコープは、変数を使える範囲のことです。メソッドの中で作った変数は、基本的にそのメソッドの中でしか使えません。", "int sum = a + b; を total メソッドの中で作ったなら、main から直接 sum を読むことはできません。外で使いたいなら return sum; として返す必要があります。", "コードを読むときは、変数名だけを追うのではなく、どの波かっこの中で宣言されたかを確認します。変数は名前よりも、置かれた場所が大事です。"],
+    checks: ["変数には使える範囲がある。", "メソッド内の変数は外から直接読めない。", "外へ渡したい値は return で返す。", "波かっこの内側と外側を分けて読む。"],
+    code: "static int total(int a, int b) {\n  int sum = a + b; // sum はこの中で作られた\n  return sum;      // 外へ返す\n}"
   },
   "method-overload": {
     eyebrow: "overload",
     title: "同じ名前でも、引数が違えば見分けられる。",
-    body: ["Javaでは、同じ名前のメソッドを複数作れる場合があります。どれが呼ばれるかは、引数の数や型で決まります。", "add(3, 4) なら引数2つのadd。add(1, 2, 3) なら引数3つのadd。名前だけで判断せず、丸かっこの中まで見ましょう。"],
-    checks: ["名前だけで決めない。", "引数の数を見る。", "型の違いも見る。"],
-    code: "static int add(int a, int b) { return a + b; }\nstatic int add(int a, int b, int c) { return a + b + c; }"
+    body: ["オーバーロードは、同じ名前のメソッドを複数用意する書き方です。ただし、Javaはどれを呼ぶか区別できる必要があります。その判断材料が、引数の数や型です。", "add(3, 4) は引数が2つなので、int a, int b の add が呼ばれます。add(1, 2, 3) は引数が3つなので、int a, int b, int c の add が呼ばれます。", "名前だけを見ていると、どちらの add なのか分からなくなります。必ず丸かっこの中まで見てください。問題で詰まったら、呼び出し側の引数の数を声に出して数えるくらいでちょうどいいです。"],
+    checks: ["メソッド名だけで判断しない。", "丸かっこの中の引数の数を見る。", "型が違う場合も別メソッドとして扱える。", "呼び出し側と定義側を対応させる。"],
+    code: "static int add(int a, int b) {\n  return a + b;\n}\n\nstatic int add(int a, int b, int c) {\n  return a + b + c;\n}"
   },
   "method-design": {
     eyebrow: "design",
     title: "メソッド分割は、コードに見出しを付ける。",
-    body: ["計算する、判定する、表示する。この役割を分けると、コードを読む人は迷いにくくなります。", "短ければ何でも分ければよいわけではありません。処理に名前を付けたとき、意味がはっきりするならメソッド化の価値があります。"],
-    checks: ["1つのメソッドに1つの役割。", "名前だけで目的が見える。", "計算と表示を分ける。"],
-    code: "int result = total(100, 3);\nshow(result);"
+    body: ["メソッド分割は、コードに見出しを付ける作業です。計算する、判定する、表示する。この役割が混ざっていると、読む人はどこを見ればよいか迷います。", "たとえば total は合計を計算する、show は表示する。このように役割ごとに分けると、main は処理全体の目次のようになります。何が起きるかを上から順番に追いやすくなります。", "ただし、何でも細かく分ければ良いわけではありません。名前を付けたときに意味がはっきりするか。あとで同じ処理を使い回せるか。この2つが見えたら、メソッドに分ける価値があります。"],
+    checks: ["main は全体の流れを読む場所にする。", "計算、判定、表示を混ぜすぎない。", "メソッド名だけで目的が見えるようにする。", "分ける理由が説明できる単位で分ける。"],
+    code: "int price = total(1200, 3);\nString text = label(price);\nSystem.out.println(text);"
   },
   "class-basic": {
     eyebrow: "class",
     title: "クラスは、Javaの大きな箱。",
-    body: ["Javaでは、処理やデータをクラスの中に置きます。class Student のように書くと、Studentというまとまりを定義できます。", "クラスはただの飾りではありません。今後、データと処理をまとめる中心になります。まずは class の名前と波かっこの範囲を確実に見ましょう。"],
-    checks: ["classの後ろが名前。", "中身は波かっこの中。", "Javaコードの基本単位。"],
-    code: "class Student {\n  String name;\n  int score;\n}"
+    body: ["クラスは、Javaのコードをまとめる大きな箱です。Javaでは、変数やメソッドが何もない場所に単独で置かれるのではなく、基本的にクラスの中に入ります。", "class Student と書くと、Studentというまとまりを定義できます。この中に name や score のような情報を置けば、Studentは名前や点数を持つものとして扱えます。", "ここで意識したいのは、クラスは単なる見た目の枠ではないということです。これから学ぶオブジェクト指向では、クラスが「どんなデータを持ち、どんな処理ができるか」を決める設計図になります。"],
+    checks: ["class の後ろにクラス名を書く。", "中身は波かっこの中に置く。", "データや処理をまとめる単位になる。", "後でオブジェクトを作るための設計図になる。"],
+    code: "class Student {\n  String name;\n  int score;\n\n  void show() {\n    System.out.println(name);\n  }\n}"
   },
   "class-field": {
     eyebrow: "field",
     title: "フィールドは、オブジェクトが持つ値。",
-    body: ["String name や int score のようにクラスの中に置いた値をフィールドとして扱います。Studentなら名前や点数を持てる、という設計になります。", "フィールドは変数に似ていますが、オブジェクトに属しています。s.name のように、誰のnameなのかを左側で指定します。"],
-    checks: ["クラスの中に置く値。", "型と名前を書く。", "誰の値かをドットの左で見る。"],
-    code: "class Student {\n  String name;\n  int score;\n}"
+    body: ["フィールドは、オブジェクトが持つ値です。String name や int score を Student クラスの中に書くと、Studentは名前と点数を持てる設計になります。", "フィールドは変数に似ています。ただし、普通のローカル変数と違って、オブジェクトに属しています。s.name と書いたとき、nameだけを見るのではなく、左側の s を必ず見ます。", "同じ Student クラスから a と b を作った場合、a.name と b.name は別の値です。ここが分かると、クラスは一気に現実のものとして見えてきます。"],
+    checks: ["クラスの中に置く値がフィールド。", "型と名前をセットで書く。", "誰の値かはドットの左側で判断する。", "同じクラスから作っても、オブジェクトごとに値は別。"],
+    code: "class Student {\n  String name;\n  int score;\n}\n\nStudent s = new Student();\ns.name = \"Aoi\";"
   },
   "class-object": {
     eyebrow: "object",
     title: "newで、クラスから実体を作る。",
-    body: ["class Student は設計図です。new Student() と書くことで、実際に値を入れられるStudentを作ります。", "同じクラスから作っても、オブジェクトごとに値は別です。a.name と b.name は別々に管理できます。"],
-    checks: ["newで実体を作る。", "変数に入れて使う。", "複数作ると値は別々。"],
-    code: "Student s = new Student();\ns.name = \"Aoi\";"
+    body: ["クラスは設計図、オブジェクトはその設計図から作った実体です。class Student だけでは、まだ具体的な1人の生徒は存在していません。", "new Student() と書くことで、実際に値を入れられる Student の実体を作ります。そして Student s = new Student(); のように変数へ入れて、あとから s.name や s.score として使います。", "同じクラスから複数のオブジェクトを作ることもできます。a.name と b.name は、どちらも name ですが、持っている人が違います。ドットの左側が違えば、別の実体を見ていると考えましょう。"],
+    checks: ["class は設計図。", "new で実体を作る。", "作った実体は変数に入れて扱う。", "複数作ると、それぞれ別の値を持てる。"],
+    code: "Student a = new Student();\nStudent b = new Student();\n\na.name = \"Aoi\";\nb.name = \"Ren\";"
   },
   "class-dot": {
     eyebrow: "dot",
     title: "ドットは、中身へ進む記号。",
-    body: ["student.score は、studentが持つscoreを指します。左側が対象、右側が中身の名前です。", "ドットの左を読み飛ばすと、誰の値なのか分からなくなります。複数のオブジェクトが出る問題ほど、左側を丁寧に見ましょう。"],
-    checks: ["左側が対象。", "右側がフィールド名。", "読み書きどちらにも使う。"],
-    code: "student.score = 90;\nSystem.out.println(student.score);"
+    body: ["ドットは、オブジェクトの中身へ進む記号です。student.score と書いたら、student が持っている score を見に行きます。", "左側が対象、右側が中身の名前です。student.name なら student の name、book.title なら book の title。右側だけ見ても意味は決まりません。", "ドットは値を読むときにも、値を入れるときにも使います。student.score = 90; は score に90を入れる。System.out.println(student.score); は score を読んで表示する。同じ形でも、代入なのか読み取りなのかを行全体で判断しましょう。"],
+    checks: ["ドットの左側が対象のオブジェクト。", "ドットの右側がフィールド名やメソッド名。", "代入では値を書き換える。", "printlnでは値を読んで表示する。"],
+    code: "Student student = new Student();\nstudent.score = 90;              // 書き込む\nSystem.out.println(student.score); // 読み取る"
   }
 };
 
