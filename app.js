@@ -332,11 +332,25 @@ const traceRoomList = document.querySelector("#traceRoomList");
 let currentLevel = "beginner";
 let currentUserName = "User";
 let currentDisplayName = "User";
+let currentUserAvatar = "U";
 let remoteTraceRoomUsers = [];
 
+const profileNameKey = "java-output-practice-auth-name";
+const profileDisplayNameKey = "java-output-practice-auth-display-name";
+const profileAvatarKey = "java-output-practice-auth-avatar";
+const userAvatarOptions = [
+  { value: "{}", label: "Braces" },
+  { value: "[]", label: "Array" },
+  { value: "()", label: "Method" },
+  { value: ";", label: "Semi" },
+  { value: "if", label: "If" },
+  { value: "for", label: "For" }
+];
+
 try {
-  currentUserName = localStorage.getItem("java-output-practice-auth-name") || "User";
-  currentDisplayName = localStorage.getItem("java-output-practice-auth-display-name") || currentUserName;
+  currentUserName = localStorage.getItem(profileNameKey) || "User";
+  currentDisplayName = localStorage.getItem(profileDisplayNameKey) || currentUserName;
+  currentUserAvatar = localStorage.getItem(profileAvatarKey) || getAvatarLetter(currentDisplayName);
 } catch {}
 
 levelButtons.forEach((button) => {
@@ -2905,13 +2919,21 @@ function updateUserSummary() {
 
   const name = panel.querySelector("[data-user-name]");
   const avatar = panel.querySelector(".user-avatar");
+  const input = panel.querySelector("[data-profile-name-input]");
   const exerciseCount = panel.querySelector("[data-total-cleared]");
   const lessonCount = panel.querySelector("[data-lessons-cleared]");
 
-  if (name) name.textContent = currentUserName;
-  if (avatar) avatar.textContent = (currentUserName.trim().charAt(0) || "U").toUpperCase();
+  if (name) name.textContent = currentDisplayName;
+  if (avatar) avatar.textContent = currentUserAvatar || getAvatarLetter(currentDisplayName);
+  if (input) input.value = currentDisplayName;
   if (exerciseCount) exerciseCount.textContent = String(getTotalCompletedExercises());
   if (lessonCount) lessonCount.textContent = `${getCompletedLessonCount()}/${lessonMeta.length}`;
+
+  panel.querySelectorAll("[data-avatar-choice]").forEach((button) => {
+    const active = button.dataset.avatarChoice === currentUserAvatar;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
 }
 
 function ensureUserSummary() {
@@ -2927,6 +2949,7 @@ function ensureUserSummary() {
         <p class="user-label">User</p>
         <p class="user-name" data-user-name>User</p>
       </div>
+      <button class="user-edit-button" type="button" data-action="profile-toggle" aria-expanded="false">編集</button>
     </div>
     <div class="user-metrics">
       <div>
@@ -2938,11 +2961,86 @@ function ensureUserSummary() {
         <small>修了レッスン数</small>
       </div>
     </div>
+    <div class="user-profile-editor" aria-label="ユーザープロフィール編集">
+      <label>
+        <span>ユーザーネーム</span>
+        <input type="text" data-profile-name-input maxlength="18" autocomplete="off">
+      </label>
+      <div class="avatar-choice-group" role="group" aria-label="アイコン選択">
+        ${userAvatarOptions.map((option) => `
+          <button class="avatar-choice" type="button" data-action="avatar-choice" data-avatar-choice="${option.value}" aria-label="${option.label}" aria-pressed="false">${option.value}</button>
+        `).join("")}
+      </div>
+      <div class="profile-actions">
+        <button class="action-button primary" type="button" data-action="profile-save">保存</button>
+        <button class="action-button secondary" type="button" data-action="profile-cancel">閉じる</button>
+      </div>
+      <p class="profile-message" data-profile-message aria-live="polite"></p>
+    </div>
   `;
 
   const actions = headerInner.querySelector(".header-actions");
   headerInner.insertBefore(panel, actions);
   updateUserSummary();
+}
+
+function toggleProfileEditor(forceOpen) {
+  const panel = document.querySelector(".user-summary");
+  if (!panel) return;
+
+  const open = typeof forceOpen === "boolean" ? forceOpen : !panel.classList.contains("editing");
+  panel.classList.toggle("editing", open);
+  panel.querySelector("[data-action='profile-toggle']")?.setAttribute("aria-expanded", String(open));
+  if (open) {
+    panel.querySelector("[data-profile-name-input]")?.focus();
+  }
+}
+
+function setProfileMessage(message, tone = "") {
+  const messageBox = document.querySelector("[data-profile-message]");
+  if (!messageBox) return;
+  messageBox.className = `profile-message ${tone}`;
+  messageBox.textContent = message;
+}
+
+function readSavedUserProfile() {
+  try {
+    currentUserName = localStorage.getItem(profileNameKey) || currentUserName || "User";
+    currentDisplayName = localStorage.getItem(profileDisplayNameKey) || currentUserName;
+    currentUserAvatar = localStorage.getItem(profileAvatarKey) || getAvatarLetter(currentDisplayName);
+  } catch {}
+}
+
+function saveUserProfile() {
+  const input = document.querySelector("[data-profile-name-input]");
+  const nextName = input?.value.trim().replace(/\s+/g, " ").slice(0, 18);
+
+  if (!nextName) {
+    setProfileMessage("1文字以上で入力してください。", "no");
+    return;
+  }
+
+  currentUserName = nextName;
+  currentDisplayName = nextName;
+  currentUserAvatar = currentUserAvatar || getAvatarLetter(nextName);
+
+  try {
+    localStorage.setItem(profileNameKey, currentUserName);
+    localStorage.setItem(profileDisplayNameKey, currentDisplayName);
+    localStorage.setItem(profileAvatarKey, currentUserAvatar);
+  } catch {}
+
+  updateUserSummary();
+  renderTraceRoom();
+  window.dispatchEvent(new CustomEvent("java-practice-profile-updated", {
+    detail: {
+      name: currentUserName,
+      displayName: currentDisplayName,
+      avatar: currentUserAvatar
+    }
+  }));
+  setProfileMessage("プロフィールを更新しました。", "ok");
+  window.setTimeout(() => toggleProfileEditor(false), 520);
 }
 
 function updateLessonProgress() {
@@ -3018,11 +3116,12 @@ function getTraceRoomUsers() {
 
   try {
     if (localStorage.getItem("java-output-practice-auth") === "signed-in") {
-      const displayName = localStorage.getItem("java-output-practice-auth-display-name") || currentDisplayName || "Learner";
+      const displayName = localStorage.getItem(profileDisplayNameKey) || currentDisplayName || "Learner";
+      const avatar = localStorage.getItem(profileAvatarKey) || currentUserAvatar || getAvatarLetter(displayName);
       users.push({
         userName: `@${displayName.replace(/\s+/g, "") || "Learner"}`,
         displayName,
-        avatar: getAvatarLetter(displayName),
+        avatar,
         role: "Learner",
         status: getCurrentLearningStatus(),
         lastActive: formatActiveTime(new Date()),
@@ -3868,8 +3967,9 @@ if (hasLoopUnlock()) {
 }
 window.addEventListener("java-practice-auth-ready", (event) => {
   progressScope = event.detail?.uid || "local";
-  currentUserName = event.detail?.name || "User";
+  currentUserName = event.detail?.name || currentUserName || "User";
   currentDisplayName = event.detail?.displayName || currentUserName;
+  currentUserAvatar = event.detail?.avatar || currentUserAvatar || getAvatarLetter(currentDisplayName);
   updateUserSummary();
   notifyLearningStatus();
   renderTraceRoom();
@@ -3928,6 +4028,18 @@ document.addEventListener("click", (event) => {
   if (lessonPanel.classList.contains("visible")) {
     toggleLessonPanel(false);
   }
+});
+
+document.addEventListener("click", (event) => {
+  const button = event.target.closest(".user-summary button[data-action]");
+  if (!button) return;
+  handleQuestionAction(event);
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" || !event.target.matches("[data-profile-name-input]")) return;
+  event.preventDefault();
+  saveUserProfile();
 });
 
 if (unlockButton && unlockInput) {
@@ -3998,6 +4110,31 @@ function handleQuestionAction(event) {
 
   const card = button.closest(".question-card");
   const action = button.dataset.action;
+
+  if (action === "profile-toggle") {
+    toggleProfileEditor();
+    return;
+  }
+
+  if (action === "profile-cancel") {
+    readSavedUserProfile();
+    toggleProfileEditor(false);
+    updateUserSummary();
+    setProfileMessage("");
+    return;
+  }
+
+  if (action === "avatar-choice") {
+    currentUserAvatar = button.dataset.avatarChoice || getAvatarLetter(currentDisplayName);
+    updateUserSummary();
+    setProfileMessage("");
+    return;
+  }
+
+  if (action === "profile-save") {
+    saveUserProfile();
+    return;
+  }
 
   if (action === "prerequisite") {
     togglePrerequisite(button);

@@ -6,7 +6,8 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
-  signOut
+  signOut,
+  updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import {
   collection,
@@ -48,6 +49,9 @@ const authMessage = document.querySelector("#authMessage");
 let tracePresenceRef = null;
 let unsubscribeTraceUsers = null;
 let latestLearningStatus = "Java学習中";
+const profileNameKey = "java-output-practice-auth-name";
+const profileDisplayNameKey = "java-output-practice-auth-display-name";
+const profileAvatarKey = "java-output-practice-auth-avatar";
 
 function setMessage(message) {
   authMessage.textContent = message;
@@ -76,11 +80,23 @@ function setLoading(isLoading) {
 }
 
 function getPublicName(user) {
-  return user?.displayName?.trim() || "Learner";
+  try {
+    return localStorage.getItem(profileDisplayNameKey)?.trim() || user?.displayName?.trim() || "Learner";
+  } catch {
+    return user?.displayName?.trim() || "Learner";
+  }
 }
 
 function getAvatarLetter(name) {
   return (name || "U").trim().charAt(0).toUpperCase() || "U";
+}
+
+function getPublicAvatar(displayName) {
+  try {
+    return localStorage.getItem(profileAvatarKey) || getAvatarLetter(displayName);
+  } catch {
+    return getAvatarLetter(displayName);
+  }
 }
 
 function dispatchTraceUsers(users) {
@@ -125,13 +141,14 @@ async function saveTracePresence(user, overrides = {}) {
   if (!user) return;
 
   const displayName = getPublicName(user);
+  const avatar = getPublicAvatar(displayName);
   tracePresenceRef = doc(db, "traceRoomUsers", user.uid);
 
   try {
     await setDoc(tracePresenceRef, {
       userName: `@${displayName.replace(/\s+/g, "") || "Learner"}`,
       displayName,
-      avatar: getAvatarLetter(displayName),
+      avatar,
       role: "Learner",
       status: latestLearningStatus,
       online: true,
@@ -157,6 +174,26 @@ window.addEventListener("java-practice-learning-status", (event) => {
   updateTracePresence({
     status: latestLearningStatus,
     online: true
+  });
+});
+
+window.addEventListener("java-practice-profile-updated", async (event) => {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const displayName = event.detail?.displayName || getPublicName(user);
+  const avatar = event.detail?.avatar || getPublicAvatar(displayName);
+
+  try {
+    await updateProfile(user, { displayName });
+  } catch {}
+
+  await saveTracePresence(user, {
+    userName: `@${displayName.replace(/\s+/g, "") || "Learner"}`,
+    displayName,
+    avatar,
+    online: true,
+    status: latestLearningStatus
   });
 });
 
@@ -230,15 +267,18 @@ onAuthStateChanged(auth, (user) => {
   try {
     if (signedIn) {
       const userName = getPublicName(user);
+      const avatar = getPublicAvatar(userName);
       localStorage.setItem("java-output-practice-auth", "signed-in");
       localStorage.setItem("java-output-practice-auth-scope", user.uid);
-      localStorage.setItem("java-output-practice-auth-name", userName);
-      localStorage.setItem("java-output-practice-auth-display-name", userName);
+      localStorage.setItem(profileNameKey, userName);
+      localStorage.setItem(profileDisplayNameKey, userName);
+      localStorage.setItem(profileAvatarKey, avatar);
     } else {
       localStorage.removeItem("java-output-practice-auth");
       localStorage.removeItem("java-output-practice-auth-scope");
-      localStorage.removeItem("java-output-practice-auth-name");
-      localStorage.removeItem("java-output-practice-auth-display-name");
+      localStorage.removeItem(profileNameKey);
+      localStorage.removeItem(profileDisplayNameKey);
+      localStorage.removeItem(profileAvatarKey);
       tracePresenceRef = null;
       dispatchTraceUsers([]);
     }
@@ -253,7 +293,8 @@ onAuthStateChanged(auth, (user) => {
     detail: {
       uid: signedIn ? user.uid : "local",
       name: signedIn ? getPublicName(user) : "User",
-      displayName: signedIn ? getPublicName(user) : "User"
+      displayName: signedIn ? getPublicName(user) : "User",
+      avatar: signedIn ? getPublicAvatar(getPublicName(user)) : "U"
     }
   }));
 
