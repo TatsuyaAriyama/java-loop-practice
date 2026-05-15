@@ -3519,6 +3519,40 @@ function toggleLessonPanel(forceOpen) {
   });
 }
 
+function createPreparingLessonGroup({ id, title }) {
+  const section = document.createElement("section");
+  section.className = "lesson-group";
+  section.dataset.lessonGroup = id;
+  section.innerHTML = `
+    <button class="lesson-group-toggle" type="button" aria-expanded="false">
+      <span>${title}</span>
+      <small>準備中</small>
+    </button>
+    <div class="lesson-links">
+      <a href="#" class="disabled" aria-disabled="true"><span>01</span><b>準備中</b><small>近日追加</small></a>
+    </div>
+  `;
+  return section;
+}
+
+function ensureLessonSeriesGroups() {
+  document.querySelectorAll(".lesson-groups").forEach((groups) => {
+    if (!groups.querySelector('[data-lesson-group="basic-syntax"]')) {
+      groups.prepend(createPreparingLessonGroup({
+        id: "basic-syntax",
+        title: "Java 基礎文法編"
+      }));
+    }
+
+    if (!groups.querySelector('[data-lesson-group="oop-advanced"]')) {
+      groups.appendChild(createPreparingLessonGroup({
+        id: "oop-advanced",
+        title: "Java オブジェクト指向応用編"
+      }));
+    }
+  });
+}
+
 function textNode(value) {
   return document.createTextNode(value);
 }
@@ -4266,6 +4300,7 @@ renderClassMethodQuestions(classList, classQuestions, {
   numberPrefix: "C-",
   panelLabel: "クラスコード"
 });
+ensureLessonSeriesGroups();
 ensureUserSummary();
 updateLessonProgress();
 notifyLearningStatus();
