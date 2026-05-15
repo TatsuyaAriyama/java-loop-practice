@@ -328,11 +328,14 @@ const lessonToggles = [...document.querySelectorAll(".lesson-toggle")];
 const lessonPanel = document.querySelector("#lessonPanel");
 const topicCards = [...document.querySelectorAll(".topic-card")];
 const arrayDeepDive = document.querySelector("#arrayDeepDive");
+const traceRoomList = document.querySelector("#traceRoomList");
 let currentLevel = "beginner";
 let currentUserName = "User";
+let currentDisplayName = "User";
 
 try {
   currentUserName = localStorage.getItem("java-output-practice-auth-name") || "User";
+  currentDisplayName = localStorage.getItem("java-output-practice-auth-display-name") || currentUserName;
 } catch {}
 
 levelButtons.forEach((button) => {
@@ -2708,6 +2711,146 @@ function updateLessonProgress() {
   updateUserSummary();
 }
 
+function getCurrentLearningStatus() {
+  const currentLesson = document.querySelector(".lesson-current")?.textContent?.trim();
+  if (currentLesson && currentLesson !== "Trace Room") {
+    return `${currentLesson}を学習中`;
+  }
+  if (traceRoomList) return "Trace Roomを閲覧中";
+  return "Java学習中";
+}
+
+function getAvatarLetter(name) {
+  return (name || "U").trim().charAt(0).toUpperCase() || "U";
+}
+
+function formatActiveTime(date) {
+  if (!date) return "取得できません";
+
+  try {
+    return new Intl.DateTimeFormat("ja-JP", {
+      hour: "2-digit",
+      minute: "2-digit"
+    }).format(date);
+  } catch {
+    return "たった今";
+  }
+}
+
+function getTraceRoomUsers() {
+  const users = [];
+
+  try {
+    if (localStorage.getItem("java-output-practice-auth") === "signed-in") {
+      const name = localStorage.getItem("java-output-practice-auth-name") || currentUserName || "User";
+      const displayName = localStorage.getItem("java-output-practice-auth-display-name") || name;
+      users.push({
+        userName: `@${name}`,
+        displayName,
+        avatar: getAvatarLetter(displayName),
+        role: "Learner",
+        status: getCurrentLearningStatus(),
+        lastActive: formatActiveTime(new Date()),
+        online: true
+      });
+    }
+  } catch {}
+
+  return users;
+}
+
+function getTraceRoomMembers() {
+  const tracea = {
+    userName: "@Tracea",
+    displayName: "Tracea",
+    avatar: "T",
+    role: "Teacher",
+    badge: "Java Guide",
+    status: "学習者をサポート中",
+    lastActive: "常時オンライン",
+    online: true,
+    mentor: true
+  };
+
+  return [tracea, ...getTraceRoomUsers()];
+}
+
+function createTraceRoomCard(user) {
+  const card = document.createElement("article");
+  card.className = `trace-user-card${user.mentor ? " mentor" : ""}`;
+
+  const top = document.createElement("div");
+  top.className = "trace-user-top";
+
+  const avatar = document.createElement("div");
+  avatar.className = "trace-user-avatar";
+  avatar.textContent = user.avatar;
+
+  const identity = document.createElement("div");
+  identity.className = "trace-user-identity";
+
+  const nameLine = document.createElement("div");
+  nameLine.className = "trace-user-name-line";
+
+  const displayName = document.createElement("h3");
+  displayName.textContent = user.displayName;
+  nameLine.appendChild(displayName);
+
+  if (user.badge) {
+    const badge = document.createElement("span");
+    badge.className = "trace-user-badge";
+    badge.textContent = user.badge;
+    nameLine.appendChild(badge);
+  }
+
+  const userName = document.createElement("p");
+  userName.textContent = user.userName;
+  identity.append(nameLine, userName);
+
+  const online = document.createElement("span");
+  online.className = `trace-online-dot${user.online ? " online" : ""}`;
+  online.setAttribute("aria-label", user.online ? "オンライン" : "オフライン");
+
+  top.append(avatar, identity, online);
+
+  const details = document.createElement("dl");
+  details.className = "trace-user-details";
+  [
+    ["役割", user.role],
+    ["ステータス", user.status],
+    ["最終アクティブ", user.lastActive]
+  ].forEach(([label, value]) => {
+    const row = document.createElement("div");
+    const term = document.createElement("dt");
+    const description = document.createElement("dd");
+    term.textContent = label;
+    description.textContent = value;
+    row.append(term, description);
+    details.appendChild(row);
+  });
+
+  card.append(top, details);
+  return card;
+}
+
+function renderTraceRoom() {
+  if (!traceRoomList) return;
+
+  const members = getTraceRoomMembers();
+  traceRoomList.textContent = "";
+
+  members.forEach((member) => {
+    traceRoomList.appendChild(createTraceRoomCard(member));
+  });
+
+  if (members.length <= 1) {
+    const empty = document.createElement("p");
+    empty.className = "trace-room-empty";
+    empty.textContent = "現在表示できるユーザーがいません。";
+    traceRoomList.appendChild(empty);
+  }
+}
+
 function hasLoopUnlock() {
   try {
     return localStorage.getItem(scopedLoopUnlockKey()) === "true" || localStorage.getItem(loopUnlockKey) === "true";
@@ -3351,13 +3494,16 @@ renderConditionalQuestions();
 renderBooleanQuestions();
 ensureUserSummary();
 updateLessonProgress();
+renderTraceRoom();
 if (hasLoopUnlock()) {
   applyLoopUnlock();
 }
 window.addEventListener("java-practice-auth-ready", (event) => {
   progressScope = event.detail?.uid || "local";
   currentUserName = event.detail?.name || "User";
+  currentDisplayName = event.detail?.displayName || currentUserName;
   updateUserSummary();
+  renderTraceRoom();
   if (hasLoopUnlock()) {
     applyLoopUnlock();
   }

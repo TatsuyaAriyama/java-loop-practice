@@ -114,17 +114,20 @@ onAuthStateChanged(auth, (user) => {
       localStorage.setItem("java-output-practice-auth", "signed-in");
       localStorage.setItem("java-output-practice-auth-scope", user.uid);
       localStorage.setItem("java-output-practice-auth-name", userName);
+      localStorage.setItem("java-output-practice-auth-display-name", user.displayName || userName);
     } else {
       localStorage.removeItem("java-output-practice-auth");
       localStorage.removeItem("java-output-practice-auth-scope");
       localStorage.removeItem("java-output-practice-auth-name");
+      localStorage.removeItem("java-output-practice-auth-display-name");
     }
   } catch {}
 
   window.dispatchEvent(new CustomEvent("java-practice-auth-ready", {
     detail: {
       uid: signedIn ? user.uid : "local",
-      name: signedIn ? (user.displayName || user.email?.split("@")[0] || "User") : "User"
+      name: signedIn ? (user.displayName || user.email?.split("@")[0] || "User") : "User",
+      displayName: signedIn ? (user.displayName || user.email?.split("@")[0] || "User") : "User"
     }
   }));
 
