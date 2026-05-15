@@ -325,7 +325,7 @@ const unlockFeedback = document.querySelector("#unlockFeedback");
 const typeLogo = document.querySelector(".type-logo");
 const lessonToggles = [...document.querySelectorAll(".lesson-toggle")];
 const lessonPanel = document.querySelector("#lessonPanel");
-const arrayTopicCards = [...document.querySelectorAll(".array-topic-card")];
+const topicCards = [...document.querySelectorAll(".topic-card")];
 const arrayDeepDive = document.querySelector("#arrayDeepDive");
 let currentLevel = "beginner";
 
@@ -1357,7 +1357,7 @@ const booleanQuestions = [
   }
 ];
 
-const arrayDeepDives = {
+const topicDeepDives = {
   array: {
     eyebrow: "array",
     title: "配列は、値をまとめるための箱。でも、何でも入る箱ではない。",
@@ -1447,6 +1447,190 @@ const arrayDeepDives = {
       "最後は array[array.length - 1]。"
     ],
     code: "int[] scores = {80, 90, 70};\nSystem.out.println(scores[2]); // OK\n// System.out.println(scores[3]); // 範囲外"
+  },
+  "class-main": {
+    eyebrow: "class Main",
+    title: "Javaは、まずクラスという箱の中にコードを書く。",
+    body: [
+      "class Main は、Javaのコードを入れる大きな箱です。練習問題ではこの箱の名前をMainにそろえています。",
+      "最初はおまじないに見えても構いません。ただし、波かっこの外に処理を書くとJavaは実行できません。どこからどこまでが箱なのか、目で追ってください。"
+    ],
+    checks: ["classの後ろに名前を書く。", "処理は基本的にclassの波かっこの中に入る。", "練習ではMainという名前でそろえる。"],
+    code: "class Main {\n  // この中にmainメソッドを書く\n}"
+  },
+  "main-method": {
+    eyebrow: "main method",
+    title: "mainメソッドは、プログラムが動き始める入口。",
+    body: [
+      "public static void main(String[] args) は、Javaを実行したときに最初に呼ばれる特別な形です。",
+      "今すべてを分解して暗記する必要はありません。大切なのは、この波かっこの中に書いた命令が上から順に実行される、ということです。"
+    ],
+    checks: ["mainメソッドは実行開始地点。", "実際の処理はmainの波かっこの中に書く。", "命令は基本的に上から順番に動く。"],
+    code: "public static void main(String[] args) {\n  System.out.println(\"Hello\");\n}"
+  },
+  braces: {
+    eyebrow: "{ }",
+    title: "波かっこは、コードの範囲を決める境界線。",
+    body: [
+      "{ から } までがひとまとまりです。classの範囲、mainメソッドの範囲、ifやforの範囲を作ります。",
+      "波かっこがずれると、どの処理がどこに属しているのかが崩れます。エラーが出たら、まず対応する波かっこを探してください。"
+    ],
+    checks: ["開いた { には閉じる } が必要。", "内側の処理はインデントして読む。", "範囲が変わると実行される場所も変わる。"],
+    code: "if (score >= 80) {\n  System.out.println(\"OK\");\n}"
+  },
+  semicolon: {
+    eyebrow: ";",
+    title: "セミコロンは、命令の終わりを示す。",
+    body: [
+      "System.out.println(i); の最後にある ; は、ここで1つの命令が終わるという印です。",
+      "日本語の句点に近いですが、Javaでは省略できません。書き忘れると、次の行まで命令が続いているように読まれてしまいます。"
+    ],
+    checks: ["命令文の最後に ; を付ける。", "classやifの閉じ波かっこの後には基本的に付けない。", "エラー時は行末の ; を確認する。"],
+    code: "int score = 80;\nSystem.out.println(score);"
+  },
+  comment: {
+    eyebrow: "// comment",
+    title: "コメントは、人間のためのメモ。",
+    body: [
+      "// から右側はJavaに実行されません。コードの意図や注意点を残すために使います。",
+      "ただし、コメントで説明しないと読めないコードは危険です。まずコードを整理し、必要な場所だけ短く補足するのが基本です。"
+    ],
+    checks: ["// の右側は実行されない。", "学習中は処理の目的を書くと理解しやすい。", "古いコメントを残すと逆に混乱する。"],
+    code: "// scoreを表示する\nSystem.out.println(score);"
+  },
+  println: {
+    eyebrow: "println",
+    title: "printlnは、値を表示して改行する命令。",
+    body: [
+      "System.out.println(...) は、かっこの中の値を画面に表示します。表示した後に改行するので、次の出力は次の行に出ます。",
+      "出力問題では、何がprintlnに渡されているかを読むのが中心です。変数なのか、文字列なのか、計算式なのかを必ず見分けてください。"
+    ],
+    checks: ["文字列は \"Hello\" のように囲む。", "変数はそのまま書く。", "+ を使うと文字と値をつなげられる。"],
+    code: "System.out.println(\"Hello\");\nSystem.out.println(3 + 2);"
+  },
+  "loop-for": {
+    eyebrow: "for",
+    title: "for文は、回数と流れが見えている繰り返し。",
+    body: [
+      "for文は、初期化式、条件式、更新式を1行にまとめます。どこから始めるか、いつまで続けるか、1回ごとにどう変えるかを同時に読みます。",
+      "問題を解くときは、まずiの最初の値を書き出してください。次に条件式がtrueか確認し、最後に更新式で次の値へ進みます。"
+    ],
+    checks: ["初期化式は最初に1回だけ実行。", "条件式がtrueの間だけ続く。", "更新式は1回の処理が終わった後に動く。"],
+    code: "for (int i = 1; i <= 5; i++) {\n  System.out.println(i);\n}"
+  },
+  "loop-while": {
+    eyebrow: "while",
+    title: "while文は、条件がtrueの間だけ続く。",
+    body: [
+      "while文は条件式だけを丸かっこに書きます。変数の準備と更新を別の場所に書くため、増やし忘れや減らし忘れに注意が必要です。",
+      "止まらない繰り返しの多くは、条件をfalseにする動きが中にないことが原因です。条件がいつfalseになるか、必ず確認してください。"
+    ],
+    checks: ["繰り返し前に変数を用意する。", "条件式がtrueなら中を実行する。", "中で条件が変わるように更新する。"],
+    code: "int i = 1;\nwhile (i <= 5) {\n  System.out.println(i);\n  i++;\n}"
+  },
+  "loop-break": {
+    eyebrow: "break",
+    title: "breakは、繰り返しをその場で完全に止める。",
+    body: [
+      "breakが実行されると、いま入っている繰り返しから抜けます。その回の残りも、次の回も実行されません。",
+      "見つけたら終わり、条件に達したら終わり。そういう場面で使います。continueとの違いは、次の回へ行くのではなく、繰り返し自体を終えることです。"
+    ],
+    checks: ["break後の同じブロック内の処理には進まない。", "一番内側の繰り返しを抜ける。", "特定条件で探索を終えるときに使う。"],
+    code: "if (i == 4) {\n  break;\n}"
+  },
+  "loop-continue": {
+    eyebrow: "continue",
+    title: "continueは、その回だけを飛ばして次へ進む。",
+    body: [
+      "continueが実行されると、その回の残りの処理を飛ばします。ただし、繰り返し自体は終わりません。",
+      "3だけ表示しない、偶数だけ飛ばす、条件に合わないデータを無視する。こういう場面ではcontinueが自然です。"
+    ],
+    checks: ["今の回だけを途中で終える。", "次の回の判定へ進む。", "繰り返し全体は止まらない。"],
+    code: "if (i == 3) {\n  continue;\n}"
+  },
+  if: {
+    eyebrow: "if",
+    title: "ifは、条件がtrueのときだけ中を実行する。",
+    body: ["ifの丸かっこには、trueかfalseになる条件式を書きます。条件がtrueなら波かっこの中へ進み、falseなら通りません。", "まず条件式を声に出して読んでください。score >= 80 なら「scoreが80以上なら」です。ここを曖昧にしたままコードを追うと、分岐を見失います。"],
+    checks: ["条件式はtrue/falseになる。", "trueのときだけ中を実行。", "falseならifの中を飛ばす。"],
+    code: "if (score >= 80) {\n  System.out.println(\"合格\");\n}"
+  },
+  else: {
+    eyebrow: "else",
+    title: "elseは、ifに当てはまらなかった残りを受け止める。",
+    body: ["elseには条件を書きません。直前のifやelse ifがすべてfalseだったときに実行されます。", "条件から外れた値を放置しないための出口です。合格ではないなら再挑戦、範囲内ではないならエラー、というように残りの扱いを決めます。"],
+    checks: ["else単体に条件式はない。", "直前のifがfalseのときに動く。", "最後の受け皿として使う。"],
+    code: "if (score >= 80) {\n  System.out.println(\"合格\");\n} else {\n  System.out.println(\"再挑戦\");\n}"
+  },
+  "else-if": {
+    eyebrow: "else if",
+    title: "else ifは、条件を上から順番に試す。",
+    body: ["else ifは条件を追加するときに使います。上から順番に見て、最初にtrueになった場所だけが実行されます。", "順番には意味があります。90以上を先に見るのか、70以上を先に見るのかで結果が変わることがあります。強い条件から置くのが基本です。"],
+    checks: ["上から順に判定する。", "最初にtrueになったブロックだけ動く。", "条件の順番が結果を変える。"],
+    code: "if (score >= 90) {\n  System.out.println(\"A\");\n} else if (score >= 70) {\n  System.out.println(\"B\");\n}"
+  },
+  "conditional-comparison": {
+    eyebrow: "comparison",
+    title: "比較演算子は、値を比べてtrue/falseを作る。",
+    body: ["==、!=、>=、< などは、条件式を作るための記号です。結果は数値ではなくtrueかfalseになります。", "特に = と == は分けてください。= は入れる、== は比べる。ここを間違えると、条件分岐の読み方が崩れます。"],
+    checks: ["= は代入。", "== は等しいか比較。", "比較結果はtrue/false。"],
+    code: "System.out.println(score >= 80);\nSystem.out.println(count == 3);"
+  },
+  "conditional-logic": {
+    eyebrow: "&& / ||",
+    title: "&&と||は、条件を組み合わせる。",
+    body: ["&&は両方trueのときだけtrueです。条件を狭くします。||はどちらかtrueならtrueです。条件を広げます。", "迷ったら、日本語に戻してください。「AかつB」なのか、「AまたはB」なのか。ここを言葉で決めてから記号を選びます。"],
+    checks: ["&& は両方true。", "|| はどちらかtrue。", "条件を狭めるか広げるかで選ぶ。"],
+    code: "if (score >= 80 && attendance >= 90) {\n  System.out.println(\"OK\");\n}"
+  },
+  "conditional-boolean": {
+    eyebrow: "boolean",
+    title: "条件分岐は、trueかfalseを見て進む。",
+    body: ["if文の中心にあるのはbooleanです。条件式もboolean変数も、最後はtrueかfalseとして扱われます。", "if (isMember) のように、boolean変数そのものを条件にできます。== true と書かなくても、変数がすでに判定結果を持っています。"],
+    checks: ["booleanはtrue/falseの型。", "ifの条件にそのまま使える。", "!を付けると反転する。"],
+    code: "boolean isMember = true;\nif (isMember) {\n  System.out.println(\"member\");\n}"
+  },
+  "boolean-type": {
+    eyebrow: "boolean",
+    title: "booleanは、trueかfalseだけを持つ型。",
+    body: ["boolean型は、はい/いいえ、ON/OFF、合格/不合格のような二択を表すときに使います。", "数字や文字ではありません。trueとfalseはJavaのキーワードなので、\"true\"のように文字列として囲まない点に注意します。"],
+    checks: ["入る値はtrueかfalseだけ。", "文字列ではないので引用符で囲まない。", "状態や判定結果を名前にする。"],
+    code: "boolean isOpen = true;\nboolean hasError = false;"
+  },
+  "condition-expression": {
+    eyebrow: "condition",
+    title: "条件式は、最後にtrueかfalseへ評価される。",
+    body: ["score >= 60 のような式は、見た目は計算式に似ていますが、結果はtrueかfalseです。", "if文に入れる前に、条件式だけをprintlnで表示してみると理解が速くなります。判定結果を自分の目で確認できます。"],
+    checks: ["比較式の結果はboolean。", "printlnで判定結果を表示できる。", "ifはその結果を見て動く。"],
+    code: "int score = 82;\nSystem.out.println(score >= 60); // true"
+  },
+  "boolean-comparison": {
+    eyebrow: "comparison",
+    title: "比較演算子は、booleanを作るための道具。",
+    body: ["==は等しい、!=は等しくない、>はより大きい、<=は以下。どれも結果はtrueかfalseです。", "条件式を読むときは、記号を日本語に直すと安定します。num <= 10 は「numが10以下なら」です。"],
+    checks: ["== と = を混同しない。", ">= は以上、<= は以下。", "結果は必ずtrue/false。"],
+    code: "System.out.println(level != 1);\nSystem.out.println(num <= 10);"
+  },
+  "not-operator": {
+    eyebrow: "!",
+    title: "!は、trueとfalseを反転する。",
+    body: ["!isError は「isErrorではない」と読みます。isErrorがfalseなら、!isErrorはtrueです。", "短い記号ですが、読み飛ばすと結果が真逆になります。条件式の先頭に!がないか、必ず確認してください。"],
+    checks: ["!true はfalse。", "!false はtrue。", "条件の意味が反対になる。"],
+    code: "boolean isError = false;\nSystem.out.println(!isError); // true"
+  },
+  "and-operator": {
+    eyebrow: "&&",
+    title: "&&は、両方trueのときだけtrue。",
+    body: ["&&は「かつ」です。左と右の条件がどちらもtrueのときだけ、全体がtrueになります。", "条件を厳しくしたいときに使います。年齢も満たす、チケットも持っている。このように両方必要な場面です。"],
+    checks: ["true && true だけtrue。", "片方でもfalseならfalse。", "条件を狭くする。"],
+    code: "System.out.println(age >= 20 && hasTicket);"
+  },
+  "or-operator": {
+    eyebrow: "||",
+    title: "||は、どちらかtrueならtrue。",
+    body: ["||は「または」です。左か右のどちらか一方でもtrueなら、全体がtrueになります。", "条件を広げたいときに使います。会員ならOK、クーポンがあってもOK、というように入口を増やします。"],
+    checks: ["false || false だけfalse。", "片方でもtrueならtrue。", "条件を広くする。"],
+    code: "System.out.println(isMember || coupon);"
   }
 };
 
@@ -1986,11 +2170,11 @@ function renderBooleanQuestions() {
   });
 }
 
-function renderArrayDeepDive(topicKey) {
-  if (!arrayDeepDive || !arrayDeepDives[topicKey]) return;
+function renderTopicDeepDive(panel, topicKey) {
+  if (!panel || !topicDeepDives[topicKey]) return;
 
-  const topic = arrayDeepDives[topicKey];
-  arrayDeepDive.textContent = "";
+  const topic = topicDeepDives[topicKey];
+  panel.textContent = "";
 
   const eyebrow = document.createElement("p");
   eyebrow.className = "eyebrow";
@@ -2024,20 +2208,28 @@ function renderArrayDeepDive(topicKey) {
   codeInner.textContent = topic.code;
   code.appendChild(codeInner);
 
-  arrayDeepDive.append(eyebrow, title, body, checks, code);
+  panel.append(eyebrow, title, body, checks, code);
 }
 
-function activateArrayTopic(card) {
+function findTopicPanel(card) {
+  const section = card.closest("section");
+  return section?.querySelector(".topic-deep-dive") || arrayDeepDive;
+}
+
+function activateTopicCard(card) {
   if (!card) return;
 
-  arrayTopicCards.forEach((topicCard) => {
+  const section = card.closest("section") || document;
+  const relatedCards = [...section.querySelectorAll(".topic-card")];
+  relatedCards.forEach((topicCard) => {
     const active = topicCard === card;
     topicCard.classList.toggle("active", active);
     topicCard.setAttribute("aria-expanded", String(active));
   });
 
-  renderArrayDeepDive(card.dataset.arrayTopic);
-  arrayDeepDive.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  const panel = findTopicPanel(card);
+  renderTopicDeepDive(panel, card.dataset.topic || card.dataset.arrayTopic);
+  panel?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 renderQuestions();
@@ -2136,16 +2328,16 @@ if (booleanList) {
   });
 }
 
-if (arrayTopicCards.length > 0 && arrayDeepDive) {
-  arrayTopicCards.forEach((card) => {
+if (topicCards.length > 0) {
+  topicCards.forEach((card) => {
     card.addEventListener("click", () => {
-      activateArrayTopic(card);
+      activateTopicCard(card);
     });
 
     card.addEventListener("keydown", (event) => {
       if (event.key !== "Enter" && event.key !== " ") return;
       event.preventDefault();
-      activateArrayTopic(card);
+      activateTopicCard(card);
     });
   });
 }

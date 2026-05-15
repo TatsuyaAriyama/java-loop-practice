@@ -55,6 +55,7 @@
   <div class="app-shell" id="appShell" aria-hidden="true">
   <header class="site-header">
     <div class="header-inner">
+      <p class="lesson-current">Lesson01 繰り返し処理編</p>
       <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
       <div class="header-actions">
         <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
@@ -101,37 +102,43 @@
         </div>
 
         <div class="syntax-cards">
-          <article>
+          <article class="topic-card" data-topic="class-main" tabindex="0" role="button" aria-expanded="false">
             <span class="syntax-label">class Main</span>
             <h3>クラスは、Javaのコードを入れる大きな箱</h3>
             <p>Javaでは、処理をいきなり外に書かず、基本的に<span class="term">class</span>の中へ書きます。ここでは練習用の箱の名前を<span class="term">Main</span>にしています。</p>
           </article>
-          <article>
+          <article class="topic-card" data-topic="main-method" tabindex="0" role="button" aria-expanded="false">
             <span class="syntax-label">main method</span>
             <h3>mainメソッドは、プログラムのスタート地点</h3>
             <p><span class="term">public static void main(String[] args)</span>は、Javaアプリを実行するときに最初に呼ばれる特別な形です。今は「ここから始まる合図」と覚えれば大丈夫です。</p>
           </article>
-          <article>
+          <article class="topic-card" data-topic="braces" tabindex="0" role="button" aria-expanded="false">
             <span class="syntax-label">{ }</span>
             <h3>波かっこは、範囲を表す</h3>
             <p><span class="term">{</span>から<span class="term">}</span>までが、ひとまとまりの範囲です。classの波かっこの中にmainメソッドがあり、mainメソッドの波かっこの中に実際の処理を書きます。</p>
           </article>
-          <article>
+          <article class="topic-card" data-topic="semicolon" tabindex="0" role="button" aria-expanded="false">
             <span class="syntax-label">;</span>
             <h3>セミコロンは、文の終わりの印</h3>
             <p><span class="term">System.out.println(i);</span>のように、1つの命令の終わりには<span class="term">;</span>を付けます。日本語の「。」に近い役割です。</p>
           </article>
-          <article>
+          <article class="topic-card" data-topic="comment" tabindex="0" role="button" aria-expanded="false">
             <span class="syntax-label">// comment</span>
             <h3>コメントは、実行されないメモ</h3>
             <p><span class="term">//</span>から右側はコメントです。人間が読むためのメモで、Javaは実行するときに無視します。</p>
           </article>
-          <article>
+          <article class="topic-card" data-topic="println" tabindex="0" role="button" aria-expanded="false">
             <span class="syntax-label">println</span>
             <h3>printlnは、画面に表示して改行する命令</h3>
             <p><span class="term">System.out.println(...)</span>は、かっこの中の値を画面に出して、最後に改行します。問題の「目標の出力」は、この命令で作ります。</p>
           </article>
         </div>
+      </div>
+
+      <div class="topic-deep-dive" id="syntaxDeepDive" aria-live="polite">
+        <p class="eyebrow">Click a Card</p>
+        <h3>カードを押すと、文法の深掘り解説が表示されます。</h3>
+        <p>Javaの外枠は最初だけ難しく見えます。どの範囲に何を書くのかを、ここで一つずつ確認します。</p>
       </div>
 
       <p class="source-note">
@@ -147,7 +154,7 @@
         <h2>最初にここだけ押さえる</h2>
       </div>
       <div class="basics-grid">
-        <article id="lesson-for">
+        <article id="lesson-for" class="topic-card" data-topic="loop-for" tabindex="0" role="button" aria-expanded="false">
           <h3>for</h3>
           <p>回数や順番を決めて繰り返すときに使います。Javaでは、丸かっこの中を<span class="term">(1)初期化式</span>、<span class="term">(2)条件式</span>、<span class="term">(3)更新式</span>の3つに分けて書きます。</p>
           <code>for (初期化式; 条件式; 更新式)</code>
@@ -157,7 +164,7 @@
             <li><b>更新式</b>：1回ごとに値を変える</li>
           </ul>
         </article>
-        <article id="lesson-while">
+        <article id="lesson-while" class="topic-card" data-topic="loop-while" tabindex="0" role="button" aria-expanded="false">
           <h3>while</h3>
           <p>条件式が<span class="term">trueの間</span>だけ、同じ処理を繰り返します。回数よりも「この条件を満たしている間」という考え方が中心です。</p>
           <code>while (条件式)</code>
@@ -167,7 +174,7 @@
             <li>falseになったら繰り返しを終える</li>
           </ul>
         </article>
-        <article id="lesson-break">
+        <article id="lesson-break" class="topic-card" data-topic="loop-break" tabindex="0" role="button" aria-expanded="false">
           <h3>break</h3>
           <p>繰り返しを<span class="term">その場で終了</span>します。たとえば「探している値が見つかったら、もう続けなくてよい」という場面で使います。</p>
           <code>break;</code>
@@ -177,7 +184,7 @@
             <li>終了後は繰り返しの次へ進む</li>
           </ul>
         </article>
-        <article id="lesson-continue">
+        <article id="lesson-continue" class="topic-card" data-topic="loop-continue" tabindex="0" role="button" aria-expanded="false">
           <h3>continue</h3>
           <p>繰り返し自体は続けたまま、<span class="term">今の1回分だけ</span>残りの処理を飛ばします。「条件に合わない回だけスキップする」と考えるとわかりやすいです。</p>
           <code>continue;</code>
@@ -187,6 +194,11 @@
             <li>除外したい値があるときに便利</li>
           </ul>
         </article>
+      </div>
+      <div class="topic-deep-dive" id="basicsDeepDive" aria-live="polite">
+        <p class="eyebrow">Click a Card</p>
+        <h3>カードを押すと、繰り返し処理の深掘り解説が表示されます。</h3>
+        <p>for、while、break、continueは似て見えて役割が違います。止めるのか、続けるのか、飛ばすのか。そこを分けて読みます。</p>
       </div>
       <p class="source-note">
         参考: Oracle Java Tutorials の

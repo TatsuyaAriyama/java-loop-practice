@@ -55,6 +55,7 @@
   <div class="app-shell" id="appShell" aria-hidden="true">
     <header class="site-header">
       <div class="header-inner">
+        <p class="lesson-current">Lesson04 真偽値と条件式</p>
         <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
         <div class="header-actions">
           <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
@@ -95,37 +96,43 @@ System.out.println(passed); // true
 System.out.println(!passed); // false</code></pre>
           </div>
           <div class="syntax-cards">
-            <article>
+            <article class="topic-card" data-topic="boolean-type" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">boolean</span>
               <h3>trueかfalseだけを入れる型</h3>
               <p><span class="term">boolean</span> は真偽値の型です。入れられる値は<span class="term">true</span>か<span class="term">false</span>だけです。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="condition-expression" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">condition</span>
               <h3>条件式は判定結果を返す</h3>
               <p><span class="term">score &gt;= 60</span> のような式は、計算結果としてtrueかfalseになります。ここを読めないと分岐は読めません。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="boolean-comparison" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">comparison</span>
               <h3>比較演算子で値を比べる</h3>
               <p><span class="term">==</span>、<span class="term">!=</span>、<span class="term">&gt;</span>、<span class="term">&lt;=</span> などで値を比べます。代入の<span class="term">=</span>とは別物です。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="not-operator" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">!</span>
               <h3>否定は結果を反転する</h3>
               <p><span class="term">!passed</span> はpassedの反対です。trueならfalse、falseならtrue。短いですが、読み飛ばすと危険です。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="and-operator" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">&amp;&amp;</span>
               <h3>両方trueならtrue</h3>
               <p><span class="term">&amp;&amp;</span> は「かつ」です。条件を狭くします。片方でもfalseなら、全体はfalseです。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="or-operator" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">||</span>
               <h3>どちらかtrueならtrue</h3>
               <p><span class="term">||</span> は「または」です。条件を広げます。片方でもtrueなら、全体はtrueです。</p>
             </article>
           </div>
+        </div>
+
+        <div class="topic-deep-dive" id="booleanDeepDive" aria-live="polite">
+          <p class="eyebrow">Click a Card</p>
+          <h3>カードを押すと、真偽値と条件式の深掘り解説が表示されます。</h3>
+          <p>trueかfalseか。条件式は最後に必ずそこへ着地します。コードを読むときは、その着地点を先に見ます。</p>
         </div>
 
         <p class="source-note">

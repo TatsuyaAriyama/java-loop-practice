@@ -231,6 +231,17 @@ main,
   padding: 46px 0 38px 96px;
 }
 
+.lesson-current {
+  display: inline-block;
+  margin: 0 0 12px;
+  border-left: 4px solid var(--red);
+  padding: 6px 0 6px 12px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
 .eyebrow {
   margin: 0 0 18px;
   color: var(--red);
@@ -659,14 +670,14 @@ h1 {
   border-bottom: 1px solid var(--line);
 }
 
-.array-topic-card {
+.topic-card {
   position: relative;
   padding-bottom: 48px;
   cursor: pointer;
   transition: background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 
-.array-topic-card::after {
+.topic-card::after {
   content: "詳しく見る";
   position: absolute;
   right: 18px;
@@ -680,17 +691,17 @@ h1 {
   transition: opacity 180ms ease, transform 180ms ease;
 }
 
-.array-topic-card:hover,
-.array-topic-card:focus-visible,
-.array-topic-card.active {
+.topic-card:hover,
+.topic-card:focus-visible,
+.topic-card.active {
   background: #fff8f9;
   box-shadow: inset 0 0 0 2px var(--red);
   outline: none;
 }
 
-.array-topic-card:hover::after,
-.array-topic-card:focus-visible::after,
-.array-topic-card.active::after {
+.topic-card:hover::after,
+.topic-card:focus-visible::after,
+.topic-card.active::after {
   opacity: 1;
   transform: translateY(0);
 }
@@ -736,6 +747,7 @@ h1 {
   line-height: 1.85;
 }
 
+.topic-deep-dive,
 .array-deep-dive {
   margin-top: 24px;
   border: 1px solid var(--ink);
@@ -743,6 +755,7 @@ h1 {
   background: #ffffff;
 }
 
+.topic-deep-dive h3,
 .array-deep-dive h3 {
   width: min(100%, 780px);
   margin-bottom: 18px;
@@ -792,6 +805,7 @@ h1 {
   line-height: 1.75;
 }
 
+.topic-deep-dive pre,
 .array-deep-dive pre {
   margin: 22px 0 0;
   overflow-x: auto;

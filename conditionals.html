@@ -55,6 +55,7 @@
   <div class="app-shell" id="appShell" aria-hidden="true">
     <header class="site-header">
       <div class="header-inner">
+        <p class="lesson-current">Lesson03 条件分岐編</p>
         <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
         <div class="header-actions">
           <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
@@ -97,37 +98,43 @@ if (score >= 80) {
 }</code></pre>
           </div>
           <div class="syntax-cards">
-            <article>
+            <article class="topic-card" data-topic="if" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">if</span>
               <h3>条件がtrueなら実行する</h3>
               <p><span class="term">if (条件式)</span> は「もし条件が成り立つなら」という意味です。条件式の結果がtrueのときだけ、中の処理が動きます。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="else" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">else</span>
               <h3>当てはまらない場合を受け止める</h3>
               <p><span class="term">else</span> は、ifの条件がfalseだったときに実行されます。条件から外れた値を放置しないための出口です。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="else-if" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">else if</span>
               <h3>条件を上から順番に試す</h3>
               <p><span class="term">else if</span> は、条件を追加したいときに使います。最初にtrueになった場所だけが実行され、残りは見ません。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="conditional-comparison" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">comparison</span>
               <h3>比較演算子で判定する</h3>
               <p><span class="term">==</span>、<span class="term">!=</span>、<span class="term">&gt;=</span>、<span class="term">&lt;</span> などで値を比べます。代入の<span class="term">=</span>とは役割が違います。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="conditional-logic" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">&amp;&amp; / ||</span>
               <h3>条件を組み合わせる</h3>
               <p><span class="term">&amp;&amp;</span> は両方true、<span class="term">||</span> はどちらかtrueです。条件を強くしたいのか、広げたいのかを決めて使います。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="conditional-boolean" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">boolean</span>
               <h3>true / falseを読む</h3>
               <p>条件式の答えは必ずtrueかfalseです。今この値は条件を満たすのか。そこを一度止まって読む癖が、分岐のミスを減らします。</p>
             </article>
           </div>
+        </div>
+
+        <div class="topic-deep-dive" id="conditionalDeepDive" aria-live="polite">
+          <p class="eyebrow">Click a Card</p>
+          <h3>カードを押すと、条件分岐の深掘り解説が表示されます。</h3>
+          <p>条件分岐は「どの条件がtrueになったか」を読む技術です。上から順に、止まる場所を見極めます。</p>
         </div>
 
         <p class="source-note">
