@@ -933,7 +933,7 @@ h1 {
 
 .trace-user-details {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   margin: 0;
   border: 1px solid var(--line);
 }
@@ -2107,6 +2107,15 @@ h1 {
     width: 44px;
     height: 44px;
     font-size: 18px;
+  }
+
+  .trace-user-details {
+    grid-template-columns: 1fr;
+  }
+
+  .trace-user-details div + div {
+    border-top: 1px solid var(--line);
+    border-left: 0;
   }
 
   .trace-room-empty {

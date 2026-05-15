@@ -3128,6 +3128,10 @@ function getTotalCompletedExercises() {
   return lessonMeta.reduce((total, lesson) => total + getCompletedCount(lesson), 0);
 }
 
+function getTotalExerciseCount() {
+  return lessonMeta.reduce((total, lesson) => total + lesson.total, 0);
+}
+
 function getCompletedLessonCount() {
   return lessonMeta.filter((lesson) => getCompletedCount(lesson) >= lesson.total).length;
 }
@@ -3322,7 +3326,9 @@ function normalizeTraceRoomUser(user) {
     lastActive: user.lastActive === "常時オンライン" ? user.lastActive : formatActiveTime(activeDate),
     online: Boolean(user.online),
     mentor: Boolean(user.mentor),
-    badge: user.badge
+    badge: user.badge,
+    totalCleared: user.totalCleared ?? "取得中",
+    lessonsCleared: user.lessonsCleared ?? "取得中"
   };
 }
 
@@ -3344,7 +3350,9 @@ function getTraceRoomUsers() {
         role: "Learner",
         status: getCurrentLearningStatus(),
         lastActive: formatActiveTime(new Date()),
-        online: true
+        online: true,
+        totalCleared: String(getTotalCompletedExercises()),
+        lessonsCleared: `${getCompletedLessonCount()}/${lessonMeta.length}`
       });
     }
   } catch {}
@@ -3362,7 +3370,9 @@ function getTraceRoomMembers() {
     status: "学習者をサポート中",
     lastActive: "常時オンライン",
     online: true,
-    mentor: true
+    mentor: true,
+    totalCleared: `${getTotalExerciseCount()}問を案内中`,
+    lessonsCleared: `${lessonMeta.length} Lessons`
   };
 
   return [tracea, ...getTraceRoomUsers()];
@@ -3408,9 +3418,14 @@ function createTraceRoomCard(user) {
 
   const details = document.createElement("dl");
   details.className = "trace-user-details";
+  const exerciseLabel = user.mentor ? "案内中の演習数" : "総演習クリア数";
+  const lessonLabel = user.mentor ? "対象レッスン数" : "修了レッスン数";
+
   [
     ["役割", user.role],
     ["ステータス", user.status],
+    [exerciseLabel, user.totalCleared],
+    [lessonLabel, user.lessonsCleared],
     ["最終アクティブ", user.lastActive]
   ].forEach(([label, value]) => {
     const row = document.createElement("div");
