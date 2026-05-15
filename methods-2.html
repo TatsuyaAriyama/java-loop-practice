@@ -88,9 +88,9 @@
                 <small>3 Lessons</small>
               </button>
               <div class="lesson-links">
-                <a href="methods-1.html" data-lesson-link="methods-1"><span>01</span><b>メソッド(1)</b><small>Guide</small></a>
-                <a href="methods-2.html" class="active" data-lesson-link="methods-2"><span>02</span><b>メソッド(2)</b><small>Guide</small></a>
-                <a href="classes.html" data-lesson-link="classes"><span>03</span><b>クラス</b><small>Guide</small></a>
+                <a href="methods-1.html" data-lesson-link="methods-1"><span>01</span><b>メソッド(1)</b><small class="lesson-check">0/10</small></a>
+                <a href="methods-2.html" class="active" data-lesson-link="methods-2"><span>02</span><b>メソッド(2)</b><small class="lesson-check">0/10</small></a>
+                <a href="classes.html" data-lesson-link="classes"><span>03</span><b>クラス</b><small class="lesson-check">0/10</small></a>
               </div>
             </section>
             <section class="lesson-group" data-lesson-group="oop-basic">
@@ -133,28 +133,42 @@
 }</code></pre>
           </div>
           <div class="syntax-cards">
-            <article>
+            <article class="topic-card" data-topic="method-static" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">static</span>
               <h3>staticは、インスタンスを作らず呼べる印</h3>
               <p>練習では <span class="term">main</span> から直接呼びたいので、補助メソッドにも <span class="term">static</span> を付けます。まずは「同じクラス内で直接呼ぶため」と読めば十分です。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="method-scope" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">scope</span>
               <h3>変数には、使える範囲がある</h3>
               <p><span class="term">total</span> の中で作った変数は、基本的にそのメソッドの外では使えません。どこで宣言した変数なのかを見る癖が大事です。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="method-overload" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">overload</span>
               <h3>同じ名前でも、引数が違えば別メソッド</h3>
               <p>Javaでは、同じ名前のメソッドを複数作れる場合があります。見分ける鍵は、引数の数や型です。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="method-design" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">design</span>
               <h3>メソッド分割は、読む順番を作る</h3>
               <p>長い処理を小さく分けると、コードに見出しが付きます。何を計算するのか、何を表示用に整えるのか、役割ごとに分けるのが基本です。</p>
             </article>
           </div>
         </div>
+        <div class="topic-deep-dive" aria-live="polite">
+          <p class="eyebrow">Click a Card</p>
+          <h3>カードを押すと、ここに深掘り解説が表示されます。</h3>
+          <p>メソッド(2)では、書けるだけでなく「なぜ分けるのか」まで見ます。static、スコープ、引数の違いを順番に押さえましょう。</p>
+        </div>
+      </section>
+
+      <section id="methodTwoQuestions" class="questions-section">
+        <div class="section-heading">
+          <p class="eyebrow">Method Output Practice</p>
+          <h2>メソッド(2)の穴埋め問題10問</h2>
+          <p>static、スコープ、オーバーロード、処理分割を初級問題で確認します。コードの役割を読み分ける力を鍛えます。</p>
+        </div>
+        <div id="methodTwoQuestionList" class="question-list"></div>
       </section>
     </main>
 

@@ -88,9 +88,9 @@
                 <small>3 Lessons</small>
               </button>
               <div class="lesson-links">
-                <a href="methods-1.html" class="active" data-lesson-link="methods-1"><span>01</span><b>メソッド(1)</b><small>Guide</small></a>
-                <a href="methods-2.html" data-lesson-link="methods-2"><span>02</span><b>メソッド(2)</b><small>Guide</small></a>
-                <a href="classes.html" data-lesson-link="classes"><span>03</span><b>クラス</b><small>Guide</small></a>
+                <a href="methods-1.html" class="active" data-lesson-link="methods-1"><span>01</span><b>メソッド(1)</b><small class="lesson-check">0/10</small></a>
+                <a href="methods-2.html" data-lesson-link="methods-2"><span>02</span><b>メソッド(2)</b><small class="lesson-check">0/10</small></a>
+                <a href="classes.html" data-lesson-link="classes"><span>03</span><b>クラス</b><small class="lesson-check">0/10</small></a>
               </div>
             </section>
             <section class="lesson-group" data-lesson-group="oop-basic">
@@ -134,28 +134,42 @@
 }</code></pre>
           </div>
           <div class="syntax-cards">
-            <article>
+            <article class="topic-card" data-topic="method-basic" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">method</span>
               <h3>メソッドは、処理のまとまり</h3>
               <p><span class="term">greet</span> や <span class="term">add</span> のように、処理に名前を付けます。同じ処理を何度も書かず、呼び出して使えるようになります。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="method-parameter" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">parameter</span>
               <h3>引数は、外から渡す材料</h3>
               <p><span class="term">String name</span> や <span class="term">int a</span> は、メソッドの中で使う材料です。呼び出す側が値を渡します。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="method-return" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">return</span>
               <h3>戻り値は、呼び出し元へ返す結果</h3>
               <p><span class="term">return a + b;</span> は、計算した値をメソッドの外へ返します。返した値は変数に入れたり、表示したりできます。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="method-void" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">void</span>
               <h3>voidは、値を返さないという意味</h3>
               <p><span class="term">static void greet</span> は、表示などの処理はするけれど、結果の値は返さないメソッドです。</p>
             </article>
           </div>
         </div>
+        <div class="topic-deep-dive" aria-live="polite">
+          <p class="eyebrow">Click a Card</p>
+          <h3>カードを押すと、ここに深掘り解説が表示されます。</h3>
+          <p>メソッドは、Javaのコードを読みやすく分けるための最初の大きな道具です。気になるカードから開いて、呼び出す側と作る側の関係を確認しましょう。</p>
+        </div>
+      </section>
+
+      <section id="methodOneQuestions" class="questions-section">
+        <div class="section-heading">
+          <p class="eyebrow">Method Output Practice</p>
+          <h2>メソッド(1)の穴埋め問題10問</h2>
+          <p>引数、戻り値、voidを初級問題で確認します。まずは「呼ぶ」「受け取る」「返す」を手で書けるようにしましょう。</p>
+        </div>
+        <div id="methodOneQuestionList" class="question-list"></div>
       </section>
     </main>
 

@@ -317,6 +317,9 @@ const list = document.querySelector("#questionList");
 const arrayList = document.querySelector("#arrayQuestionList");
 const conditionalList = document.querySelector("#conditionalQuestionList");
 const booleanList = document.querySelector("#booleanQuestionList");
+const methodOneList = document.querySelector("#methodOneQuestionList");
+const methodTwoList = document.querySelector("#methodTwoQuestionList");
+const classList = document.querySelector("#classQuestionList");
 const levelButtons = [...document.querySelectorAll(".difficulty-tab")];
 const questionsSection = document.querySelector("#questions");
 const unlockInput = document.querySelector(".unlock-input");
@@ -1209,6 +1212,55 @@ const prerequisiteCatalog = [
     description: "画面に値を表示する命令です。丸かっこの中に表示したいものを書きます。",
     defaultStatus: "理解済み",
     pitfall: "最終的に何を表示しているのかを見落とす"
+  },
+  {
+    label: "メソッド",
+    terms: ["static", "return", "void", "()"],
+    description: "処理に名前を付けて、必要な場所から呼び出せるようにしたまとまりです。",
+    defaultStatus: "初見注意",
+    pitfall: "メソッドを作る場所と呼び出す場所を混同する"
+  },
+  {
+    label: "引数",
+    terms: ["String name", "int a", "int b", "(int"],
+    description: "メソッドへ外から渡す材料です。定義側では型と名前をセットで書きます。",
+    defaultStatus: "復習推奨",
+    pitfall: "呼び出し側の値と、受け取る側の変数名を分けて読めない"
+  },
+  {
+    label: "戻り値",
+    terms: ["return"],
+    description: "メソッドが呼び出し元へ返す結果です。returnの右側が外へ渡されます。",
+    defaultStatus: "復習推奨",
+    pitfall: "returnした値をどこで使っているか追えない"
+  },
+  {
+    label: "void",
+    terms: ["void"],
+    description: "値を返さないメソッドであることを表します。表示だけする処理などで使います。",
+    defaultStatus: "復習推奨",
+    pitfall: "voidなのに戻り値があるように読んでしまう"
+  },
+  {
+    label: "static",
+    terms: ["static"],
+    description: "この練習では、mainから同じクラス内のメソッドを直接呼ぶための印として読みます。",
+    defaultStatus: "復習推奨",
+    pitfall: "mainから呼ぶ補助メソッドにstaticを付け忘れる"
+  },
+  {
+    label: "クラス",
+    terms: ["class ", "new "],
+    description: "Javaコードやデータのまとまりです。オブジェクトを作るための設計図としても使います。",
+    defaultStatus: "初見注意",
+    pitfall: "classの宣言と、newで作った実体を同じものとして読んでしまう"
+  },
+  {
+    label: "フィールド",
+    terms: [".name", ".score", ".price", ".count", ".title"],
+    description: "クラスやオブジェクトが持つ値です。ドットを使って読み書きします。",
+    defaultStatus: "復習推奨",
+    pitfall: "どのオブジェクトの値を読んでいるのか見失う"
   }
 ];
 
@@ -1216,14 +1268,18 @@ const lessonPrerequisiteLabels = {
   loops: ["変数", "int型", "比較演算子", "System.out.println"],
   arrays: ["変数", "配列", "index", "System.out.println"],
   conditionals: ["変数", "if文", "比較演算子", "System.out.println"],
-  booleans: ["boolean型", "比較演算子", "System.out.println"]
+  booleans: ["boolean型", "比較演算子", "System.out.println"],
+  methods: ["メソッド", "引数", "戻り値", "void", "static", "System.out.println"],
+  classes: ["クラス", "フィールド", "変数", "String型", "int型", "System.out.println"]
 };
 
 const prerequisitePriority = {
   loops: ["for文", "while文", "break", "continue", "比較演算子", "+=", "++", "--", "%", "変数", "int型", "System.out.println"],
   arrays: ["配列", "index", "length", "for文", "if文", "比較演算子", "+=", "++", "変数", "int型", "String型", "System.out.println"],
   conditionals: ["if文", "else", "比較演算子", "論理演算子", "boolean型", "変数", "int型", "System.out.println"],
-  booleans: ["boolean型", "比較演算子", "論理演算子", "if文", "変数", "System.out.println"]
+  booleans: ["boolean型", "比較演算子", "論理演算子", "if文", "変数", "System.out.println"],
+  methods: ["メソッド", "引数", "戻り値", "void", "static", "if文", "比較演算子", "変数", "int型", "String型", "System.out.println"],
+  classes: ["クラス", "フィールド", "変数", "String型", "int型", "System.out.println"]
 };
 
 function getProblemSource(problem) {
@@ -2831,11 +2887,162 @@ const topicDeepDives = {
   }
 };
 
+const classMethodTopicDeepDives = {
+  "method-basic": {
+    eyebrow: "method",
+    title: "メソッドは、処理に名前を付ける。",
+    body: ["メソッドは、何度も使う処理や意味を持つ処理をひとまとまりにしたものです。呼び出す側は greet(); のように名前を書くことで、その中の処理を実行します。", "大事なのは、メソッドを作る場所と呼ぶ場所を分けて見ることです。mainの中に呼び出し、mainの外に定義。この位置関係をまず押さえましょう。"],
+    checks: ["呼び出しは 名前(); の形。", "定義は main の外に置く。", "処理の意味が名前に出る。"],
+    code: "static void greet() {\n  System.out.println(\"Hello\");\n}\n\ngreet();"
+  },
+  "method-parameter": {
+    eyebrow: "parameter",
+    title: "引数は、メソッドへ渡す材料。",
+    body: ["String name のように書くと、メソッドは外から文字列を受け取れます。呼び出す側の greet(\"Aoi\") と、受け取る側の String name を対応させて読みます。", "値そのものと変数名は違います。\"Aoi\" が渡され、メソッド内では name という名前で使える。この変換を落ち着いて追いましょう。"],
+    checks: ["定義側は 型 + 名前。", "呼び出し側は実際の値。", "順番が対応する。"],
+    code: "static void greet(String name) {\n  System.out.println(name);\n}"
+  },
+  "method-return": {
+    eyebrow: "return",
+    title: "戻り値は、外へ返す結果。",
+    body: ["return a + b; は、計算結果を呼び出し元へ返します。返ってきた値は、変数に入れたり println に直接入れたりできます。", "戻り値の型にも注目です。static int add と書いたなら、returnする結果もintとして扱える値である必要があります。"],
+    checks: ["returnで外へ返す。", "戻り値の型と結果を合わせる。", "呼び出し式は値として使える。"],
+    code: "static int add(int a, int b) {\n  return a + b;\n}"
+  },
+  "method-void": {
+    eyebrow: "void",
+    title: "voidは、値を返さないという宣言。",
+    body: ["voidメソッドは、表示する、更新する、処理を実行するなど、結果の値を外へ返さないときに使います。", "returnで値を返すメソッドと混ぜないこと。System.out.printlnをしているからといって、値を返しているわけではありません。"],
+    checks: ["voidは戻り値なし。", "表示とreturnは別。", "呼び出しだけで処理が動く。"],
+    code: "static void show(String text) {\n  System.out.println(text);\n}"
+  },
+  "method-static": {
+    eyebrow: "static",
+    title: "staticは、mainから直接呼ぶための印。",
+    body: ["このサイトの初級問題では、mainも補助メソッドも同じクラスの中に置きます。そのとき補助メソッドにstaticを付けると、mainから直接呼べます。", "今は深追いしすぎなくて大丈夫です。まずは static void show、static int add のように、mainから呼ぶ補助メソッドに付いている印として見ましょう。"],
+    checks: ["mainはstatic。", "同じクラス内の補助メソッドにもstatic。", "まずは呼び出せる形を覚える。"],
+    code: "public static void main(String[] args) {\n  show();\n}\nstatic void show() { }"
+  },
+  "method-scope": {
+    eyebrow: "scope",
+    title: "変数は、宣言した場所の中で使う。",
+    body: ["メソッドの中で作った変数は、基本的にそのメソッドの外から直接使えません。必要ならreturnで返すか、引数として渡します。", "どこで宣言された変数か。これを見落とすと、突然その名前が使えなくなったように見えます。コードを読むときは波かっこの範囲まで見ましょう。"],
+    checks: ["変数は使える範囲がある。", "メソッドをまたぐならreturnや引数。", "波かっこを見て範囲を読む。"],
+    code: "static int total(int a, int b) {\n  int sum = a + b;\n  return sum;\n}"
+  },
+  "method-overload": {
+    eyebrow: "overload",
+    title: "同じ名前でも、引数が違えば見分けられる。",
+    body: ["Javaでは、同じ名前のメソッドを複数作れる場合があります。どれが呼ばれるかは、引数の数や型で決まります。", "add(3, 4) なら引数2つのadd。add(1, 2, 3) なら引数3つのadd。名前だけで判断せず、丸かっこの中まで見ましょう。"],
+    checks: ["名前だけで決めない。", "引数の数を見る。", "型の違いも見る。"],
+    code: "static int add(int a, int b) { return a + b; }\nstatic int add(int a, int b, int c) { return a + b + c; }"
+  },
+  "method-design": {
+    eyebrow: "design",
+    title: "メソッド分割は、コードに見出しを付ける。",
+    body: ["計算する、判定する、表示する。この役割を分けると、コードを読む人は迷いにくくなります。", "短ければ何でも分ければよいわけではありません。処理に名前を付けたとき、意味がはっきりするならメソッド化の価値があります。"],
+    checks: ["1つのメソッドに1つの役割。", "名前だけで目的が見える。", "計算と表示を分ける。"],
+    code: "int result = total(100, 3);\nshow(result);"
+  },
+  "class-basic": {
+    eyebrow: "class",
+    title: "クラスは、Javaの大きな箱。",
+    body: ["Javaでは、処理やデータをクラスの中に置きます。class Student のように書くと、Studentというまとまりを定義できます。", "クラスはただの飾りではありません。今後、データと処理をまとめる中心になります。まずは class の名前と波かっこの範囲を確実に見ましょう。"],
+    checks: ["classの後ろが名前。", "中身は波かっこの中。", "Javaコードの基本単位。"],
+    code: "class Student {\n  String name;\n  int score;\n}"
+  },
+  "class-field": {
+    eyebrow: "field",
+    title: "フィールドは、オブジェクトが持つ値。",
+    body: ["String name や int score のようにクラスの中に置いた値をフィールドとして扱います。Studentなら名前や点数を持てる、という設計になります。", "フィールドは変数に似ていますが、オブジェクトに属しています。s.name のように、誰のnameなのかを左側で指定します。"],
+    checks: ["クラスの中に置く値。", "型と名前を書く。", "誰の値かをドットの左で見る。"],
+    code: "class Student {\n  String name;\n  int score;\n}"
+  },
+  "class-object": {
+    eyebrow: "object",
+    title: "newで、クラスから実体を作る。",
+    body: ["class Student は設計図です。new Student() と書くことで、実際に値を入れられるStudentを作ります。", "同じクラスから作っても、オブジェクトごとに値は別です。a.name と b.name は別々に管理できます。"],
+    checks: ["newで実体を作る。", "変数に入れて使う。", "複数作ると値は別々。"],
+    code: "Student s = new Student();\ns.name = \"Aoi\";"
+  },
+  "class-dot": {
+    eyebrow: "dot",
+    title: "ドットは、中身へ進む記号。",
+    body: ["student.score は、studentが持つscoreを指します。左側が対象、右側が中身の名前です。", "ドットの左を読み飛ばすと、誰の値なのか分からなくなります。複数のオブジェクトが出る問題ほど、左側を丁寧に見ましょう。"],
+    checks: ["左側が対象。", "右側がフィールド名。", "読み書きどちらにも使う。"],
+    code: "student.score = 90;\nSystem.out.println(student.score);"
+  }
+};
+
+Object.assign(topicDeepDives, classMethodTopicDeepDives);
+
+function fillAnswer(parts) {
+  return parts.map((part) => typeof part === "string" ? part : part.answer).join("");
+}
+
+function makeClassMethodQuestion(question) {
+  return { ...question, answer: question.answer || fillAnswer(question.parts) };
+}
+
+const methodOneQuestions = [
+  makeClassMethodQuestion({ title: "あいさつメソッドを呼ぶ", concept: "method / call", prompt: "greetメソッドを呼び出してHelloを表示します。", output: "Hello", explanation: "voidメソッドは、名前と丸かっこで呼び出します。", parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "greet()", chars: 8 }, ";\n  }\n\n  static void greet() {\n    System.out.println(\"Hello\");\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "名前を受け取って表示する", concept: "parameter", prompt: "nameを受け取るgreetメソッドを作り、Aoiにあいさつします。", output: "Hello Aoi", explanation: "引数は外から渡される材料です。String nameとして受け取ります。", parts: ["class Main {\n  public static void main(String[] args) {\n    greet(\"Aoi\");\n  }\n\n  static void greet(", { answer: "String name", chars: 12 }, ") {\n    System.out.println(\"Hello \" + ", { answer: "name", chars: 5 }, ");\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "2つの数を足して返す", concept: "return", prompt: "addメソッドで3+4の結果を返して表示します。", output: "7", explanation: "戻り値があるメソッドは、returnで結果を返します。", parts: ["class Main {\n  public static void main(String[] args) {\n    int result = add(3, 4);\n    System.out.println(result);\n  }\n\n  static int add(int a, int b) {\n    ", { answer: "return a + b", accepts: ["return a + b", "return a+b"], chars: 13 }, ";\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "点数を2倍にする", concept: "return", prompt: "doubleScoreメソッドでscoreを2倍にして返します。", output: "160", explanation: "受け取った値を計算して、returnで返します。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(doubleScore(80));\n  }\n\n  static int doubleScore(int score) {\n    return ", { answer: "score * 2", accepts: ["score * 2", "score*2"], chars: 10 }, ";\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "合格かどうかを返す", concept: "boolean return", prompt: "isPassメソッドでscoreが80以上かを返します。", output: "true", explanation: "booleanを返すメソッドでは、条件式をそのままreturnできます。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(isPass(82));\n  }\n\n  static boolean isPass(int score) {\n    return ", { answer: "score >= 80", accepts: ["score >= 80", "score>=80"], chars: 12 }, ";\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "文字列を返す", concept: "String return", prompt: "labelメソッドでscoreに点を付けて返します。", output: "90点", explanation: "Stringを返すメソッドでは、returnの右側もStringになるようにします。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(label(90));\n  }\n\n  static String label(int score) {\n    return ", { answer: "score + \"点\"", accepts: ["score + \"点\"", "score+\"点\""], chars: 12 }, ";\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "表示だけを担当する", concept: "void", prompt: "showメソッドで受け取った値を表示します。", output: "Java", explanation: "表示だけなら戻り値は不要なのでvoidにします。", parts: ["class Main {\n  public static void main(String[] args) {\n    show(\"Java\");\n  }\n\n  static ", { answer: "void", chars: 5 }, " show(String text) {\n    System.out.println(text);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "計算結果を直接表示する", concept: "method value", prompt: "multiplyメソッドの戻り値をprintlnに直接入れます。", output: "12", explanation: "戻り値があるメソッド呼び出しは、値として扱えます。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(", { answer: "multiply(3, 4)", accepts: ["multiply(3, 4)", "multiply(3,4)"], chars: 16 }, ");\n  }\n\n  static int multiply(int a, int b) {\n    return a * b;\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "引数を2つ使う", concept: "parameters", prompt: "fullNameメソッドで姓と名をつなげます。", output: "Aoi Sato", explanation: "引数が複数あるときは、定義側と呼び出し側の順番を合わせます。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(fullName(\"Aoi\", \"Sato\"));\n  }\n\n  static String fullName(String first, String last) {\n    return ", { answer: "first + \" \" + last", accepts: ["first + \" \" + last", "first+\" \"+last"], chars: 20 }, ";\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "結果を変数に入れる", concept: "return value", prompt: "squareの戻り値をnumに入れて表示します。", output: "25", explanation: "returnされた値は、普通の値と同じように変数へ代入できます。", parts: ["class Main {\n  public static void main(String[] args) {\n    int num = ", { answer: "square(5)", chars: 10 }, ";\n    System.out.println(num);\n  }\n\n  static int square(int n) {\n    return n * n;\n  }\n}"] })
+];
+
+const methodTwoQuestions = [
+  makeClassMethodQuestion({ title: "staticメソッドを呼ぶ", concept: "static", prompt: "mainから同じクラス内のshowTitleを呼びます。", output: "Menu", explanation: "mainから直接呼ぶ補助メソッドにはstaticを付けます。", parts: ["class Main {\n  public static void main(String[] args) {\n    showTitle();\n  }\n\n  ", { answer: "static", chars: 7 }, " void showTitle() {\n    System.out.println(\"Menu\");\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "メソッド内の変数を返す", concept: "scope", prompt: "totalメソッド内で作ったsumをreturnします。", output: "15", explanation: "メソッド内の変数は外で直接使わず、returnで返します。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(total(10, 5));\n  }\n\n  static int total(int a, int b) {\n    int sum = a + b;\n    ", { answer: "return sum", chars: 11 }, ";\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "判定メソッドをifで使う", concept: "boolean method", prompt: "isEvenの結果をif文で使います。", output: "even", explanation: "booleanを返すメソッドは、ifの条件式として使えます。", parts: ["class Main {\n  public static void main(String[] args) {\n    if (", { answer: "isEven(4)", chars: 10 }, ") {\n      System.out.println(\"even\");\n    }\n  }\n\n  static boolean isEven(int n) {\n    return n % 2 == 0;\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "表示用メソッドを分ける", concept: "design", prompt: "計算と表示を分け、showに結果を渡します。", output: "8", explanation: "役割を分けると、読む順番が明確になります。", parts: ["class Main {\n  public static void main(String[] args) {\n    int result = add(3, 5);\n    ", { answer: "show(result)", chars: 13 }, ";\n  }\n\n  static int add(int a, int b) { return a + b; }\n  static void show(int value) { System.out.println(value); }\n}"] }),
+  makeClassMethodQuestion({ title: "オーバーロードを読む", concept: "overload", prompt: "引数が2つのaddが呼ばれます。", output: "7", explanation: "同じ名前でも、引数の数で呼ばれるメソッドが決まります。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(add(3, 4));\n  }\n\n  static int add(int a, int b) { return ", { answer: "a + b", accepts: ["a + b", "a+b"], chars: 7 }, "; }\n  static int add(int a, int b, int c) { return a + b + c; }\n}"] }),
+  makeClassMethodQuestion({ title: "早めにreturnする", concept: "return / if", prompt: "0ならzeroを返し、それ以外ならnumを返します。", output: "zero", explanation: "returnが実行されると、そのメソッドはそこで終了します。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(label(0));\n  }\n\n  static String label(int n) {\n    if (n == 0) {\n      ", { answer: "return \"zero\"", chars: 15 }, ";\n    }\n    return \"num\";\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "配列をメソッドへ渡す", concept: "array parameter", prompt: "sumメソッドに配列を渡して合計を返します。", output: "6", explanation: "配列も引数として渡せます。メソッド内でループして処理します。", parts: ["class Main {\n  public static void main(String[] args) {\n    int[] nums = {1, 2, 3};\n    System.out.println(sum(nums));\n  }\n\n  static int sum(int[] nums) {\n    int total = 0;\n    for (int i = 0; i < nums.length; i++) {\n      total += ", { answer: "nums[i]", chars: 8 }, ";\n    }\n    return total;\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "文字を整形して返す", concept: "String method", prompt: "formatメソッドで名前にさんを付けます。", output: "Renさん", explanation: "表示用の文字列を作る処理もメソッドにできます。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(format(\"Ren\"));\n  }\n\n  static String format(String name) {\n    return ", { answer: "name + \"さん\"", accepts: ["name + \"さん\"", "name+\"さん\""], chars: 14 }, ";\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "税込価格を返す", concept: "calculation", prompt: "taxInメソッドでpriceに10%を足します。", output: "1100", explanation: "計算の意味がある処理は、名前を付けると読みやすくなります。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(taxIn(1000));\n  }\n\n  static int taxIn(int price) {\n    return ", { answer: "price + price / 10", accepts: ["price + price / 10", "price+price/10"], chars: 19 }, ";\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "メソッドを組み合わせる", concept: "compose", prompt: "doubleNumの結果をlabelに渡して表示します。", output: "value: 10", explanation: "メソッドの戻り値は、別のメソッドの引数にもできます。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(label(", { answer: "doubleNum(5)", chars: 13 }, "));\n  }\n\n  static int doubleNum(int n) { return n * 2; }\n  static String label(int n) { return \"value: \" + n; }\n}"] })
+];
+
+const classQuestions = [
+  makeClassMethodQuestion({ title: "Studentクラスを作る", concept: "class / field", prompt: "Studentクラスにnameフィールドを作ります。", output: "Aoi", explanation: "クラスの中にフィールドを書くと、オブジェクトがその値を持てます。", parts: ["class Main {\n  public static void main(String[] args) {\n    Student s = new Student();\n    s.name = \"Aoi\";\n    System.out.println(s.name);\n  }\n}\n\nclass Student {\n  ", { answer: "String name", chars: 12 }, ";\n}"] }),
+  makeClassMethodQuestion({ title: "intフィールドを持たせる", concept: "field", prompt: "Studentにscoreフィールドを作って表示します。", output: "90", explanation: "整数を持たせたいときはint型のフィールドを用意します。", parts: ["class Main {\n  public static void main(String[] args) {\n    Student s = new Student();\n    s.score = 90;\n    System.out.println(s.score);\n  }\n}\n\nclass Student {\n  ", { answer: "int score", chars: 10 }, ";\n}"] }),
+  makeClassMethodQuestion({ title: "newで実体を作る", concept: "object", prompt: "Studentクラスからオブジェクトを作ります。", output: "Ren", explanation: "new Student()でStudentの実体を作り、変数sに入れます。", parts: ["class Main {\n  public static void main(String[] args) {\n    Student s = ", { answer: "new Student()", chars: 14 }, ";\n    s.name = \"Ren\";\n    System.out.println(s.name);\n  }\n}\n\nclass Student { String name; }"] }),
+  makeClassMethodQuestion({ title: "ドットで値を入れる", concept: "dot", prompt: "book.titleにJavaを入れて表示します。", output: "Java", explanation: "オブジェクトのフィールドには、ドットを使ってアクセスします。", parts: ["class Main {\n  public static void main(String[] args) {\n    Book book = new Book();\n    ", { answer: "book.title", chars: 11 }, " = \"Java\";\n    System.out.println(book.title);\n  }\n}\n\nclass Book { String title; }"] }),
+  makeClassMethodQuestion({ title: "2つのフィールドを表示する", concept: "fields", prompt: "nameとscoreをつなげて表示します。", output: "Aoi:90", explanation: "1つのオブジェクトが複数のフィールドを持てます。", parts: ["class Main {\n  public static void main(String[] args) {\n    Student s = new Student();\n    s.name = \"Aoi\";\n    s.score = 90;\n    System.out.println(", { answer: "s.name + \":\" + s.score", accepts: ["s.name + \":\" + s.score", "s.name+\":\"+s.score"], chars: 24 }, ");\n  }\n}\n\nclass Student { String name; int score; }"] }),
+  makeClassMethodQuestion({ title: "別々のオブジェクトを作る", concept: "objects", prompt: "2人分のStudentを作り、別々のnameを表示します。", output: "Aoi\nRen", explanation: "同じクラスから作っても、オブジェクトごとに別の値を持てます。", parts: ["class Main {\n  public static void main(String[] args) {\n    Student a = new Student();\n    Student b = new Student();\n    a.name = \"Aoi\";\n    b.name = \"Ren\";\n    System.out.println(a.name);\n    System.out.println(", { answer: "b.name", chars: 7 }, ");\n  }\n}\n\nclass Student { String name; }"] }),
+  makeClassMethodQuestion({ title: "クラス名を書く", concept: "declaration", prompt: "Itemクラスを宣言します。", output: "100", explanation: "classの後ろにクラス名を書き、波かっこの中にフィールドを置きます。", parts: ["class Main {\n  public static void main(String[] args) {\n    Item item = new Item();\n    item.price = 100;\n    System.out.println(item.price);\n  }\n}\n\nclass ", { answer: "Item", chars: 5 }, " { int price; }"] }),
+  makeClassMethodQuestion({ title: "フィールドの値を更新する", concept: "update", prompt: "priceをあとから150に更新します。", output: "150", explanation: "フィールドも変数のようにあとから値を入れ替えられます。", parts: ["class Main {\n  public static void main(String[] args) {\n    Item item = new Item();\n    item.price = 100;\n    ", { answer: "item.price", chars: 11 }, " = 150;\n    System.out.println(item.price);\n  }\n}\n\nclass Item { int price; }"] }),
+  makeClassMethodQuestion({ title: "オブジェクトをメソッドへ渡す", concept: "object parameter", prompt: "showメソッドにStudentを渡してnameを表示します。", output: "Mio", explanation: "オブジェクトも引数として渡せます。メソッド内でフィールドを読めます。", parts: ["class Main {\n  public static void main(String[] args) {\n    Student s = new Student();\n    s.name = \"Mio\";\n    show(s);\n  }\n\n  static void show(Student s) {\n    System.out.println(", { answer: "s.name", chars: 7 }, ");\n  }\n}\n\nclass Student { String name; }"] }),
+  makeClassMethodQuestion({ title: "フィールドで計算する", concept: "calculation", prompt: "item.priceとitem.countを使って合計を表示します。", output: "600", explanation: "複数のフィールドを使って計算できます。", parts: ["class Main {\n  public static void main(String[] args) {\n    Item item = new Item();\n    item.price = 200;\n    item.count = 3;\n    System.out.println(", { answer: "item.price * item.count", accepts: ["item.price * item.count", "item.price*item.count"], chars: 25 }, ");\n  }\n}\n\nclass Item { int price; int count; }"] })
+];
+
+[methodOneQuestions, methodTwoQuestions].forEach((set) => {
+  set.forEach((question) => {
+    Object.assign(question, buildPrerequisiteSupport(question, "methods", "beginner"));
+    question.hints = buildTraceaHints(question, question.parts);
+  });
+});
+
+classQuestions.forEach((question) => {
+  Object.assign(question, buildPrerequisiteSupport(question, "classes", "beginner"));
+  question.hints = buildTraceaHints(question, question.parts);
+});
+
 const lessonMeta = [
   { id: "loops", total: questions.length * 2 },
   { id: "arrays", total: arrayQuestions.length * 2 },
   { id: "conditionals", total: conditionalQuestions.length },
-  { id: "booleans", total: booleanQuestions.length }
+  { id: "booleans", total: booleanQuestions.length },
+  { id: "methods-1", total: methodOneQuestions.length },
+  { id: "methods-2", total: methodTwoQuestions.length },
+  { id: "classes", total: classQuestions.length }
 ];
 
 const progressPrefix = "java-output-practice-progress";
@@ -3904,6 +4111,80 @@ function renderBooleanQuestions() {
   });
 }
 
+function renderClassMethodQuestions(targetList, targetQuestions, options) {
+  if (!targetList) return;
+
+  targetList.textContent = "";
+
+  targetQuestions.forEach((question, index) => {
+    const card = document.createElement("article");
+    const completed = isQuestionComplete(options.lessonId, index);
+    card.className = `question-card${completed ? " completed" : ""}`;
+    card.dataset.lesson = options.lessonId;
+    card.dataset.level = "beginner";
+    card.dataset.questionIndex = String(index);
+
+    card.innerHTML = `
+      <div class="question-top">
+        <div class="question-number">${options.numberPrefix}${index + 1}</div>
+        <div class="question-copy">
+          <div class="question-title-line">
+            <h3>${question.title}</h3>
+            <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
+          </div>
+          <div class="prerequisite-slot"></div>
+          <div class="tracea-prompt"></div>
+        </div>
+      </div>
+      <div class="question-body">
+        <div class="code-panel">
+          <div class="panel-title">
+            <span>${options.panelLabel}</span>
+            <span class="concept">${question.concept} / 初級</span>
+          </div>
+        </div>
+        <div class="side-panel">
+          <div class="output-box">
+            <h4>目標の出力</h4>
+            <pre></pre>
+          </div>
+          <div class="explain-box">
+            <h4>考え方</h4>
+            <p></p>
+          </div>
+          <div class="button-row">
+            <button class="action-button primary" type="button" data-action="check">入力をチェック</button>
+            <button class="action-button secondary tracea-ask" type="button" data-action="tracea" aria-expanded="false">Traceaに聞く</button>
+            <button class="action-button secondary" type="button" data-action="tracea-reset" disabled>ヒントをリセット</button>
+            <button class="action-button secondary" type="button" data-action="answer" aria-expanded="false">解答を表示</button>
+            <button class="action-button secondary" type="button" data-action="reset">リセット</button>
+          </div>
+          <p class="feedback" aria-live="polite"></p>
+          <div class="tracea-panel">
+            <h4>Tracea</h4>
+            <p class="tracea-status" aria-live="polite">Traceaは、答えではなく見る場所を示します。</p>
+            <ol class="tracea-notes" aria-live="polite"></ol>
+          </div>
+          <div class="answer-box">
+            <h4>解答例</h4>
+            <pre></pre>
+          </div>
+        </div>
+      </div>
+    `;
+
+    card.dataset.traceaStep = "0";
+    card.querySelector(".prerequisite-slot").appendChild(renderPrerequisitePanel(question));
+    card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(question.prompt, question.hints));
+    card.querySelector(".code-panel").appendChild(renderCode(question.parts, index, question.hints));
+    card.querySelector(".output-box pre").textContent = question.output;
+    card.querySelector(".explain-box p").textContent = question.explanation;
+    card.querySelector(".answer-box pre").textContent = question.answer;
+    updateTraceaState(card);
+    targetList.appendChild(card);
+  });
+}
+
 function renderTopicDeepDive(panel, topicKey) {
   if (!panel || !topicDeepDives[topicKey]) return;
 
@@ -3970,6 +4251,21 @@ renderQuestions();
 renderArrayQuestions();
 renderConditionalQuestions();
 renderBooleanQuestions();
+renderClassMethodQuestions(methodOneList, methodOneQuestions, {
+  lessonId: "methods-1",
+  numberPrefix: "M1-",
+  panelLabel: "メソッドコード"
+});
+renderClassMethodQuestions(methodTwoList, methodTwoQuestions, {
+  lessonId: "methods-2",
+  numberPrefix: "M2-",
+  panelLabel: "メソッドコード"
+});
+renderClassMethodQuestions(classList, classQuestions, {
+  lessonId: "classes",
+  numberPrefix: "C-",
+  panelLabel: "クラスコード"
+});
 ensureUserSummary();
 updateLessonProgress();
 notifyLearningStatus();
@@ -4098,6 +4394,24 @@ if (conditionalList) {
 
 if (booleanList) {
   booleanList.addEventListener("click", (event) => {
+    handleQuestionAction(event);
+  });
+}
+
+if (methodOneList) {
+  methodOneList.addEventListener("click", (event) => {
+    handleQuestionAction(event);
+  });
+}
+
+if (methodTwoList) {
+  methodTwoList.addEventListener("click", (event) => {
+    handleQuestionAction(event);
+  });
+}
+
+if (classList) {
+  classList.addEventListener("click", (event) => {
     handleQuestionAction(event);
   });
 }

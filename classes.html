@@ -88,9 +88,9 @@
                 <small>3 Lessons</small>
               </button>
               <div class="lesson-links">
-                <a href="methods-1.html" data-lesson-link="methods-1"><span>01</span><b>メソッド(1)</b><small>Guide</small></a>
-                <a href="methods-2.html" data-lesson-link="methods-2"><span>02</span><b>メソッド(2)</b><small>Guide</small></a>
-                <a href="classes.html" class="active" data-lesson-link="classes"><span>03</span><b>クラス</b><small>Guide</small></a>
+                <a href="methods-1.html" data-lesson-link="methods-1"><span>01</span><b>メソッド(1)</b><small class="lesson-check">0/10</small></a>
+                <a href="methods-2.html" data-lesson-link="methods-2"><span>02</span><b>メソッド(2)</b><small class="lesson-check">0/10</small></a>
+                <a href="classes.html" class="active" data-lesson-link="classes"><span>03</span><b>クラス</b><small class="lesson-check">0/10</small></a>
               </div>
             </section>
             <section class="lesson-group" data-lesson-group="oop-basic">
@@ -131,28 +131,42 @@ class Student {
 }</code></pre>
           </div>
           <div class="syntax-cards">
-            <article>
+            <article class="topic-card" data-topic="class-basic" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">class</span>
               <h3>クラスは、名前を持つ大きなまとまり</h3>
               <p><span class="term">class Student</span> は、Studentという種類のデータや処理をまとめる場所です。Javaでは、処理だけが浮いて存在するのではなく、基本的にクラスの中に置かれます。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="class-field" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">field</span>
               <h3>フィールドは、クラスが持つ情報</h3>
               <p><span class="term">String name</span> や <span class="term">int score</span> は、Studentが持つ値です。あとでオブジェクトを作ると、それぞれのStudentが自分の値を持てます。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="class-object" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">object</span>
               <h3>newで、クラスから実体を作る</h3>
               <p><span class="term">new Student()</span> は、Studentクラスをもとに実際に使えるものを作る書き方です。設計図と実物を分けて考える入口です。</p>
             </article>
-            <article>
+            <article class="topic-card" data-topic="class-dot" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">dot</span>
               <h3>ドットで中身にアクセスする</h3>
               <p><span class="term">student.name</span> は、studentという実体のnameを見る、または変更する書き方です。どの実体の値なのかを左側で指定します。</p>
             </article>
           </div>
         </div>
+        <div class="topic-deep-dive" aria-live="polite">
+          <p class="eyebrow">Click a Card</p>
+          <h3>カードを押すと、ここに深掘り解説が表示されます。</h3>
+          <p>クラスでは、設計図と実体、フィールドとドットアクセスの区別が土台になります。カードを押して、コードのどこを見ればよいか確認しましょう。</p>
+        </div>
+      </section>
+
+      <section id="classQuestions" class="questions-section">
+        <div class="section-heading">
+          <p class="eyebrow">Class Output Practice</p>
+          <h2>クラスの穴埋め問題10問</h2>
+          <p>class、フィールド、new、ドットアクセスを初級問題で確認します。オブジェクト指向へ入る前の足場を固めましょう。</p>
+        </div>
+        <div id="classQuestionList" class="question-list"></div>
       </section>
     </main>
 
