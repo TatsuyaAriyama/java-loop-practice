@@ -48,6 +48,9 @@ const signOutButton = document.querySelector("#signOutButton");
 const authMessage = document.querySelector("#authMessage");
 let tracePresenceRef = null;
 let unsubscribeTraceUsers = null;
+let unsubscribeRegisteredUsers = null;
+let tracePresenceUsers = [];
+let registeredTraceUsers = [];
 let latestLearningStatus = "Java学習中";
 const profileNameKey = "java-output-practice-auth-name";
 const profileDisplayNameKey = "java-output-practice-auth-display-name";
@@ -108,6 +111,7 @@ function dispatchTraceUsers(users) {
 function serializeTraceUser(docSnap) {
   const data = docSnap.data();
   return {
+    uid: docSnap.id,
     userName: data.userName || "@Learner",
     displayName: data.displayName || "Learner",
     avatar: data.avatar || getAvatarLetter(data.displayName),
@@ -118,23 +122,108 @@ function serializeTraceUser(docSnap) {
   };
 }
 
+function serializeRegisteredUser(docSnap) {
+  const data = docSnap.data();
+  const displayName = data.displayName || data.email || "Learner";
+
+  return {
+    uid: docSnap.id,
+    userName: data.userName || `@${String(displayName).replace(/\s+/g, "") || "Learner"}`,
+    displayName,
+    avatar: data.avatar || getAvatarLetter(displayName),
+    role: "Learner",
+    status: data.status || "ログイン済み",
+    lastActive: data.lastSeenAt?.toDate?.()?.toISOString() || data.lastLoginAt?.toDate?.()?.toISOString() || null,
+    online: Boolean(data.online)
+  };
+}
+
+function mergeTraceUsers() {
+  const usersById = new Map();
+
+  registeredTraceUsers.forEach((user) => {
+    usersById.set(user.uid || user.userName, user);
+  });
+
+  tracePresenceUsers.forEach((user) => {
+    usersById.set(user.uid || user.userName, {
+      ...usersById.get(user.uid || user.userName),
+      ...user
+    });
+  });
+
+  return [...usersById.values()].sort((a, b) => {
+    if (a.online !== b.online) return a.online ? -1 : 1;
+    return new Date(b.lastActive || 0).getTime() - new Date(a.lastActive || 0).getTime();
+  });
+}
+
+function dispatchMergedTraceUsers() {
+  dispatchTraceUsers(mergeTraceUsers());
+}
+
 function startTraceRoomSubscription() {
-  if (unsubscribeTraceUsers) return;
+  if (!unsubscribeTraceUsers) {
+    try {
+      const usersQuery = query(
+        collection(db, "traceRoomUsers"),
+        orderBy("lastActiveAt", "desc"),
+        limit(30)
+      );
+      unsubscribeTraceUsers = onSnapshot(usersQuery, (snapshot) => {
+        tracePresenceUsers = snapshot.docs.map(serializeTraceUser);
+        dispatchMergedTraceUsers();
+      }, () => {
+        tracePresenceUsers = [];
+        dispatchMergedTraceUsers();
+      });
+    } catch {
+      tracePresenceUsers = [];
+      dispatchMergedTraceUsers();
+    }
+  }
+
+  if (!unsubscribeRegisteredUsers) {
+    try {
+      const registeredUsersQuery = query(
+        collection(db, "javaPracticeUsers"),
+        orderBy("lastLoginAt", "desc"),
+        limit(100)
+      );
+      unsubscribeRegisteredUsers = onSnapshot(registeredUsersQuery, (snapshot) => {
+        registeredTraceUsers = snapshot.docs.map(serializeRegisteredUser);
+        dispatchMergedTraceUsers();
+      }, () => {
+        registeredTraceUsers = [];
+        dispatchMergedTraceUsers();
+      });
+    } catch {
+      registeredTraceUsers = [];
+      dispatchMergedTraceUsers();
+    }
+  }
+}
+
+async function saveRegisteredUser(user, overrides = {}) {
+  if (!user) return;
+
+  const displayName = getPublicName(user);
+  const avatar = getPublicAvatar(displayName);
 
   try {
-    const usersQuery = query(
-      collection(db, "traceRoomUsers"),
-      orderBy("lastActiveAt", "desc"),
-      limit(30)
-    );
-    unsubscribeTraceUsers = onSnapshot(usersQuery, (snapshot) => {
-      dispatchTraceUsers(snapshot.docs.map(serializeTraceUser));
-    }, () => {
-      dispatchTraceUsers([]);
-    });
-  } catch {
-    dispatchTraceUsers([]);
-  }
+    await setDoc(doc(db, "javaPracticeUsers", user.uid), {
+      userName: `@${displayName.replace(/\s+/g, "") || "Learner"}`,
+      displayName,
+      avatar,
+      email: user.email || "",
+      role: "Learner",
+      status: latestLearningStatus,
+      online: true,
+      lastLoginAt: serverTimestamp(),
+      lastSeenAt: serverTimestamp(),
+      ...overrides
+    }, { merge: true });
+  } catch {}
 }
 
 async function saveTracePresence(user, overrides = {}) {
@@ -195,6 +284,14 @@ window.addEventListener("java-practice-profile-updated", async (event) => {
     online: true,
     status: latestLearningStatus
   });
+  await saveRegisteredUser(user, {
+    userName: `@${displayName.replace(/\s+/g, "") || "Learner"}`,
+    displayName,
+    avatar,
+    online: true,
+    status: latestLearningStatus,
+    lastSeenAt: serverTimestamp()
+  });
 });
 
 document.addEventListener("visibilitychange", () => {
@@ -202,6 +299,13 @@ document.addEventListener("visibilitychange", () => {
     online: document.visibilityState === "visible",
     status: latestLearningStatus
   });
+  if (auth.currentUser) {
+    saveRegisteredUser(auth.currentUser, {
+      online: document.visibilityState === "visible",
+      status: latestLearningStatus,
+      lastSeenAt: serverTimestamp()
+    });
+  }
 });
 
 window.addEventListener("beforeunload", () => {
@@ -259,6 +363,13 @@ signOutButton.addEventListener("click", async () => {
     online: false,
     status: "ログアウト"
   });
+  if (auth.currentUser) {
+    await saveRegisteredUser(auth.currentUser, {
+      online: false,
+      status: "ログアウト",
+      lastSeenAt: serverTimestamp()
+    });
+  }
   await signOut(auth);
 });
 
@@ -280,11 +391,14 @@ onAuthStateChanged(auth, (user) => {
       localStorage.removeItem(profileDisplayNameKey);
       localStorage.removeItem(profileAvatarKey);
       tracePresenceRef = null;
-      dispatchTraceUsers([]);
+      tracePresenceUsers = [];
+      registeredTraceUsers = [];
+      dispatchMergedTraceUsers();
     }
   } catch {}
 
   if (signedIn) {
+    saveRegisteredUser(user);
     saveTracePresence(user);
     startTraceRoomSubscription();
   }

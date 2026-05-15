@@ -3361,17 +3361,13 @@ function normalizeTraceRoomUser(user) {
 }
 
 function getTraceRoomUsers() {
-  if (remoteTraceRoomUsers.length > 0) {
-    return remoteTraceRoomUsers.map(normalizeTraceRoomUser);
-  }
-
-  const users = [];
+  const localUsers = [];
 
   try {
     if (localStorage.getItem("java-output-practice-auth") === "signed-in") {
       const displayName = localStorage.getItem(profileDisplayNameKey) || currentDisplayName || "Learner";
       const avatar = localStorage.getItem(profileAvatarKey) || currentUserAvatar || getAvatarLetter(displayName);
-      users.push({
+      localUsers.push({
         userName: `@${displayName.replace(/\s+/g, "") || "Learner"}`,
         displayName,
         avatar,
@@ -3385,7 +3381,24 @@ function getTraceRoomUsers() {
     }
   } catch {}
 
-  return users;
+  if (remoteTraceRoomUsers.length > 0) {
+    const usersByName = new Map();
+
+    remoteTraceRoomUsers.map(normalizeTraceRoomUser).forEach((user) => {
+      usersByName.set(user.userName || user.displayName, user);
+    });
+
+    localUsers.forEach((user) => {
+      usersByName.set(user.userName || user.displayName, {
+        ...usersByName.get(user.userName || user.displayName),
+        ...user
+      });
+    });
+
+    return [...usersByName.values()];
+  }
+
+  return localUsers;
 }
 
 function getTraceRoomMembers() {
