@@ -522,10 +522,253 @@ const intermediateData = [
   }
 ];
 
+const traceaRules = [
+  {
+    targetText: "for (",
+    message: "forの中は、始まり・条件・変化の順に読みます。",
+    styleType: "highlight"
+  },
+  {
+    targetText: "while",
+    message: "条件がtrueの間だけ、ここから中へ進みます。",
+    styleType: "highlight"
+  },
+  {
+    targetText: "if",
+    message: "この分かれ道で、実行するかどうかが決まります。",
+    styleType: "circle"
+  },
+  {
+    targetText: "else",
+    message: "上の条件に当てはまらない側の出口です。",
+    styleType: "underline"
+  },
+  {
+    targetText: "i <=",
+    message: "この条件式は、どこまで続くかを表しています。",
+    styleType: "wavy"
+  },
+  {
+    targetText: "i < ",
+    message: "最後の番号を超えないための条件です。",
+    styleType: "wavy"
+  },
+  {
+    targetText: "count >=",
+    message: "カウントがどこで止まるかを見てみましょう。",
+    styleType: "wavy"
+  },
+  {
+    targetText: "sum",
+    message: "この変数は、途中経過を覚えておく箱です。",
+    styleType: "circle"
+  },
+  {
+    targetText: "break",
+    message: "ここは、繰り返しを完全に終える合図です。",
+    styleType: "underline"
+  },
+  {
+    targetText: "continue",
+    message: "この回だけ飛ばして、次の回へ進みます。",
+    styleType: "underline"
+  },
+  {
+    targetText: "String[] fruits",
+    message: "文字列をまとめた配列です。配列名にも注目しましょう。",
+    styleType: "highlight"
+  },
+  {
+    targetText: "String[] names",
+    message: "文字列をまとめた配列です。番号で1つずつ取り出します。",
+    styleType: "highlight"
+  },
+  {
+    targetText: "int[] scores",
+    message: "数値をまとめた配列です。何個あるかも意識しましょう。",
+    styleType: "highlight"
+  },
+  {
+    targetText: "int[] numbers",
+    message: "数値の並びです。1つずつ見る流れを作ります。",
+    styleType: "highlight"
+  },
+  {
+    targetText: "fruits",
+    message: "どの配列から取り出すのか、名前を確認しましょう。",
+    styleType: "circle"
+  },
+  {
+    targetText: "scores",
+    message: "この配列の中身を、番号で追っていきます。",
+    styleType: "circle"
+  },
+  {
+    targetText: "numbers",
+    message: "この配列を1つずつ見て、条件に通します。",
+    styleType: "circle"
+  },
+  {
+    targetText: "names",
+    message: "表示したい文字列は、この配列の中にあります。",
+    styleType: "circle"
+  },
+  {
+    targetText: "最初",
+    message: "最初という言葉が出たら、0番を思い出しましょう。",
+    styleType: "circle"
+  },
+  {
+    targetText: "最後",
+    message: "最後の番号は、lengthから1を引いて考えます。",
+    styleType: "circle"
+  },
+  {
+    targetText: "2番目",
+    message: "Javaの番号では、ここが1番になります。",
+    styleType: "circle"
+  },
+  {
+    targetText: "何個",
+    message: "個数を知りたいときはlengthを探します。",
+    styleType: "underline"
+  },
+  {
+    targetText: "個数",
+    message: "個数を知りたいときはlengthを探します。",
+    styleType: "underline"
+  },
+  {
+    targetText: "偶数",
+    message: "偶数かどうかは、2で割った余りを見ると判断できます。",
+    styleType: "wavy"
+  },
+  {
+    targetText: "[0]",
+    message: "配列の最初は1番ではなく0番です。",
+    styleType: "circle"
+  },
+  {
+    targetText: "[1]",
+    message: "人間の2番目は、Javaでは1番です。",
+    styleType: "circle"
+  },
+  {
+    targetText: "[i]",
+    message: "今の番号にある要素を取り出しています。",
+    styleType: "circle"
+  },
+  {
+    targetText: ".length",
+    message: "要素数を見る印です。最後の番号ではありません。",
+    styleType: "underline"
+  },
+  {
+    targetText: "% 2",
+    message: "2で割った余りを見ると、偶数か判断できます。",
+    styleType: "wavy"
+  },
+  {
+    targetText: "==",
+    message: "代入ではなく、同じかどうかの比較です。",
+    styleType: "circle"
+  },
+  {
+    targetText: "!=",
+    message: "等しくないかどうかを調べる記号です。",
+    styleType: "circle"
+  },
+  {
+    targetText: ">=",
+    message: "その値も含めて、以上と読みます。",
+    styleType: "wavy"
+  },
+  {
+    targetText: "<=",
+    message: "その値も含めて、以下と読みます。",
+    styleType: "wavy"
+  },
+  {
+    targetText: "&&",
+    message: "左右の条件が両方trueかを見ています。",
+    styleType: "circle"
+  },
+  {
+    targetText: "||",
+    message: "左右のどちらかがtrueなら通ります。",
+    styleType: "circle"
+  },
+  {
+    targetText: "!",
+    message: "trueとfalseを反転させる小さな印です。",
+    styleType: "underline"
+  },
+  {
+    targetText: "boolean",
+    message: "trueかfalseだけを持つ型です。",
+    styleType: "highlight"
+  },
+  {
+    targetText: "System.out.println",
+    message: "最後は、何を画面に出しているかを見ましょう。",
+    styleType: "underline"
+  }
+];
+
+const traceaStyleCycle = ["highlight", "underline", "circle", "wavy"];
+
+function getStaticCode(parts) {
+  return parts.filter((part) => typeof part === "string").join("");
+}
+
+function hasTraceaTarget(source, targetText) {
+  return targetText && source.includes(targetText);
+}
+
+function buildTraceaHints(question, parts) {
+  const source = `${question.title}\n${question.prompt}\n${getStaticCode(parts)}`;
+  const picked = [];
+  const seen = new Set();
+
+  traceaRules.forEach((rule) => {
+    const overlapsPickedTarget = picked.some((hint) => hint.targetText.includes(rule.targetText) || rule.targetText.includes(hint.targetText));
+    if (picked.length >= 3 || seen.has(rule.targetText) || overlapsPickedTarget || !hasTraceaTarget(source, rule.targetText)) return;
+    picked.push({ ...rule });
+    seen.add(rule.targetText);
+  });
+
+  const fallbackTargets = ["class Main", "public static void main", "System.out.println"];
+  let fallbackIndex = 0;
+  while (picked.length < 3 && fallbackIndex < fallbackTargets.length) {
+    const targetText = fallbackTargets[fallbackIndex];
+    fallbackIndex += 1;
+    if (picked.some((hint) => hint.targetText === targetText)) continue;
+    picked.push({
+      targetText,
+      message: "ここが何を決めているか、一度言葉にしてみましょう。",
+      styleType: traceaStyleCycle[picked.length % traceaStyleCycle.length]
+    });
+  }
+
+  picked[0] = {
+    ...picked[0],
+    message: "まず、ここに視線を置いてみましょう。流れの入口です。"
+  };
+
+  return picked.slice(0, 3).map((hint, index) => ({
+    targetText: hint.targetText,
+    message: hint.message,
+    styleType: traceaStyleCycle.includes(hint.styleType) ? hint.styleType : traceaStyleCycle[index % traceaStyleCycle.length]
+  }));
+}
+
 questions.forEach((question, index) => {
+  const beginnerHints = buildTraceaHints(question, question.parts);
+  const intermediateHints = buildTraceaHints(question, intermediateData[index].parts);
+  question.hints = beginnerHints;
   question.levels = {
-    beginner: { parts: question.parts, hints: question.hints },
-    intermediate: intermediateData[index]
+    beginner: { parts: question.parts, hints: beginnerHints },
+    intermediate: { ...intermediateData[index], hints: intermediateHints }
   };
 });
 
@@ -1363,6 +1606,18 @@ const booleanQuestions = [
   }
 ];
 
+arrayQuestions.forEach((question) => {
+  question.hints = buildTraceaHints(question, question.parts);
+});
+
+conditionalQuestions.forEach((question) => {
+  question.hints = buildTraceaHints(question, question.parts);
+});
+
+booleanQuestions.forEach((question) => {
+  question.hints = buildTraceaHints(question, question.parts);
+});
+
 const topicDeepDives = {
   array: {
     eyebrow: "array",
@@ -1857,6 +2112,51 @@ function textNode(value) {
   return document.createTextNode(value);
 }
 
+function createTraceaMark(hint, index) {
+  const mark = document.createElement("span");
+  mark.className = `tracea-mark tracea-${hint.styleType}`;
+  mark.dataset.traceaStep = String(index + 1);
+  mark.textContent = hint.targetText;
+
+  const bubble = document.createElement("span");
+  bubble.className = "tracea-bubble";
+  bubble.innerHTML = `<span class="tracea-name">Tracea</span>${hint.message}`;
+  mark.appendChild(bubble);
+
+  return mark;
+}
+
+function appendTraceableText(parent, value, hints, usedHints) {
+  let rest = value;
+
+  while (rest.length > 0) {
+    const found = hints
+      .map((hint, index) => ({ hint, index, position: usedHints.has(index) ? -1 : rest.indexOf(hint.targetText) }))
+      .filter((entry) => entry.position >= 0)
+      .sort((a, b) => a.position - b.position || a.index - b.index)[0];
+
+    if (!found) {
+      parent.appendChild(textNode(rest));
+      return;
+    }
+
+    if (found.position > 0) {
+      parent.appendChild(textNode(rest.slice(0, found.position)));
+    }
+
+    parent.appendChild(createTraceaMark(found.hint, found.index));
+    usedHints.add(found.index);
+    rest = rest.slice(found.position + found.hint.targetText.length);
+  }
+}
+
+function renderTraceableParagraph(text, hints) {
+  const paragraph = document.createElement("p");
+  const usedHints = new Set();
+  appendTraceableText(paragraph, text, hints, usedHints);
+  return paragraph;
+}
+
 function createInput(blank, questionIndex, blankIndex) {
   const input = document.createElement("input");
   input.className = "code-input";
@@ -1870,14 +2170,15 @@ function createInput(blank, questionIndex, blankIndex) {
   return input;
 }
 
-function renderCode(parts, questionIndex) {
+function renderCode(parts, questionIndex, hints = []) {
   const code = document.createElement("pre");
   code.className = "code-box";
   let blankIndex = 0;
+  const usedHints = new Set();
 
   parts.forEach((part) => {
     if (typeof part === "string") {
-      code.appendChild(textNode(part));
+      appendTraceableText(code, part, hints, usedHints);
       return;
     }
 
@@ -1886,19 +2187,6 @@ function renderCode(parts, questionIndex) {
   });
 
   return code;
-}
-
-function renderHints(hints) {
-  const list = document.createElement("ol");
-  list.className = "hint-list";
-
-  hints.forEach((hint) => {
-    const item = document.createElement("li");
-    item.textContent = hint;
-    list.appendChild(item);
-  });
-
-  return list;
 }
 
 function checkUnlock() {
@@ -1949,11 +2237,56 @@ function toggleAnswer(card, button) {
   button.setAttribute("aria-expanded", String(visible));
 }
 
-function toggleHint(card, button) {
-  const box = card.querySelector(".hint-box");
-  const visible = box.classList.toggle("visible");
-  button.textContent = visible ? "ヒントを隠す" : "ヒントを表示";
-  button.setAttribute("aria-expanded", String(visible));
+function getTraceaTotal(card) {
+  const steps = [...card.querySelectorAll(".tracea-mark")].map((mark) => Number(mark.dataset.traceaStep));
+  return steps.length > 0 ? Math.max(...steps) : 0;
+}
+
+function updateTraceaState(card) {
+  const step = Number(card.dataset.traceaStep || 0);
+  const total = getTraceaTotal(card);
+  const askButton = card.querySelector('button[data-action="tracea"]');
+  const resetButton = card.querySelector('button[data-action="tracea-reset"]');
+  const status = card.querySelector(".tracea-status");
+
+  card.querySelectorAll(".tracea-mark").forEach((mark) => {
+    mark.classList.toggle("is-visible", Number(mark.dataset.traceaStep) <= step);
+  });
+
+  if (askButton) {
+    askButton.textContent = step >= total && total > 0 ? "Traceaはここまで" : `Traceaに聞く ${Math.min(step + 1, total || 1)}/${total || 1}`;
+    askButton.disabled = total > 0 && step >= total;
+    askButton.setAttribute("aria-expanded", String(step > 0));
+  }
+
+  if (resetButton) {
+    resetButton.disabled = step === 0;
+  }
+
+  if (status) {
+    status.classList.toggle("thinking", step > 0 && step < total);
+    if (step === 0) {
+      status.textContent = "Traceaは、答えではなく見る場所を示します。";
+    } else if (step >= total) {
+      status.textContent = "Tracea: ここまで見れば、自力でかなり近づけます。";
+    } else {
+      status.textContent = "Tracea: もう少しだけ、視線を進めてみましょう。";
+    }
+  }
+}
+
+function advanceTracea(card) {
+  const total = getTraceaTotal(card);
+  if (total === 0) return;
+
+  const current = Number(card.dataset.traceaStep || 0);
+  card.dataset.traceaStep = String(Math.min(current + 1, total));
+  updateTraceaState(card);
+}
+
+function resetTracea(card) {
+  card.dataset.traceaStep = "0";
+  updateTraceaState(card);
 }
 
 function resetQuestion(card) {
@@ -1963,11 +2296,7 @@ function resetQuestion(card) {
   const feedback = card.querySelector(".feedback");
   feedback.className = "feedback";
   feedback.textContent = "";
-  const hintBox = card.querySelector(".hint-box");
-  const hintButton = card.querySelector('button[data-action="hint"]');
-  hintBox.classList.remove("visible");
-  hintButton.textContent = "ヒントを表示";
-  hintButton.setAttribute("aria-expanded", "false");
+  resetTracea(card);
 }
 
 function renderQuestions() {
@@ -1991,7 +2320,7 @@ function renderQuestions() {
             <h3>${question.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
-          <p>${question.prompt}</p>
+          <div class="tracea-prompt"></div>
         </div>
       </div>
       <div class="question-body">
@@ -2012,13 +2341,15 @@ function renderQuestions() {
           </div>
           <div class="button-row">
             <button class="action-button primary" type="button" data-action="check">入力をチェック</button>
-            <button class="action-button secondary" type="button" data-action="hint" aria-expanded="false">ヒントを表示</button>
+            <button class="action-button secondary tracea-ask" type="button" data-action="tracea" aria-expanded="false">Traceaに聞く</button>
+            <button class="action-button secondary" type="button" data-action="tracea-reset" disabled>ヒントをリセット</button>
             <button class="action-button secondary" type="button" data-action="answer" aria-expanded="false">解答を表示</button>
             <button class="action-button secondary" type="button" data-action="reset">リセット</button>
           </div>
           <p class="feedback" aria-live="polite"></p>
-          <div class="hint-box">
-            <h4>ヒント</h4>
+          <div class="tracea-panel">
+            <h4>Tracea</h4>
+            <p class="tracea-status" aria-live="polite">Traceaは、答えではなく見る場所を示します。</p>
           </div>
           <div class="answer-box">
             <h4>解答例</h4>
@@ -2028,11 +2359,13 @@ function renderQuestions() {
       </div>
     `;
 
-    card.querySelector(".code-panel").appendChild(renderCode(level.parts, index));
+    card.dataset.traceaStep = "0";
+    card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(question.prompt, level.hints));
+    card.querySelector(".code-panel").appendChild(renderCode(level.parts, index, level.hints));
     card.querySelector(".output-box pre").textContent = question.output;
     card.querySelector(".explain-box p").textContent = question.explanation;
-    card.querySelector(".hint-box").appendChild(renderHints(level.hints));
     card.querySelector(".answer-box pre").textContent = question.answer;
+    updateTraceaState(card);
     list.appendChild(card);
   });
 }
@@ -2057,7 +2390,7 @@ function renderArrayQuestions() {
             <h3>${question.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
-          <p>${question.prompt}</p>
+          <div class="tracea-prompt"></div>
         </div>
       </div>
       <div class="question-body">
@@ -2078,13 +2411,15 @@ function renderArrayQuestions() {
           </div>
           <div class="button-row">
             <button class="action-button primary" type="button" data-action="check">入力をチェック</button>
-            <button class="action-button secondary" type="button" data-action="hint" aria-expanded="false">ヒントを表示</button>
+            <button class="action-button secondary tracea-ask" type="button" data-action="tracea" aria-expanded="false">Traceaに聞く</button>
+            <button class="action-button secondary" type="button" data-action="tracea-reset" disabled>ヒントをリセット</button>
             <button class="action-button secondary" type="button" data-action="answer" aria-expanded="false">解答を表示</button>
             <button class="action-button secondary" type="button" data-action="reset">リセット</button>
           </div>
           <p class="feedback" aria-live="polite"></p>
-          <div class="hint-box">
-            <h4>ヒント</h4>
+          <div class="tracea-panel">
+            <h4>Tracea</h4>
+            <p class="tracea-status" aria-live="polite">Traceaは、答えではなく見る場所を示します。</p>
           </div>
           <div class="answer-box">
             <h4>解答例</h4>
@@ -2094,11 +2429,13 @@ function renderArrayQuestions() {
       </div>
     `;
 
-    card.querySelector(".code-panel").appendChild(renderCode(question.parts, index));
+    card.dataset.traceaStep = "0";
+    card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(question.prompt, question.hints));
+    card.querySelector(".code-panel").appendChild(renderCode(question.parts, index, question.hints));
     card.querySelector(".output-box pre").textContent = question.output;
     card.querySelector(".explain-box p").textContent = question.explanation;
-    card.querySelector(".hint-box").appendChild(renderHints(question.hints));
     card.querySelector(".answer-box pre").textContent = question.answer;
+    updateTraceaState(card);
     arrayList.appendChild(card);
   });
 }
@@ -2123,7 +2460,7 @@ function renderConditionalQuestions() {
             <h3>${question.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
-          <p>${question.prompt}</p>
+          <div class="tracea-prompt"></div>
         </div>
       </div>
       <div class="question-body">
@@ -2144,13 +2481,15 @@ function renderConditionalQuestions() {
           </div>
           <div class="button-row">
             <button class="action-button primary" type="button" data-action="check">入力をチェック</button>
-            <button class="action-button secondary" type="button" data-action="hint" aria-expanded="false">ヒントを表示</button>
+            <button class="action-button secondary tracea-ask" type="button" data-action="tracea" aria-expanded="false">Traceaに聞く</button>
+            <button class="action-button secondary" type="button" data-action="tracea-reset" disabled>ヒントをリセット</button>
             <button class="action-button secondary" type="button" data-action="answer" aria-expanded="false">解答を表示</button>
             <button class="action-button secondary" type="button" data-action="reset">リセット</button>
           </div>
           <p class="feedback" aria-live="polite"></p>
-          <div class="hint-box">
-            <h4>ヒント</h4>
+          <div class="tracea-panel">
+            <h4>Tracea</h4>
+            <p class="tracea-status" aria-live="polite">Traceaは、答えではなく見る場所を示します。</p>
           </div>
           <div class="answer-box">
             <h4>解答例</h4>
@@ -2160,11 +2499,13 @@ function renderConditionalQuestions() {
       </div>
     `;
 
-    card.querySelector(".code-panel").appendChild(renderCode(question.parts, index));
+    card.dataset.traceaStep = "0";
+    card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(question.prompt, question.hints));
+    card.querySelector(".code-panel").appendChild(renderCode(question.parts, index, question.hints));
     card.querySelector(".output-box pre").textContent = question.output;
     card.querySelector(".explain-box p").textContent = question.explanation;
-    card.querySelector(".hint-box").appendChild(renderHints(question.hints));
     card.querySelector(".answer-box pre").textContent = question.answer;
+    updateTraceaState(card);
     conditionalList.appendChild(card);
   });
 }
@@ -2189,7 +2530,7 @@ function renderBooleanQuestions() {
             <h3>${question.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
-          <p>${question.prompt}</p>
+          <div class="tracea-prompt"></div>
         </div>
       </div>
       <div class="question-body">
@@ -2210,13 +2551,15 @@ function renderBooleanQuestions() {
           </div>
           <div class="button-row">
             <button class="action-button primary" type="button" data-action="check">入力をチェック</button>
-            <button class="action-button secondary" type="button" data-action="hint" aria-expanded="false">ヒントを表示</button>
+            <button class="action-button secondary tracea-ask" type="button" data-action="tracea" aria-expanded="false">Traceaに聞く</button>
+            <button class="action-button secondary" type="button" data-action="tracea-reset" disabled>ヒントをリセット</button>
             <button class="action-button secondary" type="button" data-action="answer" aria-expanded="false">解答を表示</button>
             <button class="action-button secondary" type="button" data-action="reset">リセット</button>
           </div>
           <p class="feedback" aria-live="polite"></p>
-          <div class="hint-box">
-            <h4>ヒント</h4>
+          <div class="tracea-panel">
+            <h4>Tracea</h4>
+            <p class="tracea-status" aria-live="polite">Traceaは、答えではなく見る場所を示します。</p>
           </div>
           <div class="answer-box">
             <h4>解答例</h4>
@@ -2226,11 +2569,13 @@ function renderBooleanQuestions() {
       </div>
     `;
 
-    card.querySelector(".code-panel").appendChild(renderCode(question.parts, index));
+    card.dataset.traceaStep = "0";
+    card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(question.prompt, question.hints));
+    card.querySelector(".code-panel").appendChild(renderCode(question.parts, index, question.hints));
     card.querySelector(".output-box pre").textContent = question.output;
     card.querySelector(".explain-box p").textContent = question.explanation;
-    card.querySelector(".hint-box").appendChild(renderHints(question.hints));
     card.querySelector(".answer-box pre").textContent = question.answer;
+    updateTraceaState(card);
     booleanList.appendChild(card);
   });
 }
@@ -2432,7 +2777,8 @@ function handleQuestionAction(event) {
   const action = button.dataset.action;
 
   if (action === "check") checkQuestion(card);
-  if (action === "hint") toggleHint(card, button);
+  if (action === "tracea") advanceTracea(card);
+  if (action === "tracea-reset") resetTracea(card);
   if (action === "answer") toggleAnswer(card, button);
   if (action === "reset") resetQuestion(card);
 }
