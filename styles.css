@@ -978,6 +978,48 @@ h1 {
   background: #ffffff;
 }
 
+.class-roadmap {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 20px;
+  border: 1px solid var(--ink);
+  background: #ffffff;
+}
+
+.class-roadmap div {
+  min-height: 118px;
+  padding: 18px;
+  border-right: 1px solid var(--line);
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+.class-roadmap div:last-child {
+  border-right: 0;
+}
+
+.class-roadmap span {
+  color: var(--red);
+  font-family: Menlo, Consolas, "Courier New", monospace;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.class-roadmap b {
+  color: var(--ink);
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.class-roadmap p {
+  margin: 0;
+  color: #3a3a3a;
+  font-size: 12.5px;
+  font-weight: 750;
+  line-height: 1.7;
+}
+
 .array-layout {
   display: grid;
   grid-template-columns: minmax(320px, 0.72fr) minmax(0, 1.28fr);
@@ -1110,6 +1152,10 @@ h1 {
 }
 
 .syntax-cards article:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.syntax-cards article:nth-child(n + 7) {
   border-bottom: 0;
 }
 
@@ -1921,6 +1967,18 @@ h1 {
     grid-template-columns: 1fr;
   }
 
+  .class-roadmap {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .class-roadmap div:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .class-roadmap div:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+
   .syntax-code,
   .array-code,
   .trace-room-copy {
@@ -2066,6 +2124,7 @@ h1 {
 
   .syntax-cards article,
   .syntax-cards article:nth-child(2n),
+  .syntax-cards article:nth-child(n + 7),
   .syntax-cards article:nth-last-child(-n + 2),
   .array-cards article,
   .array-cards article:nth-child(2n),
@@ -2079,6 +2138,21 @@ h1 {
 
   .syntax-cards article:last-child,
   .array-cards article:last-child {
+    border-bottom: 0;
+  }
+
+  .class-roadmap {
+    grid-template-columns: 1fr;
+  }
+
+  .class-roadmap div,
+  .class-roadmap div:nth-child(2n),
+  .class-roadmap div:nth-child(-n + 2) {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .class-roadmap div:last-child {
     border-bottom: 0;
   }
 

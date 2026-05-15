@@ -111,23 +111,54 @@
       <section id="classGuide" class="syntax-section">
         <div class="section-heading">
           <p class="eyebrow">Class Lesson</p>
-          <h2>クラスは、Javaコードをまとめる基本の箱</h2>
-          <p>まずは「どこに何を書くのか」を見抜けるようにします。</p>
+          <h2>クラスは、データと処理をまとめる設計図</h2>
+          <p>class、field、object、constructor、method、this、referenceまで、基礎の全体像を順番に見ます。</p>
+        </div>
+
+        <div class="class-roadmap" aria-label="クラス理解の順番">
+          <div>
+            <span>01</span>
+            <b>設計図を書く</b>
+            <p>classで型のまとまりを作る</p>
+          </div>
+          <div>
+            <span>02</span>
+            <b>値を持たせる</b>
+            <p>fieldで状態を表す</p>
+          </div>
+          <div>
+            <span>03</span>
+            <b>実体を作る</b>
+            <p>newでobjectを作る</p>
+          </div>
+          <div>
+            <span>04</span>
+            <b>動きを持たせる</b>
+            <p>methodで処理をまとめる</p>
+          </div>
         </div>
 
         <div class="syntax-layout">
           <div class="syntax-code">
             <pre><code>class Main {
   public static void main(String[] args) {
-    Student student = new Student();
-    student.name = "Aoi";
-    student.score = 90;
+    Student student = new Student("Aoi", 90);
+    student.show();
   }
 }
 
 class Student {
   String name;
   int score;
+
+  Student(String name, int score) {
+    this.name = name;
+    this.score = score;
+  }
+
+  void show() {
+    System.out.println(name + ": " + score);
+  }
 }</code></pre>
           </div>
           <div class="syntax-cards">
@@ -151,12 +182,32 @@ class Student {
               <h3>ドットで中身にアクセスする</h3>
               <p><span class="term">student.name</span> は、studentという実体のnameを見る、または変更する書き方です。どの実体の値なのかを左側で指定します。</p>
             </article>
+            <article class="topic-card" data-topic="class-constructor" tabindex="0" role="button" aria-expanded="false">
+              <span class="syntax-label">constructor</span>
+              <h3>コンストラクタは、作る瞬間に初期値を入れる</h3>
+              <p><span class="term">new Student("Aoi", 90)</span> の値を受け取り、nameやscoreへ入れる入口です。オブジェクトを安全に準備できます。</p>
+            </article>
+            <article class="topic-card" data-topic="class-instance-method" tabindex="0" role="button" aria-expanded="false">
+              <span class="syntax-label">method</span>
+              <h3>インスタンスメソッドは、その実体の値を使う</h3>
+              <p><span class="term">student.show()</span> は、studentが持つnameやscoreを使って処理します。データと処理を近くに置けるのがクラスの強みです。</p>
+            </article>
+            <article class="topic-card" data-topic="class-this" tabindex="0" role="button" aria-expanded="false">
+              <span class="syntax-label">this</span>
+              <h3>thisは、今作っている自分自身を指す</h3>
+              <p><span class="term">this.name</span> は、このオブジェクトのnameです。引数のnameとフィールドのnameを区別するときに特に重要です。</p>
+            </article>
+            <article class="topic-card" data-topic="class-reference" tabindex="0" role="button" aria-expanded="false">
+              <span class="syntax-label">reference</span>
+              <h3>変数には、オブジェクトそのものへの参照が入る</h3>
+              <p><span class="term">Student student</span> には、Studentの実体を使うための手がかりが入ります。コピーと共有の違いを考える入口です。</p>
+            </article>
           </div>
         </div>
         <div class="topic-deep-dive" aria-live="polite">
           <p class="eyebrow">Click a Card</p>
           <h3>カードを押すと、ここに深掘り解説が表示されます。</h3>
-          <p>クラスでは、設計図と実体、フィールドとドットアクセスの区別が土台になります。カードを押して、コードのどこを見ればよいか確認しましょう。</p>
+          <p>クラスでは、設計図、実体、値、処理、初期化、this、参照のつながりが土台になります。カードを押して、コードのどこを見ればよいか確認しましょう。</p>
         </div>
       </section>
 

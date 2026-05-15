@@ -2971,6 +2971,34 @@ const classMethodTopicDeepDives = {
     body: ["ドットは、オブジェクトの中身へ進む記号です。student.score と書いたら、student が持っている score を見に行きます。", "左側が対象、右側が中身の名前です。student.name なら student の name、book.title なら book の title。右側だけ見ても意味は決まりません。", "ドットは値を読むときにも、値を入れるときにも使います。student.score = 90; は score に90を入れる。System.out.println(student.score); は score を読んで表示する。同じ形でも、代入なのか読み取りなのかを行全体で判断しましょう。"],
     checks: ["ドットの左側が対象のオブジェクト。", "ドットの右側がフィールド名やメソッド名。", "代入では値を書き換える。", "printlnでは値を読んで表示する。"],
     code: "Student student = new Student();\nstudent.score = 90;              // 書き込む\nSystem.out.println(student.score); // 読み取る"
+  },
+  "class-constructor": {
+    eyebrow: "constructor",
+    title: "コンストラクタは、newした瞬間に値を入れる入口。",
+    body: ["コンストラクタは、オブジェクトを作る瞬間に実行される特別な処理です。new Student(\"Aoi\", 90) と書くと、Student(String name, int score) が呼ばれます。", "フィールドにあとから1つずつ値を入れることもできます。ただ、それだと入れ忘れが起きやすくなります。コンストラクタを使うと、作る瞬間に必要な値をまとめて渡せます。", "コンストラクタには戻り値の型を書きません。voidも書きません。クラス名と同じ名前で書く。この形を見たら、これは普通のメソッドではなく、作るときの入口だと判断します。"],
+    checks: ["クラス名と同じ名前で書く。", "戻り値の型を書かない。", "new した瞬間に呼ばれる。", "必要な初期値をまとめて渡せる。"],
+    code: "class Student {\n  String name;\n  int score;\n\n  Student(String name, int score) {\n    this.name = name;\n    this.score = score;\n  }\n}"
+  },
+  "class-instance-method": {
+    eyebrow: "instance method",
+    title: "インスタンスメソッドは、そのオブジェクトの値を使う。",
+    body: ["クラスの中には、フィールドだけでなくメソッドも置けます。Studentの中に show() を書くと、Student自身が自分の情報を表示できるようになります。", "student.show() と呼ぶと、showの中では student が持っている name や score を使えます。つまり、データと、そのデータを使う処理を同じ場所にまとめられます。", "staticメソッドとの違いもここで少し見えます。staticはクラス側の処理、インスタンスメソッドは作った実体側の処理です。まずは、ドットの左にオブジェクトがある呼び出しは、その実体のメソッドだと見ましょう。"],
+    checks: ["クラスの中に処理を書ける。", "student.show() の左側が対象の実体。", "メソッド内では、その実体のフィールドを使える。", "データと処理を近くに置ける。"],
+    code: "class Student {\n  String name;\n  int score;\n\n  void show() {\n    System.out.println(name + \": \" + score);\n  }\n}\n\nstudent.show();"
+  },
+  "class-this": {
+    eyebrow: "this",
+    title: "thisは、今扱っている自分自身。",
+    body: ["thisは、今作っている、または今メソッドを実行しているオブジェクト自身を指します。this.name と書けば、このオブジェクトが持っている name フィールドです。", "コンストラクタでは、引数名とフィールド名が同じになることがよくあります。String name は外から受け取った値、this.name はフィールドです。this.name = name; は、受け取った name を、このオブジェクトの name に入れるという意味です。", "thisが出てきたら、難しく考えすぎずに「この実体の」と読み替えてください。this.score なら「この実体のscore」です。"],
+    checks: ["this は現在のオブジェクト自身。", "this.name はフィールドを指す。", "右側の name は引数やローカル変数の場合がある。", "同じ名前を区別するときに役立つ。"],
+    code: "Student(String name, int score) {\n  this.name = name;\n  this.score = score;\n}"
+  },
+  "class-reference": {
+    eyebrow: "reference",
+    title: "クラス型の変数には、実体への参照が入る。",
+    body: ["int x = 10; のような基本型では、変数に値そのものが入っていると考えやすいです。一方、Student student = new Student(); の student には、作った実体を使うための参照が入ります。", "参照は、実体そのものを指す手がかりです。別の変数に同じ参照を入れると、同じオブジェクトを見ている状態になります。片方からフィールドを書き換えると、もう片方から見ても変わって見えます。", "この考え方は少し緊張感があります。なぜなら、コピーしたつもりでも実は同じ実体を共有していることがあるからです。まずは、クラス型の変数はオブジェクトを指している、と覚えましょう。"],
+    checks: ["クラス型の変数は、実体への参照を持つ。", "同じ参照を持つ変数は、同じ実体を見る。", "フィールド変更は、その実体に対して起きる。", "基本型の値コピーとは感覚が違う。"],
+    code: "Student a = new Student();\nStudent b = a;\n\na.name = \"Aoi\";\nSystem.out.println(b.name); // Aoi"
   }
 };
 
