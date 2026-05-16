@@ -317,6 +317,7 @@ const list = document.querySelector("#questionList");
 const arrayList = document.querySelector("#arrayQuestionList");
 const conditionalList = document.querySelector("#conditionalQuestionList");
 const booleanList = document.querySelector("#booleanQuestionList");
+const basicSyntaxList = document.querySelector("#basicSyntaxQuestionList");
 const methodOneList = document.querySelector("#methodOneQuestionList");
 const methodTwoList = document.querySelector("#methodTwoQuestionList");
 const classList = document.querySelector("#classQuestionList");
@@ -1265,6 +1266,7 @@ const prerequisiteCatalog = [
 ];
 
 const lessonPrerequisiteLabels = {
+  "basic-syntax": ["クラス", "変数", "int型", "String型", "代入演算子", "System.out.println"],
   loops: ["変数", "int型", "比較演算子", "System.out.println"],
   arrays: ["変数", "配列", "index", "System.out.println"],
   conditionals: ["変数", "if文", "比較演算子", "System.out.println"],
@@ -1274,12 +1276,17 @@ const lessonPrerequisiteLabels = {
 };
 
 const prerequisitePriority = {
+  "basic-syntax": ["クラス", "変数", "int型", "String型", "boolean型", "代入演算子", "比較演算子", "if文", "フィールド", "System.out.println"],
   loops: ["for文", "while文", "break", "continue", "比較演算子", "+=", "++", "--", "%", "変数", "int型", "System.out.println"],
   arrays: ["配列", "index", "length", "for文", "if文", "比較演算子", "+=", "++", "変数", "int型", "String型", "System.out.println"],
   conditionals: ["if文", "else", "比較演算子", "論理演算子", "boolean型", "変数", "int型", "System.out.println"],
   booleans: ["boolean型", "比較演算子", "論理演算子", "if文", "変数", "System.out.println"],
   methods: ["メソッド", "引数", "戻り値", "void", "static", "if文", "比較演算子", "変数", "int型", "String型", "System.out.println"],
   classes: ["クラス", "フィールド", "変数", "String型", "int型", "System.out.println"]
+};
+
+const prerequisiteAllowList = {
+  "basic-syntax": new Set(["クラス", "変数", "int型", "String型", "boolean型", "代入演算子", "比較演算子", "if文", "フィールド", "System.out.println"])
 };
 
 function getProblemSource(problem) {
@@ -1317,7 +1324,9 @@ function buildPrerequisiteSupport(problem, lessonId, level = "beginner") {
     labels.add(label);
   });
 
+  const allowedLabels = prerequisiteAllowList[lessonId];
   const prerequisites = [...labels]
+    .filter((label) => !allowedLabels || allowedLabels.has(label))
     .sort((a, b) => {
       const priority = prerequisitePriority[lessonId] || [];
       const aIndex = priority.includes(a) ? priority.indexOf(a) : priority.length;
@@ -2761,6 +2770,61 @@ const topicDeepDives = {
     checks: ["文字列は \"Hello\" のように囲む。", "変数はそのまま書く。", "+ を使うと文字と値をつなげられる。"],
     code: "System.out.println(\"Hello\");\nSystem.out.println(3 + 2);"
   },
+  variable: {
+    eyebrow: "variable",
+    title: "変数は、値に名前を付けて後から使うための場所。",
+    body: [
+      "変数は、値を一時的に入れておく名前付きの場所です。int score = 80; なら、scoreという名前で80を扱えるようになります。",
+      "Javaでは、変数を使う前に型を決めます。intなら整数、Stringなら文字列、booleanならtrue/falseです。型は、その変数にどんな値を入れてよいかを決める約束です。",
+      "クラスに進むと、変数の考え方はフィールドや引数にも広がります。まずは、型、名前、値の3つを分けて読めるようにしましょう。"
+    ],
+    checks: ["型、名前、値の順に読む。", "同じ変数にはあとから別の値を代入できる。", "名前は中身の意味がわかるものにする。"],
+    code: "int score = 80;\nscore = 90;\nSystem.out.println(score);"
+  },
+  "primitive-type": {
+    eyebrow: "type",
+    title: "型は、値の種類を決める約束。",
+    body: [
+      "intは整数、doubleは小数、booleanはtrue/false、charは1文字を表します。Javaは型を強く見る言語なので、値の種類が合わないとコンパイル時に止まります。",
+      "型があるから、Javaは計算や比較を安全に扱えます。たとえば int count なら数として足せますが、String label は文字列として連結されます。",
+      "クラスも型になります。Student s = new Student(); の Student は、自分で作った型です。基本型を読む力は、そのままクラス型を読む力につながります。"
+    ],
+    checks: ["int は整数。", "String は文字列で、先頭が大文字。", "boolean はtrueかfalseだけ。", "自作クラス名も型として使える。"],
+    code: "int count = 3;\ndouble rate = 1.5;\nboolean passed = true;\nString name = \"Aoi\";"
+  },
+  assignment: {
+    eyebrow: "=",
+    title: "= は等しいではなく、右の値を左へ入れる。",
+    body: [
+      "Javaの = は代入です。score = 90; は、scoreと90が同じかを調べているのではなく、scoreに90を入れています。",
+      "右側が先に計算され、その結果が左側の変数へ入ります。count = count + 1; は、今のcountに1を足した結果を、もう一度countへ入れる処理です。",
+      "比較したいときは == を使います。= と == の違いは、条件分岐やクラスのフィールド更新でもずっと重要です。"
+    ],
+    checks: ["= は代入。", "右側を先に計算する。", "同じか比べるときは == を使う。"],
+    code: "int count = 1;\ncount = count + 1;\nSystem.out.println(count); // 2"
+  },
+  "string-expression": {
+    eyebrow: "String",
+    title: "Stringは文字列。+ は文字をつなげる働きも持つ。",
+    body: [
+      "Stringは文字列を扱う型です。値は \"Java\" のようにダブルクォーテーションで囲みます。charの1文字とは違い、複数の文字をまとめて持てます。",
+      "+ は数値同士なら足し算ですが、文字列が混ざると連結になります。\"score: \" + score は、文字列と変数の値をつなげた新しい文字列です。",
+      "出力問題では、+ の左右を順番に読むことが大切です。数値計算なのか、文字列連結なのかを見分けるだけで、出力の予測が安定します。"
+    ],
+    checks: ["文字列はダブルクォーテーションで囲む。", "文字列 + 値 は連結になる。", "数値計算を先にしたいときは丸かっこを使う。"],
+    code: "int score = 90;\nSystem.out.println(\"score: \" + score);\nSystem.out.println(\"total: \" + (40 + 50));"
+  },
+  "scope-basic": {
+    eyebrow: "scope",
+    title: "変数は、宣言したブロックの中で使える。",
+    body: [
+      "スコープは、変数を使える範囲のことです。波かっこの中で宣言した変数は、基本的にその波かっこの中で使います。",
+      "mainの中で作った変数はmainの中で使えます。ifやforの中で作った変数は、そのブロックの外に出ると使えないことがあります。",
+      "クラスでは、フィールド、引数、ローカル変数が同時に出てきます。どの名前がどの範囲で有効なのかを追う力が、クラス理解の土台になります。"
+    ],
+    checks: ["変数は宣言した場所から下で使う。", "波かっこを越えると使えない場合がある。", "フィールドとローカル変数は置かれた場所で見分ける。"],
+    code: "public static void main(String[] args) {\n  int score = 80;\n  if (score >= 60) {\n    String label = \"pass\";\n    System.out.println(label);\n  }\n}"
+  },
   "loop-for": {
     eyebrow: "for",
     title: "for文は、回数と流れが見えている繰り返し。",
@@ -3012,6 +3076,19 @@ function makeClassMethodQuestion(question) {
   return { ...question, answer: question.answer || fillAnswer(question.parts) };
 }
 
+const basicSyntaxQuestions = [
+  makeClassMethodQuestion({ title: "mainメソッドに処理を書く", concept: "main / println", prompt: "Javaを実行したときに最初に動くmainメソッドの中でHelloを表示します。", output: "Hello", explanation: "mainメソッドの波かっこの中に書いた命令が上から順番に実行されます。", parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "System.out.println(\"Hello\")", accepts: ["System.out.println(\"Hello\")"], chars: 28 }, ";\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "int型の変数を宣言する", concept: "int / variable", prompt: "scoreという変数に80を入れて表示します。", output: "80", explanation: "整数を入れる変数はint型で宣言します。型、名前、値の順に読みます。", parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "int", chars: 4 }, " score = ", { answer: "80", chars: 3 }, ";\n    System.out.println(score);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "String型の変数を使う", concept: "String", prompt: "nameにAoiを入れて、Hello Aoiと表示します。", output: "Hello Aoi", explanation: "Stringは文字列を扱う型です。文字列はダブルクォーテーションで囲みます。", parts: ["class Main {\n  public static void main(String[] args) {\n    String name = ", { answer: "\"Aoi\"", chars: 7 }, ";\n    System.out.println(\"Hello \" + ", { answer: "name", chars: 5 }, ");\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "代入で値を更新する", concept: "assignment", prompt: "countを1増やして、更新後の値を表示します。", output: "2", explanation: "=は比較ではなく代入です。右側を計算して、その結果を左の変数へ入れます。", parts: ["class Main {\n  public static void main(String[] args) {\n    int count = 1;\n    count = ", { answer: "count + 1", accepts: ["count + 1", "count+1"], chars: 10 }, ";\n    System.out.println(count);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "計算結果を変数に入れる", concept: "operator", prompt: "priceとcountを使って合計金額を表示します。", output: "600", explanation: "*はかけ算です。計算結果をtotalに入れてから表示できます。", parts: ["class Main {\n  public static void main(String[] args) {\n    int price = 200;\n    int count = 3;\n    int total = ", { answer: "price * count", accepts: ["price * count", "price*count"], chars: 15 }, ";\n    System.out.println(total);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "booleanで状態を持つ", concept: "boolean", prompt: "isOpenがtrueならopenと表示します。", output: "open", explanation: "boolean変数はifの条件としてそのまま使えます。== trueと書かなくても読めます。", parts: ["class Main {\n  public static void main(String[] args) {\n    boolean isOpen = ", { answer: "true", chars: 5 }, ";\n    if (", { answer: "isOpen", chars: 7 }, ") {\n      System.out.println(\"open\");\n    }\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "比較演算子で判定する", concept: "comparison", prompt: "scoreが60以上ならpassと表示します。", output: "pass", explanation: ">=は以上という意味です。比較式の結果はtrueかfalseになります。", parts: ["class Main {\n  public static void main(String[] args) {\n    int score = 70;\n    if (score ", { answer: ">=", chars: 3 }, " 60) {\n      System.out.println(", { answer: "\"pass\"", chars: 8 }, ");\n    }\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "文字列と計算結果をつなげる", concept: "String / expression", prompt: "合計を計算して、total: 90と表示します。", output: "total: 90", explanation: "文字列と値は+で連結できます。計算を先にしたいときは丸かっこで囲みます。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(\"total: \" + ", { answer: "(40 + 50)", accepts: ["(40 + 50)", "(40+50)"], chars: 10 }, ");\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "ローカル変数のスコープを読む", concept: "scope", prompt: "mainの中で作ったmessageを表示します。", output: "ready", explanation: "メソッドの中で宣言したローカル変数は、そのメソッドの中で使います。", parts: ["class Main {\n  public static void main(String[] args) {\n    String message = \"ready\";\n    ", { answer: "System.out.println(message)", accepts: ["System.out.println(message)"], chars: 28 }, ";\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "クラス型の変数を読む準備", concept: "class type", prompt: "Student型の変数sを作り、nameフィールドに値を入れて表示します。", output: "Aoi", explanation: "自分で作ったクラス名も型として使えます。クラス編に進む前に、型としてのクラス名を読めるようにします。", parts: ["class Main {\n  public static void main(String[] args) {\n    Student s = ", { answer: "new Student()", chars: 14 }, ";\n    s.name = \"Aoi\";\n    System.out.println(s.name);\n  }\n}\n\nclass Student {\n  String name;\n}"] })
+];
+
 const methodOneQuestions = [
   makeClassMethodQuestion({ title: "あいさつメソッドを呼ぶ", concept: "method / call", prompt: "greetメソッドを呼び出してHelloを表示します。", output: "Hello", explanation: "voidメソッドは、名前と丸かっこで呼び出します。", parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "greet()", chars: 8 }, ";\n  }\n\n  static void greet() {\n    System.out.println(\"Hello\");\n  }\n}"] }),
   makeClassMethodQuestion({ title: "名前を受け取って表示する", concept: "parameter", prompt: "nameを受け取るgreetメソッドを作り、Aoiにあいさつします。", output: "Hello Aoi", explanation: "引数は外から渡される材料です。String nameとして受け取ります。", parts: ["class Main {\n  public static void main(String[] args) {\n    greet(\"Aoi\");\n  }\n\n  static void greet(", { answer: "String name", chars: 12 }, ") {\n    System.out.println(\"Hello \" + ", { answer: "name", chars: 5 }, ");\n  }\n}"] }),
@@ -3051,6 +3128,11 @@ const classQuestions = [
   makeClassMethodQuestion({ title: "フィールドで計算する", concept: "calculation", prompt: "item.priceとitem.countを使って合計を表示します。", output: "600", explanation: "複数のフィールドを使って計算できます。", parts: ["class Main {\n  public static void main(String[] args) {\n    Item item = new Item();\n    item.price = 200;\n    item.count = 3;\n    System.out.println(", { answer: "item.price * item.count", accepts: ["item.price * item.count", "item.price*item.count"], chars: 25 }, ");\n  }\n}\n\nclass Item { int price; int count; }"] })
 ];
 
+basicSyntaxQuestions.forEach((question) => {
+  Object.assign(question, buildPrerequisiteSupport(question, "basic-syntax", "beginner"));
+  question.hints = buildTraceaHints(question, question.parts);
+});
+
 [methodOneQuestions, methodTwoQuestions].forEach((set) => {
   set.forEach((question) => {
     Object.assign(question, buildPrerequisiteSupport(question, "methods", "beginner"));
@@ -3064,6 +3146,7 @@ classQuestions.forEach((question) => {
 });
 
 const lessonMeta = [
+  { id: "basic-syntax", total: basicSyntaxQuestions.length },
   { id: "loops", total: questions.length * 2 },
   { id: "arrays", total: arrayQuestions.length * 2 },
   { id: "conditionals", total: conditionalQuestions.length },
@@ -3591,13 +3674,26 @@ function createPreparingLessonGroup({ id, title }) {
   return section;
 }
 
+function createBasicSyntaxLessonGroup() {
+  const section = document.createElement("section");
+  section.className = "lesson-group";
+  section.dataset.lessonGroup = "basic-syntax";
+  section.innerHTML = `
+    <button class="lesson-group-toggle" type="button" aria-expanded="false">
+      <span>Java 基礎文法編</span>
+      <small>1 Lesson</small>
+    </button>
+    <div class="lesson-links">
+      <a href="basic-syntax.html" data-lesson-link="basic-syntax"><span>01</span><b>基礎文法</b><small class="lesson-check">0/10</small></a>
+    </div>
+  `;
+  return section;
+}
+
 function ensureLessonSeriesGroups() {
   document.querySelectorAll(".lesson-groups").forEach((groups) => {
     if (!groups.querySelector('[data-lesson-group="basic-syntax"]')) {
-      groups.prepend(createPreparingLessonGroup({
-        id: "basic-syntax",
-        title: "Java 基礎文法編"
-      }));
+      groups.prepend(createBasicSyntaxLessonGroup());
     }
 
     if (!groups.querySelector('[data-lesson-group="oop-advanced"]')) {
@@ -4341,6 +4437,11 @@ renderQuestions();
 renderArrayQuestions();
 renderConditionalQuestions();
 renderBooleanQuestions();
+renderClassMethodQuestions(basicSyntaxList, basicSyntaxQuestions, {
+  lessonId: "basic-syntax",
+  numberPrefix: "B-",
+  panelLabel: "基礎文法コード"
+});
 renderClassMethodQuestions(methodOneList, methodOneQuestions, {
   lessonId: "methods-1",
   numberPrefix: "M1-",
@@ -4485,6 +4586,12 @@ if (conditionalList) {
 
 if (booleanList) {
   booleanList.addEventListener("click", (event) => {
+    handleQuestionAction(event);
+  });
+}
+
+if (basicSyntaxList) {
+  basicSyntaxList.addEventListener("click", (event) => {
     handleQuestionAction(event);
   });
 }

@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Java 基礎文法</title>
+  <script>
+    try {
+      if (localStorage.getItem("java-output-practice-auth") === "signed-in") {
+        document.documentElement.classList.add("auth-optimistic");
+      }
+    } catch {}
+  </script>
+  <style>
+    body.auth-pending .auth-screen,
+    body.auth-pending .app-shell {
+      display: none !important;
+    }
+
+    html.auth-optimistic body.auth-pending .app-shell {
+      display: block !important;
+    }
+  </style>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-pending">
+  <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
+    <div class="auth-shell">
+      <div class="auth-brand">
+        <p class="eyebrow">Java Output Practice</p>
+        <h1>ログイン</h1>
+        <p>メール、パスワード、またはGoogleアカウントで学習ページに入ります。</p>
+      </div>
+      <form class="auth-card" id="authForm">
+        <label>
+          <span>メールアドレス</span>
+          <input type="email" id="authEmail" autocomplete="email" required>
+        </label>
+        <label>
+          <span>パスワード</span>
+          <input type="password" id="authPassword" autocomplete="current-password" required minlength="6">
+        </label>
+        <button class="action-button primary auth-submit" type="submit">メールでログイン</button>
+        <button class="action-button secondary auth-create" type="button" id="createAccountButton">新規作成</button>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="google-button" type="button" id="googleLoginButton">
+          <span>G</span>
+          Googleアカウントでログイン
+        </button>
+        <p class="auth-message" id="authMessage" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell" aria-hidden="true">
+    <header class="site-header">
+      <div class="header-inner">
+        <p class="lesson-current">Java 基礎文法編 / Lesson01 基礎文法</p>
+        <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
+        <div class="header-actions">
+          <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
+          <a href="trace-room.html" class="secondary-link">Trace Room</a>
+          <a href="#basicSyntaxQuestions" class="primary-link">問題を始める</a>
+          <a href="#basicSyntaxGuide" class="secondary-link">文法ガイドを見る</a>
+          <a href="index.html" class="secondary-link">制御構文へ</a>
+        </div>
+        <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
+          <div class="lesson-panel-head">
+            <p class="eyebrow">Lesson Index</p>
+            <h2>Lesson一覧</h2>
+            <p>学習したい大きな編を開いて、Lessonを選んでください。</p>
+          </div>
+          <div class="lesson-groups">
+            <section class="lesson-group open" data-lesson-group="basic-syntax">
+              <button class="lesson-group-toggle" type="button" aria-expanded="true">
+                <span>Java 基礎文法編</span>
+                <small>1 Lesson</small>
+              </button>
+              <div class="lesson-links">
+                <a href="basic-syntax.html" class="active" data-lesson-link="basic-syntax"><span>01</span><b>基礎文法</b><small class="lesson-check">0/10</small></a>
+              </div>
+            </section>
+            <section class="lesson-group" data-lesson-group="control">
+              <button class="lesson-group-toggle" type="button" aria-expanded="false">
+                <span>Java 制御構文編</span>
+                <small>4 Lessons</small>
+              </button>
+              <div class="lesson-links">
+                <a href="index.html" data-lesson-link="loops"><span>01</span><b>繰り返し処理</b><small class="lesson-check">0/10</small></a>
+                <a href="arrays.html" data-lesson-link="arrays"><span>02</span><b>配列</b><small class="lesson-check">0/10</small></a>
+                <a href="conditionals.html" data-lesson-link="conditionals"><span>03</span><b>条件分岐</b><small class="lesson-check">0/10</small></a>
+                <a href="booleans.html" data-lesson-link="booleans"><span>04</span><b>真偽値と条件式</b><small class="lesson-check">0/10</small></a>
+              </div>
+            </section>
+            <section class="lesson-group" data-lesson-group="class-method">
+              <button class="lesson-group-toggle" type="button" aria-expanded="false">
+                <span>Java クラス・メソッド編</span>
+                <small>3 Lessons</small>
+              </button>
+              <div class="lesson-links">
+                <a href="methods-1.html" data-lesson-link="methods-1"><span>01</span><b>メソッド(1)</b><small class="lesson-check">0/10</small></a>
+                <a href="methods-2.html" data-lesson-link="methods-2"><span>02</span><b>メソッド(2)</b><small class="lesson-check">0/10</small></a>
+                <a href="classes.html" data-lesson-link="classes"><span>03</span><b>クラス</b><small class="lesson-check">0/10</small></a>
+              </div>
+            </section>
+            <section class="lesson-group" data-lesson-group="oop-basic">
+              <button class="lesson-group-toggle" type="button" aria-expanded="false">
+                <span>Java オブジェクト指向基礎編</span>
+                <small>準備中</small>
+              </button>
+              <div class="lesson-links">
+                <a href="#" class="disabled" aria-disabled="true"><span>01</span><b>準備中</b><small>近日追加</small></a>
+              </div>
+            </section>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="basicSyntaxGuide" class="syntax-section">
+        <div class="section-heading">
+          <p class="eyebrow">Basic Syntax Lesson</p>
+          <h2>クラスへ進むためのJava基礎文法</h2>
+          <p>Javaの外枠、型、変数、代入、演算子、文字列、スコープをまとめて確認します。ここを押さえると、メソッドとクラスの読み方がかなり安定します。</p>
+        </div>
+
+        <div class="syntax-layout">
+          <div class="syntax-code">
+            <pre><code>class Main {
+  public static void main(String[] args) {
+    String name = "Aoi";
+    int score = 80;
+    boolean passed = score >= 60;
+
+    System.out.println(name + ": " + score);
+
+    Student student = new Student();
+    student.name = name;
+  }
+}
+
+class Student {
+  String name;
+}</code></pre>
+          </div>
+          <div class="syntax-cards">
+            <article class="topic-card" data-topic="class-main" tabindex="0" role="button" aria-expanded="false">
+              <span class="syntax-label">class</span>
+              <h3>Javaはclassの中にコードを書く</h3>
+              <p><span class="term">class Main</span> は、Javaコードを入れる外枠です。処理は何もない場所に浮かず、基本的にクラスの中に置かれます。</p>
+            </article>
+            <article class="topic-card" data-topic="main-method" tabindex="0" role="button" aria-expanded="false">
+              <span class="syntax-label">main</span>
+              <h3>mainは実行の入口</h3>
+              <p><span class="term">public static void main(String[] args)</span> の中に書いた命令が、上から順番に実行されます。</p>
+            </article>
+            <article class="topic-card" data-topic="variable" tabindex="0" role="button" aria-expanded="false">
+              <span class="syntax-label">variable</span>
+              <h3>変数は値に名前を付ける</h3>
+              <p><span class="term">int score = 80;</span> は、scoreという名前で80を扱えるようにする書き方です。</p>
+            </article>
+            <article class="topic-card" data-topic="primitive-type" tabindex="0" role="button" aria-expanded="false">
+              <span class="syntax-label">type</span>
+              <h3>型は値の種類を決める</h3>
+              <p><span class="term">int</span>、<span class="term">String</span>、<span class="term">boolean</span> の違いを読めると、コードの意味が崩れにくくなります。</p>
+            </article>
+            <article class="topic-card" data-topic="assignment" tabindex="0" role="button" aria-expanded="false">
+              <span class="syntax-label">=</span>
+              <h3>= は右の値を左へ入れる</h3>
+              <p><span class="term">count = count + 1;</span> は、右側を先に計算して、その結果をcountへ入れる処理です。</p>
+            </article>
+            <article class="topic-card" data-topic="string-expression" tabindex="0" role="button" aria-expanded="false">
+              <span class="syntax-label">String</span>
+              <h3>文字列と値は+でつなげる</h3>
+              <p><span class="term">"score: " + score</span> のように、文字列と変数を連結して表示用の文字を作れます。</p>
+            </article>
+            <article class="topic-card" data-topic="println" tabindex="0" role="button" aria-expanded="false">
+              <span class="syntax-label">println</span>
+              <h3>printlnは値を表示する</h3>
+              <p><span class="term">System.out.println(...)</span> は、かっこの中の値を画面へ出します。出力問題ではここを丁寧に読みます。</p>
+            </article>
+            <article class="topic-card" data-topic="scope-basic" tabindex="0" role="button" aria-expanded="false">
+              <span class="syntax-label">scope</span>
+              <h3>変数には使える範囲がある</h3>
+              <p>波かっこの範囲を意識すると、ローカル変数、引数、フィールドの違いを見分けやすくなります。</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="topic-deep-dive" aria-live="polite">
+          <p class="eyebrow">Click a Card</p>
+          <h3>カードを押すと、ここに深掘り解説が表示されます。</h3>
+          <p>基礎文法は細かい記号の暗記ではなく、コードを読むための土台です。クラスへ進む前に、型、変数、代入、スコープの意味をつなげておきましょう。</p>
+        </div>
+
+        <p class="source-note">
+          参考: Oracle Java Tutorials の
+          <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/index.html">Language Basics</a>、
+          <a href="https://docs.oracle.com/javase/tutorial/java/javaOO/classes.html">Classes</a>
+        </p>
+      </section>
+
+      <section id="basicSyntaxQuestions" class="questions-section">
+        <div class="section-heading">
+          <p class="eyebrow">Basic Syntax Output Practice</p>
+          <h2>基礎文法の穴埋め問題10問</h2>
+          <p>main、型、変数、代入、演算、文字列、boolean、スコープ、クラス型の入口までを確認します。</p>
+        </div>
+        <div id="basicSyntaxQuestionList" class="question-list"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Java basic syntax / class・main・type・variable</p>
+      <button class="signout-button" type="button" id="signOutButton">ログアウト</button>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+  <script type="module" src="firebase-auth.js"></script>
+</body>
+</html>
