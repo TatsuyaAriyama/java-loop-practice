@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Java 基礎文法</title>
+  <title>Java 値・型・計算</title>
   <script>
     try {
       if (localStorage.getItem("java-output-practice-auth") === "signed-in") {
@@ -55,21 +55,20 @@
   <div class="app-shell" id="appShell" aria-hidden="true">
     <header class="site-header">
       <div class="header-inner">
-        <p class="lesson-current">Java 基礎文法編 / Lesson01 基礎文法</p>
+        <p class="lesson-current">Java 基礎文法編 / Lesson02 値・型・計算</p>
         <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
         <div class="header-actions">
           <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
           <a href="trace-room.html" class="secondary-link">Trace Room</a>
-          <a href="#basicSyntaxQuestions" class="primary-link">問題を始める</a>
-          <a href="#basicSyntaxGuide" class="secondary-link">文法ガイドを見る</a>
-          <a href="basic-syntax-values.html" class="secondary-link">値・型・計算へ</a>
-          <a href="index.html" class="secondary-link">制御構文へ</a>
+          <a href="#basicSyntaxValueQuestions" class="primary-link">問題を始める</a>
+          <a href="#basicSyntaxValueGuide" class="secondary-link">文法ガイドを見る</a>
+          <a href="basic-syntax.html" class="secondary-link">はじめの文法へ</a>
         </div>
         <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
           <div class="lesson-panel-head">
             <p class="eyebrow">Lesson Index</p>
             <h2>Lesson一覧</h2>
-            <p>学習したい大きな編を開いて、Lessonを選んでください。</p>
+            <p>知識ゼロからJava Silverまで、必要な順番で進めます。</p>
           </div>
           <div class="lesson-groups">
             <section class="lesson-group open" data-lesson-group="basic-syntax">
@@ -78,8 +77,8 @@
                 <small>2 Lessons</small>
               </button>
               <div class="lesson-links">
-                <a href="basic-syntax.html" class="active" data-lesson-link="basic-syntax"><span>01</span><b>はじめの文法</b><small class="lesson-check">0/10</small></a>
-                <a href="basic-syntax-values.html" data-lesson-link="basic-syntax-values"><span>02</span><b>値・型・計算</b><small class="lesson-check">0/10</small></a>
+                <a href="basic-syntax.html" data-lesson-link="basic-syntax"><span>01</span><b>はじめの文法</b><small class="lesson-check">0/10</small></a>
+                <a href="basic-syntax-values.html" class="active" data-lesson-link="basic-syntax-values"><span>02</span><b>値・型・計算</b><small class="lesson-check">0/10</small></a>
               </div>
             </section>
             <section class="lesson-group" data-lesson-group="control">
@@ -105,87 +104,57 @@
                 <a href="classes.html" data-lesson-link="classes"><span>03</span><b>クラス</b><small class="lesson-check">0/10</small></a>
               </div>
             </section>
-            <section class="lesson-group" data-lesson-group="oop-basic">
-              <button class="lesson-group-toggle" type="button" aria-expanded="false">
-                <span>Java オブジェクト指向基礎編</span>
-                <small>準備中</small>
-              </button>
-              <div class="lesson-links">
-                <a href="#" class="disabled" aria-disabled="true"><span>01</span><b>準備中</b><small>近日追加</small></a>
-              </div>
-            </section>
           </div>
         </nav>
       </div>
     </header>
 
     <main>
-      <section id="basicSyntaxGuide" class="syntax-section">
+      <section id="basicSyntaxValueGuide" class="syntax-section">
         <div class="section-heading">
-          <p class="eyebrow">Basic Syntax Lesson</p>
-          <h2>ゼロからJava Silverへ進むための最初の文法</h2>
-          <p>Javaは、いきなり長い英語のように見えます。でも分けると、箱、名前、値、表示の組み合わせです。まずは「どの箱に、何を入れて、何を表示するか」をゆっくり確認します。</p>
+          <p class="eyebrow">Basic Syntax Lesson 02</p>
+          <h2>値・型・計算を、箱と道具として読む</h2>
+          <p>Java Silverでは、細かい計算結果や型の違いを聞かれます。ここでは、値を「箱に入れるもの」、型を「箱の種類」、演算子を「値を変える道具」として整理します。</p>
         </div>
 
         <div class="syntax-layout">
           <div class="syntax-code">
             <pre><code>class Main {
   public static void main(String[] args) {
-    String name = "Aoi";
-    int score = 80;
-    boolean passed = score >= 60;
+    final int TAX_RATE = 10;
+    int price = 500;
+    int count = 2;
+    int total = price * count;
 
-    System.out.println(name + ": " + score);
+    double average = 5.0 / 2;
+    char grade = 'A';
 
-    Student student = new Student();
-    student.name = name;
+    System.out.println("total: " + total);
+    System.out.println(average);
+    System.out.println(grade);
   }
-}
-
-class Student {
-  String name;
 }</code></pre>
           </div>
           <div class="syntax-cards">
-            <article class="topic-card" data-topic="class-main" tabindex="0" role="button" aria-expanded="false">
-              <span class="syntax-label">class</span>
-              <h3>Javaはclassの中にコードを書く</h3>
-              <p><span class="term">class Main</span> は、Javaコードを入れる外枠です。処理は何もない場所に浮かず、基本的にクラスの中に置かれます。</p>
-            </article>
-            <article class="topic-card" data-topic="main-method" tabindex="0" role="button" aria-expanded="false">
-              <span class="syntax-label">main</span>
-              <h3>mainは実行の入口</h3>
-              <p><span class="term">public static void main(String[] args)</span> の中に書いた命令が、上から順番に実行されます。</p>
-            </article>
-            <article class="topic-card" data-topic="variable" tabindex="0" role="button" aria-expanded="false">
-              <span class="syntax-label">variable</span>
-              <h3>変数は値に名前を付ける</h3>
-              <p><span class="term">int score = 80;</span> は、scoreという名前で80を扱えるようにする書き方です。</p>
-            </article>
             <article class="topic-card" data-topic="primitive-type" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">type</span>
-              <h3>型は値の種類を決める</h3>
-              <p><span class="term">int</span>、<span class="term">String</span>、<span class="term">boolean</span> の違いを読めると、コードの意味が崩れにくくなります。</p>
+              <h3>型は、入れてよい値を決める</h3>
+              <p><span class="term">int</span> は整数、<span class="term">double</span> は小数、<span class="term">char</span> は1文字です。箱の種類が違う、と考えると読みやすくなります。</p>
             </article>
             <article class="topic-card" data-topic="assignment" tabindex="0" role="button" aria-expanded="false">
               <span class="syntax-label">=</span>
-              <h3>= は右の値を左へ入れる</h3>
-              <p><span class="term">count = count + 1;</span> は、右側を先に計算して、その結果をcountへ入れる処理です。</p>
+              <h3>= は、右を左の箱へ入れる</h3>
+              <p><span class="term">int total = price * count;</span> は、まず右側を計算して、その答えをtotalへ入れます。</p>
             </article>
             <article class="topic-card" data-topic="string-expression" tabindex="0" role="button" aria-expanded="false">
-              <span class="syntax-label">String</span>
-              <h3>文字列と値は+でつなげる</h3>
-              <p><span class="term">"score: " + score</span> のように、文字列と変数を連結して表示用の文字を作れます。</p>
+              <span class="syntax-label">+</span>
+              <h3>+ は、足し算にも文字つなぎにもなる</h3>
+              <p>数字同士なら足し算、文字列が混ざると文字をつなげます。Java Silverでは、この切り替わりがよく出ます。</p>
             </article>
-            <article class="topic-card" data-topic="println" tabindex="0" role="button" aria-expanded="false">
-              <span class="syntax-label">println</span>
-              <h3>printlnは値を表示する</h3>
-              <p><span class="term">System.out.println(...)</span> は、かっこの中の値を画面へ出します。出力問題ではここを丁寧に読みます。</p>
-            </article>
-            <article class="topic-card" data-topic="scope-basic" tabindex="0" role="button" aria-expanded="false">
-              <span class="syntax-label">scope</span>
-              <h3>変数には使える範囲がある</h3>
-              <p>波かっこの範囲を意識すると、ローカル変数、引数、フィールドの違いを見分けやすくなります。</p>
+            <article class="topic-card" data-topic="condition-expression" tabindex="0" role="button" aria-expanded="false">
+              <span class="syntax-label">boolean</span>
+              <h3>比較の答えはtrueかfalse</h3>
+              <p><span class="term">score &gt;= 60</span> の答えは数ではなく、trueかfalseです。if文はこの答えを見て動きます。</p>
             </article>
           </div>
         </div>
@@ -193,28 +162,22 @@ class Student {
         <div class="topic-deep-dive" aria-live="polite">
           <p class="eyebrow">Click a Card</p>
           <h3>カードを押すと、ここに深掘り解説が表示されます。</h3>
-          <p>基礎文法は記号の暗記ではなく、コードを読むための土台です。小さく分けて読めるようになると、Java Silverの問題文も怖くなくなります。</p>
+          <p>この章は、Java Silverで点数を落としやすい「型」「計算順」「文字列連結」「整数の割り算」をゆっくり確認する場所です。</p>
         </div>
-
-        <p class="source-note">
-          参考: Oracle Java Tutorials の
-          <a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/index.html">Language Basics</a>、
-          <a href="https://docs.oracle.com/javase/tutorial/java/javaOO/classes.html">Classes</a>
-        </p>
       </section>
 
-      <section id="basicSyntaxQuestions" class="questions-section">
+      <section id="basicSyntaxValueQuestions" class="questions-section">
         <div class="section-heading">
-          <p class="eyebrow">Basic Syntax Output Practice</p>
-          <h2>はじめの文法の穴埋め問題10問</h2>
-          <p>main、変数、表示、文字列、boolean、スコープ、クラス型の入口までを、知識ゼロから読める粒度で確認します。</p>
+          <p class="eyebrow">Value and Type Output Practice</p>
+          <h2>値・型・計算の穴埋め問題10問</h2>
+          <p>int、double、final、割り算、余り、++、+=、char、計算順、文字列連結を、Java Silverの土台として確認します。</p>
         </div>
-        <div id="basicSyntaxQuestionList" class="question-list"></div>
+        <div id="basicSyntaxValueQuestionList" class="question-list"></div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <p>Java basic syntax / class・main・type・variable</p>
+      <p>Java Silver basics / value・type・operator</p>
       <button class="signout-button" type="button" id="signOutButton">ログアウト</button>
     </footer>
   </div>

@@ -318,6 +318,7 @@ const arrayList = document.querySelector("#arrayQuestionList");
 const conditionalList = document.querySelector("#conditionalQuestionList");
 const booleanList = document.querySelector("#booleanQuestionList");
 const basicSyntaxList = document.querySelector("#basicSyntaxQuestionList");
+const basicSyntaxValueList = document.querySelector("#basicSyntaxValueQuestionList");
 const methodOneList = document.querySelector("#methodOneQuestionList");
 const methodTwoList = document.querySelector("#methodTwoQuestionList");
 const classList = document.querySelector("#classQuestionList");
@@ -1338,7 +1339,9 @@ function buildPrerequisiteSupport(problem, lessonId, level = "beginner") {
     .slice(0, 6)
     .map((item) => ({
       label: item.label,
-      status: statusForPrerequisite(item, source, level),
+      status: lessonId === "basic-syntax" && item.label === "クラス"
+        ? "理解済み"
+        : statusForPrerequisite(item, source, level),
       description: item.description
     }));
 
@@ -3077,8 +3080,8 @@ function makeClassMethodQuestion(question) {
 }
 
 const basicSyntaxQuestions = [
-  makeClassMethodQuestion({ title: "mainメソッドに処理を書く", concept: "main / println", prompt: "Javaを実行したときに最初に動くmainメソッドの中でHelloを表示します。", output: "Hello", explanation: "mainメソッドの波かっこの中に書いた命令が上から順番に実行されます。", parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "System.out.println(\"Hello\")", accepts: ["System.out.println(\"Hello\")"], chars: 28 }, ";\n  }\n}"] }),
-  makeClassMethodQuestion({ title: "int型の変数を宣言する", concept: "int / variable", prompt: "scoreという変数に80を入れて表示します。", output: "80", explanation: "整数を入れる変数はint型で宣言します。型、名前、値の順に読みます。", parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "int", chars: 4 }, " score = ", { answer: "80", chars: 3 }, ";\n    System.out.println(score);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "mainメソッドに処理を書く", concept: "main / println", prompt: "Javaは、まずmainという入口から動きます。入口の中でHelloを表示しましょう。", output: "Hello", explanation: "mainはプログラムのスタート地点です。箱の中に書いた命令を、Javaは上から順番に読んで動かします。", parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "System.out.println(\"Hello\")", accepts: ["System.out.println(\"Hello\")"], chars: 28 }, ";\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "int型の変数を宣言する", concept: "int / variable", prompt: "scoreという名前の箱に80を入れて表示します。", output: "80", explanation: "変数は名前付きの箱です。intは整数だけを入れる箱、scoreは箱の名前、80は中に入れる値です。", parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "int", chars: 4 }, " score = ", { answer: "80", chars: 3 }, ";\n    System.out.println(score);\n  }\n}"] }),
   makeClassMethodQuestion({ title: "String型の変数を使う", concept: "String", prompt: "nameにAoiを入れて、Hello Aoiと表示します。", output: "Hello Aoi", explanation: "Stringは文字列を扱う型です。文字列はダブルクォーテーションで囲みます。", parts: ["class Main {\n  public static void main(String[] args) {\n    String name = ", { answer: "\"Aoi\"", chars: 7 }, ";\n    System.out.println(\"Hello \" + ", { answer: "name", chars: 5 }, ");\n  }\n}"] }),
   makeClassMethodQuestion({ title: "代入で値を更新する", concept: "assignment", prompt: "countを1増やして、更新後の値を表示します。", output: "2", explanation: "=は比較ではなく代入です。右側を計算して、その結果を左の変数へ入れます。", parts: ["class Main {\n  public static void main(String[] args) {\n    int count = 1;\n    count = ", { answer: "count + 1", accepts: ["count + 1", "count+1"], chars: 10 }, ";\n    System.out.println(count);\n  }\n}"] }),
   makeClassMethodQuestion({ title: "計算結果を変数に入れる", concept: "operator", prompt: "priceとcountを使って合計金額を表示します。", output: "600", explanation: "*はかけ算です。計算結果をtotalに入れてから表示できます。", parts: ["class Main {\n  public static void main(String[] args) {\n    int price = 200;\n    int count = 3;\n    int total = ", { answer: "price * count", accepts: ["price * count", "price*count"], chars: 15 }, ";\n    System.out.println(total);\n  }\n}"] }),
@@ -3087,6 +3090,19 @@ const basicSyntaxQuestions = [
   makeClassMethodQuestion({ title: "文字列と計算結果をつなげる", concept: "String / expression", prompt: "合計を計算して、total: 90と表示します。", output: "total: 90", explanation: "文字列と値は+で連結できます。計算を先にしたいときは丸かっこで囲みます。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(\"total: \" + ", { answer: "(40 + 50)", accepts: ["(40 + 50)", "(40+50)"], chars: 10 }, ");\n  }\n}"] }),
   makeClassMethodQuestion({ title: "ローカル変数のスコープを読む", concept: "scope", prompt: "mainの中で作ったmessageを表示します。", output: "ready", explanation: "メソッドの中で宣言したローカル変数は、そのメソッドの中で使います。", parts: ["class Main {\n  public static void main(String[] args) {\n    String message = \"ready\";\n    ", { answer: "System.out.println(message)", accepts: ["System.out.println(message)"], chars: 28 }, ";\n  }\n}"] }),
   makeClassMethodQuestion({ title: "クラス型の変数を読む準備", concept: "class type", prompt: "Student型の変数sを作り、nameフィールドに値を入れて表示します。", output: "Aoi", explanation: "自分で作ったクラス名も型として使えます。クラス編に進む前に、型としてのクラス名を読めるようにします。", parts: ["class Main {\n  public static void main(String[] args) {\n    Student s = ", { answer: "new Student()", chars: 14 }, ";\n    s.name = \"Aoi\";\n    System.out.println(s.name);\n  }\n}\n\nclass Student {\n  String name;\n}"] })
+];
+
+const basicSyntaxValueQuestions = [
+  makeClassMethodQuestion({ title: "整数と小数を分けて読む", concept: "int / double", prompt: "人数は整数、平均点は小数として変数に入れます。", output: "3\n82.5", explanation: "intは1、2、3のような整数用です。doubleは82.5のような小数用です。Java Silverでは、型に合う値を入れているかをよく見ます。", parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "int", chars: 4 }, " count = 3;\n    ", { answer: "double", chars: 7 }, " average = 82.5;\n    System.out.println(count);\n    System.out.println(average);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "finalで入れ替えできない値にする", concept: "final", prompt: "TAX_RATEをあとから変えない定数として宣言します。", output: "10", explanation: "finalを付けた変数は、一度入れたら中身を入れ替えられません。消費税率や最大数など、変わってほしくない値に使います。", parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "final", chars: 6 }, " int TAX_RATE = 10;\n    System.out.println(TAX_RATE);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "割り算の結果を読む", concept: "division", prompt: "int同士で割り算すると、小数部分は切り捨てられます。", output: "2", explanation: "5 / 2 は2.5ではなく2になります。int同士の計算なので、Javaは整数として結果を出します。", parts: ["class Main {\n  public static void main(String[] args) {\n    int result = 5 ", { answer: "/", chars: 2 }, " 2;\n    System.out.println(result);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "余りを求める", concept: "modulo", prompt: "7を3で割った余りを表示します。", output: "1", explanation: "%は割り算の余りを出す記号です。偶数か奇数か、何回ごとに処理するかを調べるときにも使います。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(7 ", { answer: "%", chars: 2 }, " 3);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "++で1増やす", concept: "increment", prompt: "levelを1増やして表示します。", output: "2", explanation: "level++は、levelの中身を1だけ増やす書き方です。count = count + 1と同じ気持ちで読めます。", parts: ["class Main {\n  public static void main(String[] args) {\n    int level = 1;\n    ", { answer: "level++", accepts: ["level++", "++level"], chars: 8 }, ";\n    System.out.println(level);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "+=で足して入れる", concept: "compound assignment", prompt: "totalに30を足して、もう一度totalに入れます。", output: "80", explanation: "total += 30 は total = total + 30 と同じ意味です。右の値を足して、左の箱に戻します。", parts: ["class Main {\n  public static void main(String[] args) {\n    int total = 50;\n    total ", { answer: "+=", chars: 3 }, " 30;\n    System.out.println(total);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "charは1文字だけを持つ", concept: "char", prompt: "gradeにAという1文字を入れて表示します。", output: "A", explanation: "charは1文字だけを入れる型です。Stringはダブルクォーテーション、charはシングルクォーテーションを使います。", parts: ["class Main {\n  public static void main(String[] args) {\n    char grade = ", { answer: "'A'", chars: 4 }, ";\n    System.out.println(grade);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "丸かっこで先に計算する", concept: "precedence", prompt: "2 + 3を先に計算してから4をかけます。", output: "20", explanation: "Javaはかけ算を先に計算します。先に足し算したいときは、算数と同じように丸かっこで囲みます。", parts: ["class Main {\n  public static void main(String[] args) {\n    int result = ", { answer: "(2 + 3)", accepts: ["(2 + 3)", "(2+3)"], chars: 8 }, " * 4;\n    System.out.println(result);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "小数として計算する", concept: "casting", prompt: "5を2で割った結果を2.5として表示します。", output: "2.5", explanation: "片方をdoubleにすると、小数として計算できます。Java Silverでは、整数の割り算か小数の割り算かを見分ける問題が出ます。", parts: ["class Main {\n  public static void main(String[] args) {\n    double result = ", { answer: "5.0", chars: 4 }, " / 2;\n    System.out.println(result);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "文字列連結は左から進む", concept: "String concat", prompt: "文字列と数字を+でつなげた結果を読みます。", output: "score: 90", explanation: "左に文字列があると、+は文字をつなげる働きになります。計算したい場所は丸かっこで囲むと安全です。", parts: ["class Main {\n  public static void main(String[] args) {\n    int score = 90;\n    System.out.println(", { answer: "\"score: \" + score", accepts: ["\"score: \" + score", "\"score: \"+score"], chars: 18 }, ");\n  }\n}"] })
 ];
 
 const methodOneQuestions = [
@@ -3133,6 +3149,11 @@ basicSyntaxQuestions.forEach((question) => {
   question.hints = buildTraceaHints(question, question.parts);
 });
 
+basicSyntaxValueQuestions.forEach((question) => {
+  Object.assign(question, buildPrerequisiteSupport(question, "basic-syntax", "beginner"));
+  question.hints = buildTraceaHints(question, question.parts);
+});
+
 [methodOneQuestions, methodTwoQuestions].forEach((set) => {
   set.forEach((question) => {
     Object.assign(question, buildPrerequisiteSupport(question, "methods", "beginner"));
@@ -3147,6 +3168,7 @@ classQuestions.forEach((question) => {
 
 const lessonMeta = [
   { id: "basic-syntax", total: basicSyntaxQuestions.length },
+  { id: "basic-syntax-values", total: basicSyntaxValueQuestions.length },
   { id: "loops", total: questions.length * 2 },
   { id: "arrays", total: arrayQuestions.length * 2 },
   { id: "conditionals", total: conditionalQuestions.length },
@@ -3681,10 +3703,11 @@ function createBasicSyntaxLessonGroup() {
   section.innerHTML = `
     <button class="lesson-group-toggle" type="button" aria-expanded="false">
       <span>Java 基礎文法編</span>
-      <small>1 Lesson</small>
+      <small>2 Lessons</small>
     </button>
     <div class="lesson-links">
-      <a href="basic-syntax.html" data-lesson-link="basic-syntax"><span>01</span><b>基礎文法</b><small class="lesson-check">0/10</small></a>
+      <a href="basic-syntax.html" data-lesson-link="basic-syntax"><span>01</span><b>はじめの文法</b><small class="lesson-check">0/10</small></a>
+      <a href="basic-syntax-values.html" data-lesson-link="basic-syntax-values"><span>02</span><b>値・型・計算</b><small class="lesson-check">0/10</small></a>
     </div>
   `;
   return section;
@@ -4442,6 +4465,11 @@ renderClassMethodQuestions(basicSyntaxList, basicSyntaxQuestions, {
   numberPrefix: "B-",
   panelLabel: "基礎文法コード"
 });
+renderClassMethodQuestions(basicSyntaxValueList, basicSyntaxValueQuestions, {
+  lessonId: "basic-syntax-values",
+  numberPrefix: "V-",
+  panelLabel: "値と型のコード"
+});
 renderClassMethodQuestions(methodOneList, methodOneQuestions, {
   lessonId: "methods-1",
   numberPrefix: "M1-",
@@ -4592,6 +4620,12 @@ if (booleanList) {
 
 if (basicSyntaxList) {
   basicSyntaxList.addEventListener("click", (event) => {
+    handleQuestionAction(event);
+  });
+}
+
+if (basicSyntaxValueList) {
+  basicSyntaxValueList.addEventListener("click", (event) => {
     handleQuestionAction(event);
   });
 }
