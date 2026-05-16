@@ -4326,9 +4326,10 @@ function renderClassMethodQuestions(targetList, targetQuestions, options) {
   targetList.textContent = "";
 
   targetQuestions.forEach((question, index) => {
+    const isBasicSyntaxLesson = options.lessonId === "basic-syntax" || options.lessonId === "basic-syntax-values";
     const card = document.createElement("article");
     const completed = isQuestionComplete(options.lessonId, index);
-    card.className = `question-card${completed ? " completed" : ""}`;
+    card.className = `question-card${completed ? " completed" : ""}${isBasicSyntaxLesson ? " basic-syntax-question" : ""}`;
     card.dataset.lesson = options.lessonId;
     card.dataset.level = "beginner";
     card.dataset.questionIndex = String(index);
@@ -4341,8 +4342,16 @@ function renderClassMethodQuestions(targetList, targetQuestions, options) {
             <h3>${question.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
-          <div class="prerequisite-slot"></div>
-          <div class="tracea-prompt"></div>
+          ${isBasicSyntaxLesson ? `
+            <div class="question-focus">
+              <p class="question-focus-label">この問題でやること</p>
+              <div class="tracea-prompt"></div>
+            </div>
+            <div class="prerequisite-slot"></div>
+          ` : `
+            <div class="prerequisite-slot"></div>
+            <div class="tracea-prompt"></div>
+          `}
         </div>
       </div>
       <div class="question-body">
