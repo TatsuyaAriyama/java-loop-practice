@@ -3251,6 +3251,8 @@ const lessonMeta = [
 ];
 
 const progressPrefix = "java-output-practice-progress";
+const studyLogPrefix = "java-output-practice-study-log";
+const answerUnlockPrefix = "java-output-practice-answer-unlocked";
 const loopUnlockKey = "java-output-practice-loop-unlocked";
 const authScopeKey = "java-output-practice-auth-scope";
 let progressScope = "local";
@@ -3262,6 +3264,22 @@ try {
 
 function progressKey(lessonId) {
   return `${progressPrefix}:${progressScope}:${lessonId}`;
+}
+
+function todayKey() {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function studyLogKey() {
+  return `${studyLogPrefix}:${progressScope}:${todayKey()}`;
+}
+
+function answerUnlockKey(lessonId) {
+  return `${answerUnlockPrefix}:${progressScope}:${lessonId}`;
 }
 
 function legacyProgressKey(lessonId) {
@@ -3332,6 +3350,64 @@ function questionProgressKey(questionIndex, level = "beginner") {
   return `${level}:${questionIndex}`;
 }
 
+function getQuestionIdentity(card) {
+  const lessonId = card?.dataset.lesson;
+  const questionIndex = Number(card?.dataset.questionIndex);
+  const level = card?.dataset.level || "beginner";
+  if (!lessonId || Number.isNaN(questionIndex)) return null;
+
+  return {
+    lessonId,
+    questionIndex,
+    level,
+    key: questionProgressKey(questionIndex, level),
+    title: card.querySelector(".question-title-line h3")?.textContent?.trim() || `問${questionIndex + 1}`,
+    number: card.querySelector(".question-number")?.textContent?.trim() || String(questionIndex + 1),
+    concept: card.querySelector(".concept")?.textContent?.trim() || lessonId
+  };
+}
+
+function readAnswerUnlocks(lessonId) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(answerUnlockKey(lessonId)) || "[]");
+    return new Set(Array.isArray(saved) ? saved : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function writeAnswerUnlocks(lessonId, unlocked) {
+  try {
+    localStorage.setItem(answerUnlockKey(lessonId), JSON.stringify([...unlocked]));
+  } catch {}
+}
+
+function hasAnswerUnlock(lessonId, questionIndex, level = "beginner") {
+  return readAnswerUnlocks(lessonId).has(questionProgressKey(questionIndex, level));
+}
+
+function unlockAnswerForQuestion(card) {
+  const identity = getQuestionIdentity(card);
+  if (!identity) return;
+
+  const unlocked = readAnswerUnlocks(identity.lessonId);
+  unlocked.add(identity.key);
+  writeAnswerUnlocks(identity.lessonId, unlocked);
+  updateAnswerGate(card, true);
+}
+
+function updateAnswerGate(card, unlocked = false) {
+  const button = card.querySelector('button[data-action="answer"]');
+  if (!button) return;
+
+  const identity = getQuestionIdentity(card);
+  const canShow = unlocked || (identity && hasAnswerUnlock(identity.lessonId, identity.questionIndex, identity.level));
+  const visible = card.querySelector(".answer-box")?.classList.contains("visible");
+  button.disabled = !canShow;
+  button.textContent = canShow ? (visible ? "解答を隠す" : "解答を表示") : "チェック後に解答";
+  button.title = canShow ? "" : "空欄を埋めて入力チェックすると、解答を表示できます。";
+}
+
 function isQuestionComplete(lessonId, questionIndex, level = "beginner") {
   const completed = readCompletedQuestions(lessonId);
   return completed.has(questionProgressKey(questionIndex, level)) || (level === "beginner" && completed.has(questionIndex));
@@ -3369,6 +3445,75 @@ function markQuestionComplete(card) {
   writeCompletedQuestions(lessonId, completed);
   updateQuestionCompletion(card, true);
   updateLessonProgress();
+}
+
+function readTodayStudyLog() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(studyLogKey()) || "{}");
+    return {
+      attempted: Array.isArray(saved.attempted) ? saved.attempted : [],
+      missed: Array.isArray(saved.missed) ? saved.missed : [],
+      updatedAt: saved.updatedAt || null
+    };
+  } catch {
+    return { attempted: [], missed: [], updatedAt: null };
+  }
+}
+
+function writeTodayStudyLog(log) {
+  try {
+    localStorage.setItem(studyLogKey(), JSON.stringify({
+      attempted: log.attempted || [],
+      missed: log.missed || [],
+      updatedAt: new Date().toISOString()
+    }));
+  } catch {}
+}
+
+function upsertStudyLogItem(items, item) {
+  const index = items.findIndex((existing) => existing.id === item.id);
+  if (index >= 0) {
+    items[index] = { ...items[index], ...item, count: (items[index].count || 1) + 1 };
+    return items;
+  }
+  return [...items, { ...item, count: 1 }];
+}
+
+function recordStudyAttempt(card, { missed = false, wrongCount = 0 } = {}) {
+  const identity = getQuestionIdentity(card);
+  if (!identity) return;
+
+  const item = {
+    id: `${identity.lessonId}:${identity.key}`,
+    lessonId: identity.lessonId,
+    level: identity.level,
+    title: identity.title,
+    number: identity.number,
+    concept: identity.concept,
+    wrongCount,
+    checkedAt: new Date().toISOString()
+  };
+  const log = readTodayStudyLog();
+  log.attempted = upsertStudyLogItem(log.attempted, item);
+  if (missed) {
+    log.missed = upsertStudyLogItem(log.missed, item);
+  }
+  writeTodayStudyLog(log);
+  renderStudyLog();
+}
+
+function getReviewCandidates(log = readTodayStudyLog()) {
+  const completedIds = new Set();
+  lessonMeta.forEach((lesson) => {
+    readCompletedQuestions(lesson.id).forEach((item) => {
+      completedIds.add(`${lesson.id}:${String(item)}`);
+    });
+  });
+
+  return log.missed
+    .filter((item) => !completedIds.has(item.id))
+    .slice(-5)
+    .reverse();
 }
 
 function getCompletedCount(lesson) {
@@ -3523,6 +3668,105 @@ function ensureUserSummary() {
   const actions = headerInner.querySelector(".header-actions");
   headerInner.insertBefore(panel, actions);
   updateUserSummary();
+}
+
+function ensureStudyLogPanel() {
+  if (!headerInner || document.querySelector(".study-log-panel")) return;
+
+  const panel = document.createElement("aside");
+  panel.className = "study-log-panel";
+  panel.setAttribute("aria-label", "今日の学習ログ");
+  panel.innerHTML = `
+    <div class="study-log-head">
+      <div>
+        <p class="eyebrow">Today Log</p>
+        <h2>今日の学習ログ</h2>
+      </div>
+      <span data-study-date></span>
+    </div>
+    <div class="study-log-metrics">
+      <div>
+        <span data-study-attempted>0</span>
+        <small>解いた問題</small>
+      </div>
+      <div>
+        <span data-study-missed>0</span>
+        <small>ミス</small>
+      </div>
+      <div>
+        <span data-study-review>0</span>
+        <small>復習候補</small>
+      </div>
+    </div>
+    <div class="study-log-section">
+      <h3>ミスした問題</h3>
+      <ul data-study-miss-list></ul>
+    </div>
+    <div class="study-log-section review">
+      <h3>復習候補</h3>
+      <ul data-study-review-list></ul>
+    </div>
+  `;
+
+  const lessonPanel = headerInner.querySelector("#lessonPanel");
+  lessonPanel?.insertAdjacentElement("afterend", panel);
+  renderStudyLog();
+}
+
+function createStudyLogListItem(item, emptyText) {
+  const li = document.createElement("li");
+  if (!item) {
+    li.className = "empty";
+    li.textContent = emptyText;
+    return li;
+  }
+
+  const label = document.createElement("span");
+  const title = document.createElement("b");
+  const count = document.createElement("small");
+  label.textContent = item.number;
+  title.textContent = item.title;
+  count.textContent = item.count > 1 ? `${item.count}回` : item.level === "intermediate" ? "中級" : "初級";
+  li.append(label, title, count);
+  return li;
+}
+
+function renderStudyLog() {
+  const panel = document.querySelector(".study-log-panel");
+  if (!panel) return;
+
+  const log = readTodayStudyLog();
+  const review = getReviewCandidates(log);
+  const date = panel.querySelector("[data-study-date]");
+  const attempted = panel.querySelector("[data-study-attempted]");
+  const missed = panel.querySelector("[data-study-missed]");
+  const reviewCount = panel.querySelector("[data-study-review]");
+  const missList = panel.querySelector("[data-study-miss-list]");
+  const reviewList = panel.querySelector("[data-study-review-list]");
+
+  if (date) date.textContent = todayKey();
+  if (attempted) attempted.textContent = String(log.attempted.length);
+  if (missed) missed.textContent = String(log.missed.length);
+  if (reviewCount) reviewCount.textContent = String(review.length);
+
+  if (missList) {
+    missList.textContent = "";
+    const latestMisses = [...log.missed].slice(-4).reverse();
+    if (latestMisses.length === 0) {
+      missList.appendChild(createStudyLogListItem(null, "まだミスはありません。"));
+    } else {
+      latestMisses.forEach((item) => missList.appendChild(createStudyLogListItem(item, "")));
+    }
+  }
+
+  if (reviewList) {
+    reviewList.textContent = "";
+    if (review.length === 0) {
+      reviewList.appendChild(createStudyLogListItem(null, "復習候補はまだありません。"));
+    } else {
+      review.forEach((item) => reviewList.appendChild(createStudyLogListItem(item, "")));
+    }
+  }
 }
 
 function toggleProfileEditor(forceOpen) {
@@ -4643,17 +4887,32 @@ function checkQuestion(card) {
   });
 
   if (wrong.length === 0) {
+    unlockAnswerForQuestion(card);
+    recordStudyAttempt(card, { missed: false });
     feedback.className = "feedback ok";
     feedback.textContent = "正解です。出力の流れまで説明できたら、かなり良い状態です。";
     markQuestionComplete(card);
     return;
   }
 
+  unlockAnswerForQuestion(card);
+  recordStudyAttempt(card, { missed: true, wrongCount: wrong.length });
   feedback.className = "feedback no";
   feedback.textContent = `あと${wrong.length}個、考え直してみましょう。記号、数字、増え方に注目です。`;
 }
 
 function toggleAnswer(card, button) {
+  const identity = getQuestionIdentity(card);
+  if (identity && !hasAnswerUnlock(identity.lessonId, identity.questionIndex, identity.level)) {
+    const feedback = card.querySelector(".feedback");
+    if (feedback) {
+      feedback.className = "feedback no";
+      feedback.textContent = "解答を見る前に、まず空欄を埋めて入力チェックしてください。";
+    }
+    updateAnswerGate(card);
+    return;
+  }
+
   const box = card.querySelector(".answer-box");
   const visible = box.classList.toggle("visible");
   button.textContent = visible ? "解答を隠す" : "解答を表示";
@@ -4745,6 +5004,7 @@ function updateTraceaState(card) {
   }
 
   card.dataset.traceaRenderedStep = String(step);
+  updateAnswerGate(card);
 }
 
 function advanceTracea(card) {
@@ -5266,6 +5526,7 @@ renderClassMethodQuestions(classList, classQuestions, {
 });
 ensureLessonSeriesGroups();
 ensureUserSummary();
+ensureStudyLogPanel();
 updateLessonProgress();
 notifyLearningStatus();
 renderTraceRoom();
@@ -5280,6 +5541,7 @@ window.addEventListener("java-practice-auth-ready", (event) => {
   currentUserAvatar = event.detail?.avatar || currentUserAvatar || getAvatarLetter(currentDisplayName);
   updateUserSummary();
   updateLessonProgress();
+  renderStudyLog();
   notifyLearningStatus();
   renderTraceRoom();
   renderTraceRoomChat();
@@ -5309,6 +5571,7 @@ window.addEventListener("java-practice-progress-loaded", (event) => {
   mergeRemoteCompletedQuestions(detail.completedByLesson || {});
   refreshQuestionCompletionFromProgress();
   updateLessonProgress();
+  renderStudyLog();
 });
 window.addEventListener("java-practice-trace-users", (event) => {
   remoteTraceRoomUsers = Array.isArray(event.detail?.users) ? event.detail.users : [];
