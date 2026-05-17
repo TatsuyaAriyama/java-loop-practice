@@ -4305,8 +4305,8 @@ function createChatMessageItem(message) {
     deleteButton.dataset.messageId = message.id;
     deleteButton.setAttribute("aria-label", "このコメントを削除");
     deleteButton.disabled = deletingRoomMessageIds.has(message.id);
-    deleteButton.textContent = deletingRoomMessageIds.has(message.id) ? "削除中" : "削除";
-    meta.appendChild(deleteButton);
+    deleteButton.textContent = deletingRoomMessageIds.has(message.id) ? "..." : "-";
+    item.appendChild(deleteButton);
   }
 
   const text = document.createElement("p");
