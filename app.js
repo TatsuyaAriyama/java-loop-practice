@@ -3182,6 +3182,7 @@ const progressPrefix = "java-output-practice-progress";
 const loopUnlockKey = "java-output-practice-loop-unlocked";
 const authScopeKey = "java-output-practice-auth-scope";
 let progressScope = "local";
+let remoteProgressSummary = null;
 
 try {
   progressScope = localStorage.getItem(authScopeKey) || "local";
@@ -3212,6 +3213,38 @@ function writeCompletedQuestions(lessonId, completed) {
   }
 }
 
+function buildCompletedByLesson() {
+  return Object.fromEntries(
+    lessonMeta.map((lesson) => [lesson.id, [...readCompletedQuestions(lesson.id)]])
+  );
+}
+
+function mergeRemoteCompletedQuestions(completedByLesson = {}) {
+  let changed = false;
+
+  lessonMeta.forEach((lesson) => {
+    const remoteItems = completedByLesson[lesson.id];
+    if (!Array.isArray(remoteItems)) return;
+
+    const completed = readCompletedQuestions(lesson.id);
+    const beforeSize = completed.size;
+    remoteItems.forEach((item) => {
+      if (typeof item === "number") {
+        completed.add(questionProgressKey(item, "beginner"));
+        return;
+      }
+      completed.add(String(item));
+    });
+
+    if (completed.size !== beforeSize) {
+      writeCompletedQuestions(lesson.id, completed);
+      changed = true;
+    }
+  });
+
+  return changed;
+}
+
 function questionProgressKey(questionIndex, level = "beginner") {
   return `${level}:${questionIndex}`;
 }
@@ -3227,6 +3260,19 @@ function updateQuestionCompletion(card, completed) {
   if (mark) {
     mark.textContent = completed ? "完了" : "未完了";
   }
+}
+
+function refreshQuestionCompletionFromProgress() {
+  document.querySelectorAll(".question-card[data-lesson][data-question-index]").forEach((card) => {
+    updateQuestionCompletion(
+      card,
+      isQuestionComplete(
+        card.dataset.lesson,
+        Number(card.dataset.questionIndex),
+        card.dataset.level || "beginner"
+      )
+    );
+  });
 }
 
 function markQuestionComplete(card) {
@@ -3282,8 +3328,16 @@ function updateUserSummary() {
   if (name) name.textContent = currentDisplayName;
   if (avatar) avatar.textContent = currentUserAvatar || getAvatarLetter(currentDisplayName);
   if (input) input.value = currentDisplayName;
-  if (exerciseCount) exerciseCount.textContent = String(getTotalCompletedExercises());
-  if (lessonCount) lessonCount.textContent = `${getCompletedLessonCount()}/${lessonMeta.length}`;
+  const localTotal = getTotalCompletedExercises();
+  const remoteTotal = Number(remoteProgressSummary?.totalCleared);
+  const displayTotal = Number.isFinite(remoteTotal) ? Math.max(localTotal, remoteTotal) : localTotal;
+  const localLessonCount = `${getCompletedLessonCount()}/${lessonMeta.length}`;
+  const displayLessonCount = (!Number.isFinite(remoteTotal) || localTotal >= remoteTotal || !remoteProgressSummary?.lessonsCleared)
+    ? localLessonCount
+    : remoteProgressSummary.lessonsCleared;
+
+  if (exerciseCount) exerciseCount.textContent = String(displayTotal);
+  if (lessonCount) lessonCount.textContent = displayLessonCount;
 
   panel.querySelectorAll("[data-avatar-choice]").forEach((button) => {
     const active = button.dataset.avatarChoice === currentUserAvatar;
@@ -3415,7 +3469,8 @@ function updateLessonProgress() {
   window.dispatchEvent(new CustomEvent("java-practice-progress-updated", {
     detail: {
       totalCleared: getTotalCompletedExercises(),
-      lessonsCleared: `${getCompletedLessonCount()}/${lessonMeta.length}`
+      lessonsCleared: `${getCompletedLessonCount()}/${lessonMeta.length}`,
+      completedByLesson: buildCompletedByLesson()
     }
   }));
 }
@@ -4752,11 +4807,23 @@ window.addEventListener("java-practice-auth-ready", (event) => {
   currentDisplayName = event.detail?.displayName || currentUserName;
   currentUserAvatar = event.detail?.avatar || currentUserAvatar || getAvatarLetter(currentDisplayName);
   updateUserSummary();
+  updateLessonProgress();
   notifyLearningStatus();
   renderTraceRoom();
   if (hasLoopUnlock()) {
     applyLoopUnlock();
   }
+});
+window.addEventListener("java-practice-progress-loaded", (event) => {
+  const detail = event.detail || {};
+  remoteProgressSummary = {
+    totalCleared: detail.totalCleared,
+    lessonsCleared: detail.lessonsCleared
+  };
+
+  mergeRemoteCompletedQuestions(detail.completedByLesson || {});
+  refreshQuestionCompletionFromProgress();
+  updateLessonProgress();
 });
 window.addEventListener("java-practice-trace-users", (event) => {
   remoteTraceRoomUsers = Array.isArray(event.detail?.users) ? event.detail.users : [];

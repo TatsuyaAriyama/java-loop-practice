@@ -12,6 +12,7 @@ import {
 import {
   collection,
   doc,
+  getDoc,
   getFirestore,
   limit,
   onSnapshot,
@@ -55,8 +56,10 @@ let traceHeartbeatTimer = null;
 let latestLearningStatus = "Java学習中";
 let latestProgress = {
   totalCleared: 0,
-  lessonsCleared: "0/7"
+  lessonsCleared: "0/9"
 };
+let latestCompletedByLesson = {};
+let hasExactProgressSnapshot = false;
 const profileNameKey = "java-output-practice-auth-name";
 const profileDisplayNameKey = "java-output-practice-auth-display-name";
 const profileAvatarKey = "java-output-practice-auth-avatar";
@@ -179,6 +182,77 @@ function mergeTraceUsers() {
 
 function dispatchMergedTraceUsers() {
   dispatchTraceUsers(mergeTraceUsers());
+}
+
+function dispatchLoadedProgress(progress) {
+  window.dispatchEvent(new CustomEvent("java-practice-progress-loaded", {
+    detail: progress
+  }));
+}
+
+async function loadAccountProgress(user) {
+  if (!user) return null;
+
+  hasExactProgressSnapshot = false;
+  latestCompletedByLesson = {};
+
+  try {
+    const progressSnap = await getDoc(doc(db, "javaPracticeProgress", user.uid));
+    if (progressSnap.exists()) {
+      const data = progressSnap.data();
+      hasExactProgressSnapshot = true;
+      latestCompletedByLesson = data.completedByLesson || {};
+      latestProgress = {
+        totalCleared: data.totalCleared ?? 0,
+        lessonsCleared: data.lessonsCleared || latestProgress.lessonsCleared
+      };
+      return {
+        ...latestProgress,
+        completedByLesson: latestCompletedByLesson
+      };
+    }
+  } catch {}
+
+  try {
+    const userSnap = await getDoc(doc(db, "javaPracticeUsers", user.uid));
+    if (userSnap.exists()) {
+      const data = userSnap.data();
+      if (data.completedByLesson) {
+        hasExactProgressSnapshot = true;
+        latestCompletedByLesson = data.completedByLesson || {};
+      }
+      latestProgress = {
+        totalCleared: data.totalCleared ?? latestProgress.totalCleared,
+        lessonsCleared: data.lessonsCleared || latestProgress.lessonsCleared
+      };
+      return {
+        ...latestProgress,
+        completedByLesson: latestCompletedByLesson
+      };
+    }
+  } catch {}
+
+  return null;
+}
+
+async function saveAccountProgress(user, progress, completedByLesson) {
+  if (!user) return;
+
+  try {
+    await setDoc(doc(db, "javaPracticeProgress", user.uid), {
+      ...progress,
+      completedByLesson: completedByLesson || {},
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  } catch {}
+
+  try {
+    await setDoc(doc(db, "javaPracticeUsers", user.uid), {
+      ...progress,
+      completedByLesson: completedByLesson || {},
+      progressUpdatedAt: serverTimestamp()
+    }, { merge: true });
+  } catch {}
 }
 
 function startTraceRoomSubscription() {
@@ -321,10 +395,19 @@ window.addEventListener("java-practice-learning-status", (event) => {
 });
 
 window.addEventListener("java-practice-progress-updated", (event) => {
-  latestProgress = {
+  const incomingProgress = {
     totalCleared: event.detail?.totalCleared ?? latestProgress.totalCleared,
     lessonsCleared: event.detail?.lessonsCleared ?? latestProgress.lessonsCleared
   };
+  const incomingCompletedByLesson = event.detail?.completedByLesson || {};
+  const shouldKeepRemoteSummary = !hasExactProgressSnapshot
+    && Number(incomingProgress.totalCleared) < Number(latestProgress.totalCleared || 0);
+
+  if (!shouldKeepRemoteSummary) {
+    latestProgress = incomingProgress;
+    latestCompletedByLesson = incomingCompletedByLesson;
+    hasExactProgressSnapshot = true;
+  }
 
   updateTracePresence({
     ...latestProgress,
@@ -333,6 +416,9 @@ window.addEventListener("java-practice-progress-updated", (event) => {
   });
 
   if (auth.currentUser) {
+    if (!shouldKeepRemoteSummary) {
+      saveAccountProgress(auth.currentUser, latestProgress, latestCompletedByLesson);
+    }
     saveRegisteredUser(auth.currentUser, {
       ...latestProgress,
       status: latestLearningStatus,
@@ -448,7 +534,7 @@ signOutButton.addEventListener("click", async () => {
   await signOut(auth);
 });
 
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   const signedIn = Boolean(user);
   try {
     if (signedIn) {
@@ -468,12 +554,18 @@ onAuthStateChanged(auth, (user) => {
       tracePresenceRef = null;
       tracePresenceUsers = [];
       registeredTraceUsers = [];
+      latestCompletedByLesson = {};
+      hasExactProgressSnapshot = false;
       stopTraceHeartbeat();
       dispatchMergedTraceUsers();
     }
   } catch {}
 
   if (signedIn) {
+    const loadedProgress = await loadAccountProgress(user);
+    if (loadedProgress) {
+      dispatchLoadedProgress(loadedProgress);
+    }
     saveRegisteredUser(user);
     saveTracePresence(user);
     startTraceHeartbeat(user);
