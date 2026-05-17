@@ -3877,12 +3877,12 @@ function ensureLessonSeriesGroups() {
       insertLessonGroupAfter(groups, createClassMethodLessonGroup(), '[data-lesson-group="control"]');
     }
 
-    if (!groups.querySelector('[data-lesson-group="silver-se17"]')) {
-      insertLessonGroupAfter(groups, createSilverLessonGroup(), '[data-lesson-group="class-method"]');
+    if (!groups.querySelector('[data-lesson-group="oop-basic"]')) {
+      insertLessonGroupAfter(groups, createOopBasicLessonGroup(), '[data-lesson-group="class-method"]');
     }
 
-    if (!groups.querySelector('[data-lesson-group="oop-basic"]')) {
-      insertLessonGroupAfter(groups, createOopBasicLessonGroup(), '[data-lesson-group="silver-se17"]');
+    if (!groups.querySelector('[data-lesson-group="silver-se17"]')) {
+      insertLessonGroupAfter(groups, createSilverLessonGroup(), '[data-lesson-group="oop-basic"]');
     }
 
     if (!groups.querySelector('[data-lesson-group="oop-advanced"]')) {
@@ -3892,7 +3892,7 @@ function ensureLessonSeriesGroups() {
         lessons: [
           { id: "oop-advanced-soon", href: "#", title: "準備中", status: "近日追加" }
         ]
-      }), '[data-lesson-group="oop-basic"]');
+      }), '[data-lesson-group="silver-se17"]');
     }
   });
 }
