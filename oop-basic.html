@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Java オブジェクト指向の基礎</title>
+  <script>
+    try { if (localStorage.getItem("java-output-practice-auth") === "signed-in") document.documentElement.classList.add("auth-optimistic"); } catch {}
+  </script>
+  <style>
+    body.auth-pending .auth-screen, body.auth-pending .app-shell { display: none !important; }
+    html.auth-optimistic body.auth-pending .app-shell { display: block !important; }
+  </style>
+  <link rel="stylesheet" href="styles.css?v=oop-basic-lesson-20260517">
+</head>
+<body class="auth-pending">
+  <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
+    <div class="auth-shell">
+      <div class="auth-brand"><p class="eyebrow">Java Output Practice</p><h1>ログイン</h1><p>メール、パスワード、またはGoogleアカウントで学習ページに入ります。</p></div>
+      <form class="auth-card" id="authForm">
+        <label><span>メールアドレス</span><input type="email" id="authEmail" autocomplete="email" required></label>
+        <label><span>パスワード</span><input type="password" id="authPassword" autocomplete="current-password" required minlength="6"></label>
+        <button class="action-button primary auth-submit" type="submit">メールでログイン</button>
+        <button class="action-button secondary auth-create" type="button" id="createAccountButton">新規作成</button>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="google-button" type="button" id="googleLoginButton"><span>G</span>Googleアカウントでログイン</button>
+        <p class="auth-message" id="authMessage" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell" aria-hidden="true">
+    <header class="site-header">
+      <div class="header-inner">
+        <p class="lesson-current">Java オブジェクト指向基礎編 / Lesson01 オブジェクト指向の基礎</p>
+        <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
+        <div class="header-actions">
+          <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
+          <a href="trace-room.html" class="secondary-link">Trace Room</a>
+          <a href="#guide" class="primary-link">講座を見る</a>
+          <a href="index.html" class="secondary-link">制御構文へ</a>
+        </div>
+        <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
+          <div class="lesson-panel-head"><p class="eyebrow">Lesson Index</p><h2>Lesson一覧</h2><p>学習したい大きな編を開いて、Lessonを選んでください。</p></div>
+          <div class="lesson-groups">
+            <section class="lesson-group open" data-lesson-group="oop-basic">
+              <button class="lesson-group-toggle" type="button" aria-expanded="true"><span>Java オブジェクト指向基礎編</span><small>1 Lessons</small></button>
+              <div class="lesson-links">
+                <a href="oop-basic.html" class="active" data-lesson-link="oop-basic"><span>01</span><b>オブジェクト指向の基礎</b><small class="lesson-check">講座</small></a>
+              </div>
+            </section>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="guide" class="syntax-section">
+        <div class="section-heading">
+          <p class="eyebrow">Object-Oriented Basics</p>
+          <h2>オブジェクト指向は「役割を持った部品」として読む。</h2>
+          <p>Java Silverへ進む前に、クラス、オブジェクト、フィールド、メソッドの関係を1枚の地図にします。コードを見たときに「何を作り、何を持ち、何を動かすのか」を分けて読める状態を目指します。</p>
+        </div>
+
+        <div class="syntax-layout">
+          <div class="syntax-code">
+            <pre><code>class Student {
+  String name;
+  int score;
+
+  void show() {
+    System.out.println(name + ": " + score);
+  }
+}
+
+Student s = new Student();
+s.name = "Ari";
+s.score = 90;
+s.show();</code></pre>
+          </div>
+          <div class="syntax-cards">
+            <article class="topic-card"><span class="syntax-label">class</span><h3>クラスは設計図</h3><p>どんな値を持ち、どんな処理ができるかを決めます。まだ実体ではなく、作るための型です。</p></article>
+            <article class="topic-card"><span class="syntax-label">object</span><h3>オブジェクトは実体</h3><p><span class="term">new Student()</span> で、設計図から実際に使える1つの実体を作ります。</p></article>
+            <article class="topic-card"><span class="syntax-label">field</span><h3>フィールドは状態</h3><p><span class="term">name</span> や <span class="term">score</span> のように、オブジェクトが持つ値です。</p></article>
+            <article class="topic-card"><span class="syntax-label">method</span><h3>メソッドは振る舞い</h3><p><span class="term">show()</span> のように、オブジェクトに行わせる処理です。状態を使って動くことがあります。</p></article>
+            <article class="topic-card"><span class="syntax-label">dot</span><h3>ドットは「誰の」を表す</h3><p><span class="term">s.name</span> は「sという実体のname」です。左側の実体を必ず見ます。</p></article>
+            <article class="topic-card"><span class="syntax-label">new</span><h3>newは作成の合図</h3><p>クラス名だけでは実体はありません。<span class="term">new</span> が出たら、メモリ上にオブジェクトが作られると読みます。</p></article>
+          </div>
+        </div>
+
+        <div class="topic-deep-dive">
+          <p class="eyebrow">Tracea Note</p>
+          <h3>「クラス」と「オブジェクト」を混ぜない。</h3>
+          <div class="deep-body">
+            <p>クラスはルール、オブジェクトはそのルールから作った実物です。試験問題では、クラスに書いてある内容を見てから、どの変数がどのオブジェクトを指しているかを追います。</p>
+            <p>出力問題では、フィールドの値がいつ代入され、どのメソッドがその値を使うのかを線でつないでください。ここが曖昧だと、継承やコンストラクタに進んだときに一気に読みにくくなります。</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><p>Java OOP / class・object・field・method</p><button class="signout-button" type="button" id="signOutButton">ログアウト</button></footer>
+  </div>
+
+  <script src="app.js?v=oop-basic-lesson-20260517"></script>
+  <script type="module" src="firebase-auth.js?v=oop-basic-lesson-20260517"></script>
+</body>
+</html>

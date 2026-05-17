@@ -3888,7 +3888,7 @@ function createOopBasicLessonGroup() {
     id: "oop-basic",
     title: "Java オブジェクト指向基礎編",
     lessons: [
-      { id: "oop-basic-soon", href: "#", title: "準備中", status: "近日追加" }
+      { id: "oop-basic", href: "oop-basic.html", title: "オブジェクト指向の基礎", status: "講座" }
     ]
   });
 }
