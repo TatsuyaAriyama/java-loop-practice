@@ -228,11 +228,23 @@ main,
 }
 
 .header-inner {
+  position: relative;
   padding: 28px 0 24px 76px;
 }
 
 .study-log-panel {
-  display: none;
+  position: absolute;
+  top: 54px;
+  right: 0;
+  z-index: 2;
+  width: 276px;
+  border: 1px solid var(--ink);
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  background: linear-gradient(180deg, #ffffff 0%, #fffafa 100%);
+  box-shadow: 0 14px 34px rgba(17, 17, 17, 0.08);
 }
 
 .lesson-current {
@@ -637,7 +649,7 @@ h1 {
 
 .header-actions {
   width: fit-content;
-  max-width: 100%;
+  max-width: calc(100% - 300px);
   border: 1px solid var(--ink);
   display: flex;
   flex-wrap: wrap;
@@ -717,42 +729,28 @@ h1 {
   vertical-align: top;
 }
 
-.lesson-panel.visible + .study-log-panel {
-  width: min(calc(50vw - 48px), 520px);
-  min-height: 260px;
-  margin-top: 12px;
-  margin-left: 16px;
-  border: 1px solid var(--ink);
-  padding: 14px;
-  display: inline-grid;
-  gap: 12px;
-  align-content: start;
-  background: linear-gradient(180deg, #ffffff 0%, #fffafa 100%);
-  box-shadow: 0 20px 46px rgba(17, 17, 17, 0.08);
-  vertical-align: top;
-}
-
 .study-log-head {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
   align-items: flex-start;
 }
 
 .study-log-head .eyebrow {
-  margin-bottom: 5px;
+  margin-bottom: 2px;
+  font-size: 10px;
 }
 
 .study-log-head h2 {
   margin: 0;
-  font-size: 20px;
+  font-size: 14px;
   line-height: 1.25;
 }
 
 .study-log-head span {
   color: var(--muted);
   font-family: Menlo, Consolas, "Courier New", monospace;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 900;
   white-space: nowrap;
 }
@@ -765,7 +763,7 @@ h1 {
 }
 
 .study-log-metrics div {
-  padding: 10px 8px;
+  padding: 7px 5px;
   text-align: center;
 }
 
@@ -777,7 +775,7 @@ h1 {
   display: block;
   color: var(--red);
   font-family: Menlo, Consolas, "Courier New", monospace;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 900;
   line-height: 1;
 }
@@ -790,19 +788,19 @@ h1 {
 
 .study-log-section {
   border-top: 1px solid rgba(200, 16, 46, 0.18);
-  padding-top: 10px;
+  padding-top: 7px;
 }
 
 .study-log-section h3 {
-  margin: 0 0 8px;
+  margin: 0 0 5px;
   color: var(--red);
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 900;
 }
 
 .study-log-section ul {
   display: grid;
-  gap: 6px;
+  gap: 4px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -811,10 +809,10 @@ h1 {
 .study-log-section li {
   min-width: 0;
   border: 1px solid var(--line);
-  padding: 8px;
+  padding: 6px;
   display: grid;
-  grid-template-columns: 42px minmax(0, 1fr) auto;
-  gap: 8px;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 6px;
   align-items: center;
   background: #ffffff;
 }
@@ -822,7 +820,7 @@ h1 {
 .study-log-section li.empty {
   display: block;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
 }
 
@@ -836,7 +834,7 @@ h1 {
 .study-log-section li b {
   overflow: hidden;
   color: var(--ink);
-  font-size: 12px;
+  font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -2842,10 +2840,15 @@ h1 {
     max-height: none;
   }
 
-  .lesson-panel.visible + .study-log-panel {
-    width: 100%;
-    margin-left: 0;
-    display: grid;
+  .header-actions {
+    max-width: 100%;
+  }
+
+  .study-log-panel {
+    position: static;
+    width: min(340px, 100%);
+    margin: 0 0 12px;
+    box-shadow: none;
   }
 
   .lesson-panel-head {

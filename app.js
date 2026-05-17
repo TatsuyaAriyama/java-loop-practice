@@ -3708,8 +3708,15 @@ function ensureStudyLogPanel() {
     </div>
   `;
 
-  const lessonPanel = headerInner.querySelector("#lessonPanel");
-  lessonPanel?.insertAdjacentElement("afterend", panel);
+  const userSummary = headerInner.querySelector(".user-summary");
+  const actions = headerInner.querySelector(".header-actions");
+  if (userSummary) {
+    userSummary.insertAdjacentElement("afterend", panel);
+  } else if (actions) {
+    headerInner.insertBefore(panel, actions);
+  } else {
+    headerInner.appendChild(panel);
+  }
   renderStudyLog();
 }
 
