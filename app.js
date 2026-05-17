@@ -3818,6 +3818,26 @@ function createControlLessonGroup() {
   });
 }
 
+function createOperatorsLessonGroup() {
+  return createLessonGroup({
+    id: "operators-casting-scope",
+    title: "Java 演算子・型変換・スコープ編",
+    lessons: [
+      { id: "operators-casting-scope-soon", href: "#", title: "準備中", status: "近日追加" }
+    ]
+  });
+}
+
+function createStringCollectionsLessonGroup() {
+  return createLessonGroup({
+    id: "strings-builders-lists",
+    title: "Java String・StringBuilder・ArrayList編",
+    lessons: [
+      { id: "strings-builders-lists-soon", href: "#", title: "準備中", status: "近日追加" }
+    ]
+  });
+}
+
 function createClassMethodLessonGroup() {
   return createLessonGroup({
     id: "class-method",
@@ -3826,6 +3846,26 @@ function createClassMethodLessonGroup() {
       { id: "methods-1", href: "methods-1.html", title: "メソッド(1)", status: "0/10" },
       { id: "methods-2", href: "methods-2.html", title: "メソッド(2)", status: "0/10" },
       { id: "classes", href: "classes.html", title: "クラス", status: "0/10" }
+    ]
+  });
+}
+
+function createModernSyntaxLessonGroup() {
+  return createLessonGroup({
+    id: "modern-syntax",
+    title: "Java switch・enum・record・sealed class編",
+    lessons: [
+      { id: "modern-syntax-soon", href: "#", title: "準備中", status: "近日追加" }
+    ]
+  });
+}
+
+function createCompileErrorLessonGroup() {
+  return createLessonGroup({
+    id: "compile-error-reading",
+    title: "Java コンパイルエラー判定編",
+    lessons: [
+      { id: "compile-error-reading-soon", href: "#", title: "準備中", status: "近日追加" }
     ]
   });
 }
@@ -3869,20 +3909,36 @@ function ensureLessonSeriesGroups() {
       groups.prepend(createBasicSyntaxLessonGroup());
     }
 
+    if (!groups.querySelector('[data-lesson-group="operators-casting-scope"]')) {
+      insertLessonGroupAfter(groups, createOperatorsLessonGroup(), '[data-lesson-group="basic-syntax"]');
+    }
+
     if (!groups.querySelector('[data-lesson-group="control"]')) {
-      insertLessonGroupAfter(groups, createControlLessonGroup(), '[data-lesson-group="basic-syntax"]');
+      insertLessonGroupAfter(groups, createControlLessonGroup(), '[data-lesson-group="operators-casting-scope"]');
+    }
+
+    if (!groups.querySelector('[data-lesson-group="strings-builders-lists"]')) {
+      insertLessonGroupAfter(groups, createStringCollectionsLessonGroup(), '[data-lesson-group="control"]');
     }
 
     if (!groups.querySelector('[data-lesson-group="class-method"]')) {
-      insertLessonGroupAfter(groups, createClassMethodLessonGroup(), '[data-lesson-group="control"]');
+      insertLessonGroupAfter(groups, createClassMethodLessonGroup(), '[data-lesson-group="strings-builders-lists"]');
     }
 
     if (!groups.querySelector('[data-lesson-group="oop-basic"]')) {
       insertLessonGroupAfter(groups, createOopBasicLessonGroup(), '[data-lesson-group="class-method"]');
     }
 
+    if (!groups.querySelector('[data-lesson-group="modern-syntax"]')) {
+      insertLessonGroupAfter(groups, createModernSyntaxLessonGroup(), '[data-lesson-group="oop-basic"]');
+    }
+
+    if (!groups.querySelector('[data-lesson-group="compile-error-reading"]')) {
+      insertLessonGroupAfter(groups, createCompileErrorLessonGroup(), '[data-lesson-group="modern-syntax"]');
+    }
+
     if (!groups.querySelector('[data-lesson-group="silver-se17"]')) {
-      insertLessonGroupAfter(groups, createSilverLessonGroup(), '[data-lesson-group="oop-basic"]');
+      insertLessonGroupAfter(groups, createSilverLessonGroup(), '[data-lesson-group="compile-error-reading"]');
     }
 
     if (!groups.querySelector('[data-lesson-group="oop-advanced"]')) {
