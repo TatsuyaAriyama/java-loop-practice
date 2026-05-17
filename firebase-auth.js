@@ -74,6 +74,7 @@ let activeAccountUid = null;
 const profileNameKey = "java-output-practice-auth-name";
 const profileDisplayNameKey = "java-output-practice-auth-display-name";
 const profileAvatarKey = "java-output-practice-auth-avatar";
+const profileScopeKey = "java-output-practice-auth-profile-scope";
 const profileSetupKeyPrefix = "java-output-practice-profile-setup-complete";
 
 function getScopedProfileSetupKey(uid) {
@@ -120,6 +121,7 @@ function setLoading(isLoading) {
 
 function getPublicName(user) {
   try {
+    if (localStorage.getItem(profileScopeKey) !== user?.uid) return getAuthBaseName(user);
     return localStorage.getItem(profileDisplayNameKey)?.trim() || getAuthBaseName(user);
   } catch {
     return getAuthBaseName(user);
@@ -142,10 +144,20 @@ function getAvatarLetter(name) {
 
 function getPublicAvatar(displayName) {
   try {
+    if (localStorage.getItem(profileScopeKey) !== auth.currentUser?.uid) return getAvatarLetter(displayName);
     return localStorage.getItem(profileAvatarKey) || getAvatarLetter(displayName);
   } catch {
     return getAvatarLetter(displayName);
   }
+}
+
+function clearLocalProfileCache() {
+  try {
+    localStorage.removeItem(profileNameKey);
+    localStorage.removeItem(profileDisplayNameKey);
+    localStorage.removeItem(profileAvatarKey);
+    localStorage.removeItem(profileScopeKey);
+  } catch {}
 }
 
 function getTrustedProgressDisplay(data = {}, uid = "") {
@@ -699,6 +711,7 @@ async function saveRegisteredUser(user, overrides = {}) {
 
   try {
     await setDoc(doc(db, "javaPracticeUsers", user.uid), {
+      profileOwnerUid: user.uid,
       userName: `@${displayName.replace(/\s+/g, "") || "Learner"}`,
       displayName,
       avatar,
@@ -722,6 +735,7 @@ async function saveTracePresence(user, overrides = {}) {
 
   try {
     await setDoc(tracePresenceRef, {
+      profileOwnerUid: user.uid,
       userName: `@${displayName.replace(/\s+/g, "") || "Learner"}`,
       displayName,
       avatar,
@@ -810,6 +824,7 @@ window.addEventListener("java-practice-profile-updated", async (event) => {
   } catch {}
 
   await saveTracePresence(user, {
+    profileOwnerUid: user.uid,
     userName: `@${displayName.replace(/\s+/g, "") || "Learner"}`,
     displayName,
     avatar,
@@ -817,6 +832,7 @@ window.addEventListener("java-practice-profile-updated", async (event) => {
     status: latestLearningStatus
   });
   await saveRegisteredUser(user, {
+    profileOwnerUid: user.uid,
     userName: `@${displayName.replace(/\s+/g, "") || "Learner"}`,
     displayName,
     avatar,
@@ -928,6 +944,7 @@ onAuthStateChanged(auth, async (user) => {
       if (activeAccountUid !== user.uid) {
         activeAccountUid = user.uid;
         resetAccountProgressState();
+        clearLocalProfileCache();
       }
       let remoteProfile = null;
       try {
@@ -935,17 +952,19 @@ onAuthStateChanged(auth, async (user) => {
         remoteProfile = profileSnap.exists() ? profileSnap.data() : null;
       } catch {}
 
-      profileSetupCompleted = Boolean(remoteProfile?.profileSetupCompleted || hasLocalProfileSetup(user.uid));
-      const userName = profileSetupCompleted
+      const trustedRemoteProfile = remoteProfile?.profileOwnerUid === user.uid;
+      profileSetupCompleted = Boolean((trustedRemoteProfile && remoteProfile?.profileSetupCompleted) || hasLocalProfileSetup(user.uid));
+      const userName = profileSetupCompleted && trustedRemoteProfile
         ? (remoteProfile?.displayName || getAuthBaseName(user))
-        : (remoteProfile?.displayName || getAuthBaseName(user));
-      const avatar = profileSetupCompleted
-        ? (remoteProfile?.avatar || getPublicAvatar(userName))
-        : (remoteProfile?.avatar || getAvatarLetter(userName));
+        : getAuthBaseName(user);
+      const avatar = profileSetupCompleted && trustedRemoteProfile
+        ? (remoteProfile?.avatar || getAvatarLetter(userName))
+        : getAvatarLetter(userName);
       needsProfileSetup = !profileSetupCompleted;
 
       localStorage.setItem("java-output-practice-auth", "signed-in");
       localStorage.setItem("java-output-practice-auth-scope", user.uid);
+      localStorage.setItem(profileScopeKey, user.uid);
       localStorage.setItem(profileNameKey, userName);
       localStorage.setItem(profileDisplayNameKey, userName);
       localStorage.setItem(profileAvatarKey, avatar);
@@ -959,6 +978,7 @@ onAuthStateChanged(auth, async (user) => {
       localStorage.removeItem(profileNameKey);
       localStorage.removeItem(profileDisplayNameKey);
       localStorage.removeItem(profileAvatarKey);
+      localStorage.removeItem(profileScopeKey);
       tracePresenceRef = null;
       tracePresenceUsers = [];
       registeredTraceUsers = [];

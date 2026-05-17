@@ -355,6 +355,7 @@ let deletingRoomMessageIds = new Set();
 const profileNameKey = "java-output-practice-auth-name";
 const profileDisplayNameKey = "java-output-practice-auth-display-name";
 const profileAvatarKey = "java-output-practice-auth-avatar";
+const profileScopeKey = "java-output-practice-auth-profile-scope";
 const profileSetupKeyPrefix = "java-output-practice-profile-setup-complete";
 const profileNudgeDismissKeyPrefix = "java-output-practice-profile-nudge-dismissed";
 let profileNudgeTypingTimer = null;
@@ -380,9 +381,12 @@ const userAvatarOptions = [
 ];
 
 try {
-  currentUserName = localStorage.getItem(profileNameKey) || "User";
-  currentDisplayName = localStorage.getItem(profileDisplayNameKey) || currentUserName;
-  currentUserAvatar = localStorage.getItem(profileAvatarKey) || getAvatarLetter(currentDisplayName);
+  const savedProfileScope = localStorage.getItem(profileScopeKey);
+  if (savedProfileScope && savedProfileScope === localStorage.getItem("java-output-practice-auth-scope")) {
+    currentUserName = localStorage.getItem(profileNameKey) || "User";
+    currentDisplayName = localStorage.getItem(profileDisplayNameKey) || currentUserName;
+    currentUserAvatar = localStorage.getItem(profileAvatarKey) || getAvatarLetter(currentDisplayName);
+  }
 } catch {}
 
 levelButtons.forEach((button) => {
@@ -3834,6 +3838,7 @@ function setProfileMessage(message, tone = "") {
 
 function readSavedUserProfile() {
   try {
+    if (localStorage.getItem(profileScopeKey) !== currentUserId) return;
     currentUserName = localStorage.getItem(profileNameKey) || currentUserName || "User";
     currentDisplayName = localStorage.getItem(profileDisplayNameKey) || currentUserName;
     currentUserAvatar = localStorage.getItem(profileAvatarKey) || getAvatarLetter(currentDisplayName);
@@ -3854,6 +3859,7 @@ function saveUserProfile() {
   currentUserAvatar = currentUserAvatar || getAvatarLetter(nextName);
 
   try {
+    localStorage.setItem(profileScopeKey, currentUserId);
     localStorage.setItem(profileNameKey, currentUserName);
     localStorage.setItem(profileDisplayNameKey, currentDisplayName);
     localStorage.setItem(profileAvatarKey, currentUserAvatar);
@@ -5553,10 +5559,13 @@ window.addEventListener("java-practice-auth-ready", (event) => {
   currentUserId = nextScope;
   if (scopeChanged) {
     remoteProgressSummary = null;
+    currentUserName = "User";
+    currentDisplayName = "User";
+    currentUserAvatar = "U";
   }
-  currentUserName = event.detail?.name || currentUserName || "User";
+  currentUserName = event.detail?.name || "User";
   currentDisplayName = event.detail?.displayName || currentUserName;
-  currentUserAvatar = event.detail?.avatar || currentUserAvatar || getAvatarLetter(currentDisplayName);
+  currentUserAvatar = event.detail?.avatar || getAvatarLetter(currentDisplayName);
   updateUserSummary();
   updateLessonProgress();
   renderStudyLog();
@@ -5575,6 +5584,7 @@ window.addEventListener("java-practice-auth-ready", (event) => {
 });
 window.addEventListener("java-practice-progress-loaded", (event) => {
   const detail = event.detail || {};
+  if (detail.uid && detail.uid !== currentUserId) return;
   if (detail.uid) {
     progressScope = detail.uid;
     try {
