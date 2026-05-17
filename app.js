@@ -3936,12 +3936,20 @@ function notifyLearningStatus() {
   }));
 }
 
+function normalizeLearningStatus(status, online = false) {
+  const text = String(status || "").trim();
+  if (!text || text === "ログイン済み" || text === "ログアウト") {
+    return online ? "Java学習中" : "学習履歴なし";
+  }
+  return text;
+}
+
 const seededTraceRoomUsers = [
   {
     userName: "@hiromusage",
     displayName: "hiromusage",
     avatar: "H",
-    status: "ログイン済み",
+    status: "学習履歴なし",
     lastActiveLabel: "2026/05/17",
     online: false
   },
@@ -3949,7 +3957,7 @@ const seededTraceRoomUsers = [
     userName: "@zerounedeuxtrois",
     displayName: "zero",
     avatar: "Z",
-    status: "ログイン済み",
+    status: "学習履歴なし",
     lastActiveLabel: "2026/05/17",
     online: false
   },
@@ -3957,7 +3965,7 @@ const seededTraceRoomUsers = [
     userName: "@800and1500",
     displayName: "800and1500",
     avatar: "8",
-    status: "ログイン済み",
+    status: "学習履歴なし",
     lastActiveLabel: "2026/05/16",
     online: false
   },
@@ -3965,7 +3973,7 @@ const seededTraceRoomUsers = [
     userName: "@tnwznwykn",
     displayName: "tnwznwykn",
     avatar: "T",
-    status: "ログイン済み",
+    status: "学習履歴なし",
     lastActiveLabel: "2026/05/16",
     online: false
   },
@@ -3973,7 +3981,7 @@ const seededTraceRoomUsers = [
     userName: "@yoshihisakohei",
     displayName: "yoshihisa kohei",
     avatar: "Y",
-    status: "ログイン済み",
+    status: "学習履歴なし",
     lastActiveLabel: "2026/05/15",
     online: false
   },
@@ -3981,7 +3989,7 @@ const seededTraceRoomUsers = [
     userName: "@ari",
     displayName: "Ari",
     avatar: "int",
-    status: "ログイン済み",
+    status: "学習履歴なし",
     lastActiveLabel: "2026/05/15",
     online: false
   }
@@ -4081,7 +4089,7 @@ function normalizeTraceRoomUser(user) {
     displayName,
     avatar: user.avatar || getAvatarLetter(displayName),
     role: user.role || "Learner",
-    status: user.status || "Java学習中",
+    status: normalizeLearningStatus(user.status, Boolean(user.online)),
     lastActive: user.lastActiveLabel || (user.lastActive === "常時オンライン" ? user.lastActive : formatActiveTime(activeDate)),
     lastActiveTime: Number.isNaN(activeDate?.getTime?.()) ? 0 : activeDate?.getTime?.() || 0,
     online: Boolean(user.online),
@@ -4197,10 +4205,15 @@ function createTraceRoomCard(user) {
   details.className = "trace-user-details";
   const exerciseLabel = user.mentor ? "案内中の演習数" : "総演習クリア数";
   const lessonLabel = user.mentor ? "対象レッスン数" : "修了レッスン数";
+  const learningLabel = user.mentor
+    ? "ステータス"
+    : user.online
+      ? "現在の学習"
+      : "最後の学習";
 
   [
     ["役割", user.role],
-    ["ステータス", user.status],
+    [learningLabel, user.status],
     [exerciseLabel, user.totalCleared],
     [lessonLabel, user.lessonsCleared],
     ["最終アクティブ", user.lastActive]

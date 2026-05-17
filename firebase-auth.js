@@ -183,7 +183,7 @@ function serializeTraceUser(docSnap) {
     displayName: data.displayName || "Learner",
     avatar: data.avatar || getAvatarLetter(data.displayName),
     role: "Learner",
-    status: data.status || "Java学習中",
+    status: data.status || "学習履歴なし",
     lastActive: data.lastActiveAt?.toDate?.()?.toISOString() || null,
     online: Boolean(data.online),
     ...progressDisplay
@@ -201,7 +201,7 @@ function serializeRegisteredUser(docSnap) {
     displayName,
     avatar: data.avatar || getAvatarLetter(displayName),
     role: "Learner",
-    status: data.status || "ログイン済み",
+    status: data.status || "学習履歴なし",
     lastActive: data.lastSeenAt?.toDate?.()?.toISOString() || data.lastLoginAt?.toDate?.()?.toISOString() || null,
     online: Boolean(data.online),
     ...progressDisplay
@@ -922,13 +922,13 @@ signOutButton.addEventListener("click", async () => {
   } catch {}
   await updateTracePresence({
     online: false,
-    status: "ログアウト"
+    status: latestLearningStatus
   });
   await updateRoomTyping(false);
   if (auth.currentUser) {
     await saveRegisteredUser(auth.currentUser, {
       online: false,
-      status: "ログアウト",
+      status: latestLearningStatus,
       lastSeenAt: serverTimestamp()
     });
   }
