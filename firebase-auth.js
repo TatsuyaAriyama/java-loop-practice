@@ -69,6 +69,7 @@ let latestCompletedByLesson = {};
 let hasExactProgressSnapshot = false;
 let isApplyingRemoteProgress = false;
 let roomTypingTimer = null;
+let activeAccountUid = null;
 const profileNameKey = "java-output-practice-auth-name";
 const profileDisplayNameKey = "java-output-practice-auth-display-name";
 const profileAvatarKey = "java-output-practice-auth-avatar";
@@ -254,6 +255,16 @@ function dispatchLoadedProgress(progress) {
   }));
 }
 
+function resetAccountProgressState() {
+  latestProgress = {
+    totalCleared: 0,
+    lessonsCleared: "0/9"
+  };
+  latestCompletedByLesson = {};
+  hasExactProgressSnapshot = false;
+  isApplyingRemoteProgress = false;
+}
+
 function normalizeProgressItem(item) {
   if (typeof item === "number" || /^\d+$/.test(String(item))) {
     return `beginner:${item}`;
@@ -373,6 +384,7 @@ async function saveAccountProgress(user, progress, completedByLesson) {
     await setDoc(doc(db, "javaPracticeProgress", user.uid), {
       ...mergedProgress,
       completedByLesson: mergedCompletedByLesson,
+      progressSchemaVersion: 2,
       updatedAt: serverTimestamp()
     }, { merge: true });
   } catch {}
@@ -381,6 +393,7 @@ async function saveAccountProgress(user, progress, completedByLesson) {
     await setDoc(doc(db, "javaPracticeUsers", user.uid), {
       ...mergedProgress,
       completedByLesson: mergedCompletedByLesson,
+      progressSchemaVersion: 2,
       progressUpdatedAt: serverTimestamp()
     }, { merge: true });
   } catch {}
@@ -718,6 +731,9 @@ window.addEventListener("java-practice-learning-status", (event) => {
 
 window.addEventListener("java-practice-progress-updated", (event) => {
   if (isApplyingRemoteProgress) return;
+  const eventUid = event.detail?.uid || "local";
+  if (auth.currentUser && eventUid !== auth.currentUser.uid) return;
+  if (!auth.currentUser && eventUid !== "local") return;
 
   const incomingCompletedByLesson = event.detail?.completedByLesson || {};
   latestCompletedByLesson = mergeCompletedByLesson(latestCompletedByLesson, incomingCompletedByLesson);
@@ -874,6 +890,10 @@ onAuthStateChanged(auth, async (user) => {
   let needsProfileSetup = false;
   try {
     if (signedIn) {
+      if (activeAccountUid !== user.uid) {
+        activeAccountUid = user.uid;
+        resetAccountProgressState();
+      }
       let remoteProfile = null;
       try {
         const profileSnap = await getDoc(doc(db, "javaPracticeUsers", user.uid));
@@ -898,6 +918,7 @@ onAuthStateChanged(auth, async (user) => {
         localStorage.setItem(getScopedProfileSetupKey(user.uid), "true");
       }
     } else {
+      activeAccountUid = null;
       localStorage.removeItem("java-output-practice-auth");
       localStorage.removeItem("java-output-practice-auth-scope");
       localStorage.removeItem(profileNameKey);
@@ -906,9 +927,7 @@ onAuthStateChanged(auth, async (user) => {
       tracePresenceRef = null;
       tracePresenceUsers = [];
       registeredTraceUsers = [];
-      latestCompletedByLesson = {};
-      hasExactProgressSnapshot = false;
-      isApplyingRemoteProgress = false;
+      resetAccountProgressState();
       stopAccountProgressSubscription();
       stopRoomMessageSubscription();
       stopRoomTypingSubscription();

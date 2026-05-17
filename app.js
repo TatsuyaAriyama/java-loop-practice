@@ -3250,10 +3250,10 @@ const lessonMeta = [
   { id: "classes", total: classQuestions.length }
 ];
 
-const progressPrefix = "java-output-practice-progress";
-const studyLogPrefix = "java-output-practice-study-log";
-const answerUnlockPrefix = "java-output-practice-answer-unlocked";
-const loopUnlockKey = "java-output-practice-loop-unlocked";
+const progressPrefix = "java-output-practice-progress-v2";
+const studyLogPrefix = "java-output-practice-study-log-v2";
+const answerUnlockPrefix = "java-output-practice-answer-unlocked-v2";
+const loopUnlockKey = "java-output-practice-loop-unlocked-v2";
 const authScopeKey = "java-output-practice-auth-scope";
 let progressScope = "local";
 let remoteProgressSummary = null;
@@ -3293,7 +3293,9 @@ function scopedLoopUnlockKey() {
 function readCompletedQuestions(lessonId) {
   try {
     const saved = JSON.parse(localStorage.getItem(progressKey(lessonId)) || "[]");
-    const legacySaved = JSON.parse(localStorage.getItem(legacyProgressKey(lessonId)) || "[]");
+    const legacySaved = progressScope === "local"
+      ? JSON.parse(localStorage.getItem(legacyProgressKey(lessonId)) || "[]")
+      : [];
     return new Set([
       ...(Array.isArray(saved) ? saved : []),
       ...(Array.isArray(legacySaved) ? legacySaved : [])
@@ -3306,9 +3308,6 @@ function readCompletedQuestions(lessonId) {
 function writeCompletedQuestions(lessonId, completed) {
   try {
     localStorage.setItem(progressKey(lessonId), JSON.stringify([...completed]));
-    if (progressScope !== "local") {
-      localStorage.setItem(legacyProgressKey(lessonId), JSON.stringify([...completed]));
-    }
   } catch {
     // Progress is helpful, but answering questions should still work if storage is unavailable.
   }
@@ -3891,6 +3890,7 @@ function updateLessonProgress() {
   updateUserSummary();
   window.dispatchEvent(new CustomEvent("java-practice-progress-updated", {
     detail: {
+      uid: progressScope,
       totalCleared: getTotalCompletedExercises(),
       lessonsCleared: `${getCompletedLessonCount()}/${lessonMeta.length}`,
       completedByLesson: buildCompletedByLesson()
@@ -4412,7 +4412,8 @@ function submitRoomChat() {
 
 function hasLoopUnlock() {
   try {
-    return localStorage.getItem(scopedLoopUnlockKey()) === "true" || localStorage.getItem(loopUnlockKey) === "true";
+    return localStorage.getItem(scopedLoopUnlockKey()) === "true"
+      || (progressScope === "local" && localStorage.getItem(loopUnlockKey) === "true");
   } catch {
     return false;
   }
@@ -5541,8 +5542,13 @@ if (hasLoopUnlock()) {
   applyLoopUnlock();
 }
 window.addEventListener("java-practice-auth-ready", (event) => {
-  progressScope = event.detail?.uid || "local";
-  currentUserId = event.detail?.uid || "local";
+  const nextScope = event.detail?.uid || "local";
+  const scopeChanged = progressScope !== nextScope || currentUserId !== nextScope;
+  progressScope = nextScope;
+  currentUserId = nextScope;
+  if (scopeChanged) {
+    remoteProgressSummary = null;
+  }
   currentUserName = event.detail?.name || currentUserName || "User";
   currentDisplayName = event.detail?.displayName || currentUserName;
   currentUserAvatar = event.detail?.avatar || currentUserAvatar || getAvatarLetter(currentDisplayName);
