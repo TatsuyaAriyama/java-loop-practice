@@ -332,6 +332,7 @@ const headerInner = document.querySelector(".header-inner");
 const lessonToggles = [...document.querySelectorAll(".lesson-toggle")];
 const lessonPanel = document.querySelector("#lessonPanel");
 const topicCards = [...document.querySelectorAll(".topic-card")];
+const traceRoomSwitches = [...document.querySelectorAll(".trace-room-switch")];
 const arrayDeepDive = document.querySelector("#arrayDeepDive");
 const traceRoomList = document.querySelector("#traceRoomList");
 const roomChatList = document.querySelector("#roomChatList");
@@ -339,12 +340,14 @@ const roomChatForm = document.querySelector("#roomChatForm");
 const roomChatInput = document.querySelector("#roomChatInput");
 const roomChatFeedback = document.querySelector("#roomChatFeedback");
 const roomChatCount = document.querySelector("#roomChatCount");
+const roomChatTyping = document.querySelector("#roomChatTyping");
 let currentLevel = "beginner";
 let currentUserName = "User";
 let currentDisplayName = "User";
 let currentUserAvatar = "U";
 let remoteTraceRoomUsers = [];
 let roomMessages = [];
+let roomTypingUsers = [];
 let chatSubmitPending = false;
 
 const profileNameKey = "java-output-practice-auth-name";
@@ -3850,6 +3853,21 @@ function createChatMessageItem(message) {
   return item;
 }
 
+function renderChatTyping() {
+  if (!roomChatTyping) return;
+
+  if (roomTypingUsers.length === 0) {
+    roomChatTyping.textContent = "";
+    roomChatTyping.classList.remove("visible");
+    return;
+  }
+
+  const names = roomTypingUsers.slice(0, 2).map((user) => user.userName || "Learner");
+  const suffix = roomTypingUsers.length > 2 ? ` 他${roomTypingUsers.length - 2}名` : "";
+  roomChatTyping.textContent = `${names.join("、")}${suffix} が入力中`;
+  roomChatTyping.classList.add("visible");
+}
+
 function renderTraceRoomChat() {
   if (!roomChatList) return;
 
@@ -3869,6 +3887,7 @@ function renderTraceRoomChat() {
   requestAnimationFrame(() => {
     roomChatList.scrollTop = roomChatList.scrollHeight;
   });
+  renderChatTyping();
 }
 
 function setChatFeedback(message, tone = "") {
@@ -3905,6 +3924,9 @@ function submitRoomChat() {
   setChatFeedback("");
   window.dispatchEvent(new CustomEvent("java-practice-room-message-submit", {
     detail: { text: clippedText }
+  }));
+  window.dispatchEvent(new CustomEvent("java-practice-room-typing", {
+    detail: { isTyping: false }
   }));
 }
 
@@ -4992,6 +5014,10 @@ window.addEventListener("java-practice-room-messages", (event) => {
   roomMessages = Array.isArray(event.detail?.messages) ? event.detail.messages : [];
   renderTraceRoomChat();
 });
+window.addEventListener("java-practice-room-typing-users", (event) => {
+  roomTypingUsers = Array.isArray(event.detail?.users) ? event.detail.users : [];
+  renderChatTyping();
+});
 window.addEventListener("java-practice-room-message-sent", () => {
   if (roomChatInput) {
     roomChatInput.value = "";
@@ -5152,6 +5178,9 @@ if (roomChatForm && roomChatInput) {
   roomChatInput.addEventListener("input", () => {
     updateChatCount();
     setChatFeedback("");
+    window.dispatchEvent(new CustomEvent("java-practice-room-typing", {
+      detail: { isTyping: roomChatInput.value.trim().length > 0 }
+    }));
   });
 
   roomChatInput.addEventListener("keydown", (event) => {
@@ -5160,8 +5189,22 @@ if (roomChatForm && roomChatInput) {
     submitRoomChat();
   });
 
+  roomChatInput.addEventListener("blur", () => {
+    window.dispatchEvent(new CustomEvent("java-practice-room-typing", {
+      detail: { isTyping: false }
+    }));
+  });
+
   updateChatCount();
   renderTraceRoomChat();
+}
+
+if (traceRoomSwitches.length > 0) {
+  traceRoomSwitches.forEach((link) => {
+    link.addEventListener("click", () => {
+      traceRoomSwitches.forEach((item) => item.classList.toggle("active", item === link));
+    });
+  });
 }
 
 document.addEventListener("keydown", (event) => {

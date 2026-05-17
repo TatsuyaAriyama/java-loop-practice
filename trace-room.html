@@ -21,7 +21,7 @@
       display: block !important;
     }
   </style>
-  <link rel="stylesheet" href="styles.css?v=trace-room-chat-20260517">
+  <link rel="stylesheet" href="styles.css?v=trace-room-social-chat-20260517">
 </head>
 <body class="auth-pending">
   <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
@@ -115,7 +115,18 @@
           <p>今、同じ空間で学習しているメンバー</p>
         </div>
 
-        <div class="trace-room-board">
+        <nav class="trace-room-switcher" aria-label="Trace Room内メニュー">
+          <a href="#traceMembers" class="trace-room-switch active">
+            <span>Members</span>
+            <small>学習者一覧</small>
+          </a>
+          <a href="#roomChatTitle" class="trace-room-switch">
+            <span>Chat</span>
+            <small>気づきを共有</small>
+          </a>
+        </nav>
+
+        <div class="trace-room-board" id="traceMembers">
           <div class="trace-room-copy">
             <p class="eyebrow">Room Status</p>
             <h3>ひとりで解いていても、同じ部屋に視線があります。</h3>
@@ -131,13 +142,16 @@
               <h3 id="roomChatTitle">Room Chat</h3>
               <p>今この部屋にいる学習者と、気づきを共有しましょう</p>
             </div>
-            <span class="chat-live-badge">Realtime</span>
+            <div class="chat-presence">
+              <span class="chat-live-dot" aria-hidden="true"></span>
+              <span>Realtime</span>
+            </div>
           </div>
           <div class="chat-message-list" id="roomChatList" aria-live="polite" aria-label="Room Chat メッセージ一覧">
             <p class="chat-empty">まだコメントはありません。最初の気づきを投稿してみましょう。</p>
           </div>
+          <p class="chat-typing" id="roomChatTyping" aria-live="polite"></p>
           <form class="chat-input-form" id="roomChatForm">
-            <label class="chat-input-label" for="roomChatInput">コメント</label>
             <div class="chat-input-row">
               <textarea id="roomChatInput" maxlength="200" rows="2" placeholder="学習中の気づきや詰まったところを書いてみる..."></textarea>
               <button class="chat-send-button" type="submit">送信</button>
@@ -157,7 +171,7 @@
     </footer>
   </div>
 
-  <script src="app.js?v=trace-room-chat-20260517"></script>
-  <script type="module" src="firebase-auth.js?v=trace-room-chat-20260517"></script>
+  <script src="app.js?v=trace-room-social-chat-20260517"></script>
+  <script type="module" src="firebase-auth.js?v=trace-room-social-chat-20260517"></script>
 </body>
 </html>

@@ -55,6 +55,7 @@ let unsubscribeTraceUsers = null;
 let unsubscribeRegisteredUsers = null;
 let unsubscribeAccountProgress = null;
 let unsubscribeRoomMessages = null;
+let unsubscribeRoomTyping = null;
 let tracePresenceUsers = [];
 let registeredTraceUsers = [];
 let traceHeartbeatTimer = null;
@@ -66,6 +67,7 @@ let latestProgress = {
 let latestCompletedByLesson = {};
 let hasExactProgressSnapshot = false;
 let isApplyingRemoteProgress = false;
+let roomTypingTimer = null;
 const profileNameKey = "java-output-practice-auth-name";
 const profileDisplayNameKey = "java-output-practice-auth-display-name";
 const profileAvatarKey = "java-output-practice-auth-avatar";
@@ -196,6 +198,12 @@ function dispatchRoomMessages(messages) {
   }));
 }
 
+function dispatchRoomTypingUsers(users) {
+  window.dispatchEvent(new CustomEvent("java-practice-room-typing-users", {
+    detail: { users }
+  }));
+}
+
 function serializeRoomMessage(docSnap) {
   const data = docSnap.data();
   const displayName = data.userName || "Learner";
@@ -207,6 +215,17 @@ function serializeRoomMessage(docSnap) {
     text: data.text || "",
     createdAt: data.createdAt?.toDate?.()?.toISOString() || null,
     mentor: Boolean(data.mentor)
+  };
+}
+
+function serializeTypingUser(docSnap) {
+  const data = docSnap.data();
+  return {
+    uid: docSnap.id,
+    userName: data.userName || "Learner",
+    userAvatar: data.userAvatar || getAvatarLetter(data.userName),
+    updatedAt: data.updatedAt?.toDate?.()?.getTime?.() || 0,
+    isTyping: Boolean(data.isTyping)
   };
 }
 
@@ -437,6 +456,12 @@ function stopRoomMessageSubscription() {
   unsubscribeRoomMessages = null;
 }
 
+function stopRoomTypingSubscription() {
+  if (!unsubscribeRoomTyping) return;
+  unsubscribeRoomTyping();
+  unsubscribeRoomTyping = null;
+}
+
 function startRoomMessageSubscription() {
   if (!hasRoomChat) return;
   if (unsubscribeRoomMessages) return;
@@ -455,6 +480,63 @@ function startRoomMessageSubscription() {
     });
   } catch {
     dispatchRoomMessages([]);
+  }
+}
+
+function startRoomTypingSubscription() {
+  if (!hasRoomChat) return;
+  if (unsubscribeRoomTyping) return;
+
+  try {
+    const typingQuery = query(
+      collection(db, "roomTyping"),
+      orderBy("updatedAt", "desc"),
+      limit(12)
+    );
+
+    unsubscribeRoomTyping = onSnapshot(typingQuery, (snapshot) => {
+      const now = Date.now();
+      const users = snapshot.docs
+        .map(serializeTypingUser)
+        .filter((user) => {
+          return user.isTyping
+            && user.uid !== auth.currentUser?.uid
+            && now - user.updatedAt < 8000;
+        });
+      dispatchRoomTypingUsers(users);
+    }, () => {
+      dispatchRoomTypingUsers([]);
+    });
+  } catch {
+    dispatchRoomTypingUsers([]);
+  }
+}
+
+async function updateRoomTyping(isTyping) {
+  const user = auth.currentUser;
+  if (!hasRoomChat || !user) return;
+
+  const displayName = getPublicName(user);
+  const avatar = user.photoURL || getPublicAvatar(displayName);
+
+  if (roomTypingTimer) {
+    clearTimeout(roomTypingTimer);
+    roomTypingTimer = null;
+  }
+
+  try {
+    await setDoc(doc(db, "roomTyping", user.uid), {
+      userName: displayName,
+      userAvatar: avatar,
+      isTyping: Boolean(isTyping),
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  } catch {}
+
+  if (isTyping) {
+    roomTypingTimer = setTimeout(() => {
+      updateRoomTyping(false);
+    }, 2800);
   }
 }
 
@@ -480,6 +562,7 @@ async function postRoomMessage(text) {
       text: cleanText,
       createdAt: serverTimestamp()
     });
+    updateRoomTyping(false);
     window.dispatchEvent(new CustomEvent("java-practice-room-message-sent"));
   } catch {
     window.dispatchEvent(new CustomEvent("java-practice-room-message-error", {
@@ -648,6 +731,10 @@ window.addEventListener("java-practice-room-message-submit", (event) => {
   postRoomMessage(event.detail?.text);
 });
 
+window.addEventListener("java-practice-room-typing", (event) => {
+  updateRoomTyping(Boolean(event.detail?.isTyping));
+});
+
 document.addEventListener("visibilitychange", () => {
   updateTracePresence({
     online: document.visibilityState === "visible",
@@ -717,6 +804,7 @@ signOutButton.addEventListener("click", async () => {
     online: false,
     status: "ログアウト"
   });
+  await updateRoomTyping(false);
   if (auth.currentUser) {
     await saveRegisteredUser(auth.currentUser, {
       online: false,
@@ -752,9 +840,12 @@ onAuthStateChanged(auth, async (user) => {
       isApplyingRemoteProgress = false;
       stopAccountProgressSubscription();
       stopRoomMessageSubscription();
+      stopRoomTypingSubscription();
+      updateRoomTyping(false);
       stopTraceHeartbeat();
       dispatchMergedTraceUsers();
       dispatchRoomMessages([]);
+      dispatchRoomTypingUsers([]);
     }
   } catch {}
 
@@ -769,6 +860,7 @@ onAuthStateChanged(auth, async (user) => {
     startTraceHeartbeat(user);
     startTraceRoomSubscription();
     startRoomMessageSubscription();
+    startRoomTypingSubscription();
   }
 
   window.dispatchEvent(new CustomEvent("java-practice-auth-ready", {
