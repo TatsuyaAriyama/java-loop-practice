@@ -4827,6 +4827,12 @@ window.addEventListener("java-practice-auth-ready", (event) => {
 });
 window.addEventListener("java-practice-progress-loaded", (event) => {
   const detail = event.detail || {};
+  if (detail.uid) {
+    progressScope = detail.uid;
+    try {
+      localStorage.setItem(authScopeKey, progressScope);
+    } catch {}
+  }
   remoteProgressSummary = {
     totalCleared: detail.totalCleared,
     lessonsCleared: detail.lessonsCleared

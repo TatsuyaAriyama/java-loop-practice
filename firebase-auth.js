@@ -192,6 +192,42 @@ function dispatchLoadedProgress(progress) {
   }));
 }
 
+function normalizeProgressItem(item) {
+  if (typeof item === "number" || /^\d+$/.test(String(item))) {
+    return `beginner:${item}`;
+  }
+  return String(item);
+}
+
+function mergeCompletedByLesson(base = {}, incoming = {}) {
+  const merged = { ...base };
+  Object.entries(incoming || {}).forEach(([lessonId, items]) => {
+    if (!Array.isArray(items)) return;
+    merged[lessonId] = [...new Set([
+      ...(merged[lessonId] || []).map(normalizeProgressItem),
+      ...items.map(normalizeProgressItem)
+    ])];
+  });
+  return merged;
+}
+
+function countCompletedItems(completedByLesson = {}) {
+  return Object.values(completedByLesson).reduce((total, items) => {
+    return total + (Array.isArray(items) ? new Set(items.map(normalizeProgressItem)).size : 0);
+  }, 0);
+}
+
+function completedLessonCountLabel(label) {
+  const matched = String(label || "").match(/^(\d+)/);
+  return matched ? Number(matched[1]) : 0;
+}
+
+function chooseLessonsClearedLabel(currentLabel, incomingLabel) {
+  return completedLessonCountLabel(incomingLabel) > completedLessonCountLabel(currentLabel)
+    ? incomingLabel
+    : currentLabel;
+}
+
 function normalizeProgressData(data = {}) {
   return {
     totalCleared: data.totalCleared ?? 0,
@@ -218,6 +254,7 @@ async function loadAccountProgress(user) {
         lessonsCleared: progress.lessonsCleared
       };
       return {
+        uid: user.uid,
         ...latestProgress,
         completedByLesson: latestCompletedByLesson
       };
@@ -238,6 +275,7 @@ async function loadAccountProgress(user) {
         lessonsCleared: progress.lessonsCleared
       };
       return {
+        uid: user.uid,
         ...latestProgress,
         completedByLesson: latestCompletedByLesson
       };
@@ -250,21 +288,43 @@ async function loadAccountProgress(user) {
 async function saveAccountProgress(user, progress, completedByLesson) {
   if (!user) return;
 
+  let mergedCompletedByLesson = completedByLesson || {};
+  let mergedProgress = { ...progress };
+
+  try {
+    const userSnap = await getDoc(doc(db, "javaPracticeUsers", user.uid));
+    if (userSnap.exists()) {
+      const existing = normalizeProgressData(userSnap.data());
+      mergedCompletedByLesson = mergeCompletedByLesson(existing.completedByLesson, mergedCompletedByLesson);
+      mergedProgress = {
+        totalCleared: Math.max(
+          Number(progress.totalCleared || 0),
+          Number(existing.totalCleared || 0),
+          countCompletedItems(mergedCompletedByLesson)
+        ),
+        lessonsCleared: chooseLessonsClearedLabel(existing.lessonsCleared, progress.lessonsCleared)
+      };
+    }
+  } catch {}
+
   try {
     await setDoc(doc(db, "javaPracticeProgress", user.uid), {
-      ...progress,
-      completedByLesson: completedByLesson || {},
+      ...mergedProgress,
+      completedByLesson: mergedCompletedByLesson,
       updatedAt: serverTimestamp()
     }, { merge: true });
   } catch {}
 
   try {
     await setDoc(doc(db, "javaPracticeUsers", user.uid), {
-      ...progress,
-      completedByLesson: completedByLesson || {},
+      ...mergedProgress,
+      completedByLesson: mergedCompletedByLesson,
       progressUpdatedAt: serverTimestamp()
     }, { merge: true });
   } catch {}
+
+  latestProgress = mergedProgress;
+  latestCompletedByLesson = mergedCompletedByLesson;
 }
 
 function stopAccountProgressSubscription() {
@@ -294,6 +354,7 @@ function startAccountProgressSubscription(user) {
 
       isApplyingRemoteProgress = true;
       dispatchLoadedProgress({
+        uid: user.uid,
         ...latestProgress,
         completedByLesson: latestCompletedByLesson
       });
@@ -446,19 +507,17 @@ window.addEventListener("java-practice-learning-status", (event) => {
 window.addEventListener("java-practice-progress-updated", (event) => {
   if (isApplyingRemoteProgress) return;
 
-  const incomingProgress = {
-    totalCleared: event.detail?.totalCleared ?? latestProgress.totalCleared,
-    lessonsCleared: event.detail?.lessonsCleared ?? latestProgress.lessonsCleared
-  };
   const incomingCompletedByLesson = event.detail?.completedByLesson || {};
-  const shouldKeepRemoteSummary = !hasExactProgressSnapshot
-    && Number(incomingProgress.totalCleared) < Number(latestProgress.totalCleared || 0);
-
-  if (!shouldKeepRemoteSummary) {
-    latestProgress = incomingProgress;
-    latestCompletedByLesson = incomingCompletedByLesson;
-    hasExactProgressSnapshot = true;
-  }
+  latestCompletedByLesson = mergeCompletedByLesson(latestCompletedByLesson, incomingCompletedByLesson);
+  latestProgress = {
+    totalCleared: Math.max(
+      Number(event.detail?.totalCleared || 0),
+      Number(latestProgress.totalCleared || 0),
+      countCompletedItems(latestCompletedByLesson)
+    ),
+    lessonsCleared: chooseLessonsClearedLabel(latestProgress.lessonsCleared, event.detail?.lessonsCleared)
+  };
+  hasExactProgressSnapshot = true;
 
   updateTracePresence({
     ...latestProgress,
@@ -467,9 +526,7 @@ window.addEventListener("java-practice-progress-updated", (event) => {
   });
 
   if (auth.currentUser) {
-    if (!shouldKeepRemoteSummary) {
-      saveAccountProgress(auth.currentUser, latestProgress, latestCompletedByLesson);
-    }
+    saveAccountProgress(auth.currentUser, latestProgress, latestCompletedByLesson);
     saveRegisteredUser(auth.currentUser, {
       ...latestProgress,
       status: latestLearningStatus,
