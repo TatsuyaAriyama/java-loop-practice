@@ -1340,12 +1340,15 @@ h1 {
 }
 
 .chat-message {
-  position: relative;
   display: grid;
   grid-template-columns: 38px minmax(0, 1fr);
   gap: 12px;
   align-items: start;
   animation: chatMessageIn 240ms ease both;
+}
+
+.chat-message.deletable {
+  grid-template-columns: 38px minmax(0, 1fr) 22px;
 }
 
 .chat-message.mentor .chat-message-body {
@@ -1405,9 +1408,6 @@ h1 {
 }
 
 .chat-delete-button {
-  position: absolute;
-  right: -28px;
-  bottom: 0;
   width: 20px;
   height: 20px;
   border: 1px solid rgba(31, 31, 31, 0.12);
@@ -1423,6 +1423,8 @@ h1 {
   line-height: 1;
   cursor: pointer;
   box-shadow: 0 8px 18px rgba(17, 17, 17, 0.06);
+  align-self: end;
+  justify-self: start;
   transition: color 150ms ease, border-color 150ms ease, background 150ms ease, transform 150ms ease;
 }
 
@@ -1685,7 +1687,10 @@ h1 {
   grid-template-columns: 36px minmax(0, max-content);
   max-width: min(760px, 100%);
   align-items: end;
-  padding-right: 28px;
+}
+
+.chat-message.deletable {
+  grid-template-columns: 36px minmax(0, max-content) 22px;
 }
 
 .chat-message-body {

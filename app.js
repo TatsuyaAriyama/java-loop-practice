@@ -4298,6 +4298,7 @@ function createChatMessageItem(message) {
 
   const canDelete = Boolean(message.id && message.userId && currentUserId === message.userId && !message.mentor);
   if (canDelete) {
+    item.classList.add("deletable");
     const deleteButton = document.createElement("button");
     deleteButton.className = "chat-delete-button";
     deleteButton.type = "button";
