@@ -355,6 +355,9 @@ let deletingRoomMessageIds = new Set();
 const profileNameKey = "java-output-practice-auth-name";
 const profileDisplayNameKey = "java-output-practice-auth-display-name";
 const profileAvatarKey = "java-output-practice-auth-avatar";
+const profileSetupKeyPrefix = "java-output-practice-profile-setup-complete";
+const profileNudgeDismissKeyPrefix = "java-output-practice-profile-nudge-dismissed";
+let profileNudgeTypingTimer = null;
 const userAvatarOptions = [
   { value: "{}", label: "Braces" },
   { value: "[]", label: "Array" },
@@ -3369,6 +3372,46 @@ function updateUserSummary() {
   });
 }
 
+function getScopedProfileKey(prefix, uid = currentUserId) {
+  return `${prefix}:${uid || "local"}`;
+}
+
+function hasCompletedProfileSetup(uid = currentUserId) {
+  if (!uid || uid === "local") return true;
+
+  try {
+    return localStorage.getItem(getScopedProfileKey(profileSetupKeyPrefix, uid)) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function hasDismissedProfileNudge(uid = currentUserId) {
+  if (!uid || uid === "local") return true;
+
+  try {
+    return sessionStorage.getItem(getScopedProfileKey(profileNudgeDismissKeyPrefix, uid)) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function markProfileSetupComplete(uid = currentUserId) {
+  if (!uid || uid === "local") return;
+
+  try {
+    localStorage.setItem(getScopedProfileKey(profileSetupKeyPrefix, uid), "true");
+  } catch {}
+}
+
+function dismissProfileNudge(uid = currentUserId) {
+  if (!uid || uid === "local") return;
+
+  try {
+    sessionStorage.setItem(getScopedProfileKey(profileNudgeDismissKeyPrefix, uid), "true");
+  } catch {}
+}
+
 function ensureUserSummary() {
   if (!headerInner || document.querySelector(".user-summary")) return;
 
@@ -3395,6 +3438,14 @@ function ensureUserSummary() {
       </div>
     </div>
     <div class="user-profile-editor" aria-label="ユーザープロフィール編集">
+      <div class="profile-tracea-nudge" data-profile-nudge aria-hidden="true">
+        <div class="profile-tracea-avatar" aria-hidden="true">T</div>
+        <div class="profile-tracea-body">
+          <p class="profile-tracea-label">Tracea</p>
+          <p class="profile-tracea-text" data-profile-nudge-text></p>
+          <button class="profile-nudge-skip" type="button" data-action="profile-nudge-dismiss">あとで</button>
+        </div>
+      </div>
       <label>
         <span>ユーザーネーム</span>
         <input type="text" data-profile-name-input maxlength="18" autocomplete="off">
@@ -3427,6 +3478,44 @@ function toggleProfileEditor(forceOpen) {
   if (open) {
     panel.querySelector("[data-profile-name-input]")?.focus();
   }
+}
+
+function showProfileSetupPrompt() {
+  const panel = document.querySelector(".user-summary");
+  const nudge = panel?.querySelector("[data-profile-nudge]");
+  const text = panel?.querySelector("[data-profile-nudge-text]");
+  if (!panel || !nudge || !text) return;
+  if (hasCompletedProfileSetup() || hasDismissedProfileNudge()) return;
+
+  panel.classList.add("profile-guided");
+  nudge.setAttribute("aria-hidden", "false");
+  toggleProfileEditor(true);
+
+  if (profileNudgeTypingTimer) {
+    profileNudgeTypingTimer();
+    profileNudgeTypingTimer = null;
+  }
+
+  profileNudgeTypingTimer = typeTextIntoElement(
+    text,
+    "ようこそ。Trace Roomで見える名前を、あなたらしく整えておきましょう。入力したら保存を押してください。",
+    { speed: 28, delay: 240 }
+  );
+}
+
+function hideProfileSetupPrompt({ dismiss = false } = {}) {
+  const panel = document.querySelector(".user-summary");
+  const nudge = panel?.querySelector("[data-profile-nudge]");
+  if (!panel || !nudge) return;
+
+  if (profileNudgeTypingTimer) {
+    profileNudgeTypingTimer();
+    profileNudgeTypingTimer = null;
+  }
+
+  if (dismiss) dismissProfileNudge();
+  panel.classList.remove("profile-guided");
+  nudge.setAttribute("aria-hidden", "true");
 }
 
 function setProfileMessage(message, tone = "") {
@@ -3462,6 +3551,8 @@ function saveUserProfile() {
     localStorage.setItem(profileDisplayNameKey, currentDisplayName);
     localStorage.setItem(profileAvatarKey, currentUserAvatar);
   } catch {}
+  markProfileSetupComplete();
+  hideProfileSetupPrompt();
 
   updateUserSummary();
   renderTraceRoom();
@@ -3469,7 +3560,8 @@ function saveUserProfile() {
     detail: {
       name: currentUserName,
       displayName: currentDisplayName,
-      avatar: currentUserAvatar
+      avatar: currentUserAvatar,
+      profileSetupCompleted: true
     }
   }));
   setProfileMessage("プロフィールを更新しました。", "ok");
@@ -4055,24 +4147,58 @@ function normalizeCode(value) {
 }
 
 function startTypeLogo() {
-  const text = "JAVA OUTPUT PRACTICE";
+  typeTextIntoElement(typeLogo, "JAVA OUTPUT PRACTICE", {
+    delay: 260,
+    speed: 58,
+    doneClass: "done",
+    doneDelay: 900
+  });
+}
+
+function typeTextIntoElement(element, text, options = {}) {
+  if (!element) return null;
+
+  const speed = options.speed ?? 34;
+  const delay = options.delay ?? 0;
+  const doneDelay = options.doneDelay ?? 0;
+  const doneClass = options.doneClass || "";
+  const typingClass = options.typingClass || "is-typing";
   let index = 0;
+  let timer = null;
+
+  element.textContent = "";
+  if (doneClass) element.classList.remove(doneClass);
+  element.classList.add(typingClass);
+
+  const finish = () => {
+    element.classList.remove(typingClass);
+    if (doneClass) {
+      window.setTimeout(() => {
+        element.classList.add(doneClass);
+      }, doneDelay);
+    }
+    options.onDone?.();
+  };
 
   const tick = () => {
-    typeLogo.textContent = text.slice(0, index);
+    element.textContent = text.slice(0, index);
     index += 1;
 
     if (index <= text.length) {
-      window.setTimeout(tick, 58);
+      timer = window.setTimeout(tick, speed);
       return;
     }
 
-    window.setTimeout(() => {
-      typeLogo.classList.add("done");
-    }, 900);
+    finish();
   };
 
-  window.setTimeout(tick, 260);
+  timer = window.setTimeout(tick, delay);
+  return () => {
+    if (timer) window.clearTimeout(timer);
+    element.textContent = text;
+    element.classList.remove(typingClass);
+    if (doneClass) element.classList.add(doneClass);
+  };
 }
 
 function toggleLessonPanel(forceOpen) {
@@ -5067,6 +5193,12 @@ window.addEventListener("java-practice-auth-ready", (event) => {
   notifyLearningStatus();
   renderTraceRoom();
   renderTraceRoomChat();
+  if (event.detail?.profileSetupCompleted) {
+    markProfileSetupComplete();
+    hideProfileSetupPrompt();
+  } else if (event.detail?.needsProfileSetup) {
+    showProfileSetupPrompt();
+  }
   if (hasLoopUnlock()) {
     applyLoopUnlock();
   }
@@ -5340,9 +5472,16 @@ function handleQuestionAction(event) {
 
   if (action === "profile-cancel") {
     readSavedUserProfile();
+    hideProfileSetupPrompt({ dismiss: true });
     toggleProfileEditor(false);
     updateUserSummary();
     setProfileMessage("");
+    return;
+  }
+
+  if (action === "profile-nudge-dismiss") {
+    hideProfileSetupPrompt({ dismiss: true });
+    toggleProfileEditor(false);
     return;
   }
 

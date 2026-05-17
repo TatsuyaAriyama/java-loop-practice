@@ -72,6 +72,23 @@ let roomTypingTimer = null;
 const profileNameKey = "java-output-practice-auth-name";
 const profileDisplayNameKey = "java-output-practice-auth-display-name";
 const profileAvatarKey = "java-output-practice-auth-avatar";
+const profileSetupKeyPrefix = "java-output-practice-profile-setup-complete";
+
+function getScopedProfileSetupKey(uid) {
+  return `${profileSetupKeyPrefix}:${uid || "local"}`;
+}
+
+function getAuthBaseName(user) {
+  return user?.displayName?.trim() || publicNameFromEmail(user?.email) || "Learner";
+}
+
+function hasLocalProfileSetup(uid) {
+  try {
+    return localStorage.getItem(getScopedProfileSetupKey(uid)) === "true";
+  } catch {
+    return false;
+  }
+}
 
 function setMessage(message) {
   authMessage.textContent = message;
@@ -101,9 +118,9 @@ function setLoading(isLoading) {
 
 function getPublicName(user) {
   try {
-    return localStorage.getItem(profileDisplayNameKey)?.trim() || user?.displayName?.trim() || "Learner";
+    return localStorage.getItem(profileDisplayNameKey)?.trim() || getAuthBaseName(user);
   } catch {
-    return user?.displayName?.trim() || "Learner";
+    return getAuthBaseName(user);
   }
 }
 
@@ -754,6 +771,7 @@ window.addEventListener("java-practice-profile-updated", async (event) => {
     avatar,
     online: true,
     status: latestLearningStatus,
+    profileSetupCompleted: Boolean(event.detail?.profileSetupCompleted),
     lastSeenAt: serverTimestamp()
   });
 });
@@ -852,15 +870,33 @@ signOutButton.addEventListener("click", async () => {
 
 onAuthStateChanged(auth, async (user) => {
   const signedIn = Boolean(user);
+  let profileSetupCompleted = false;
+  let needsProfileSetup = false;
   try {
     if (signedIn) {
-      const userName = getPublicName(user);
-      const avatar = getPublicAvatar(userName);
+      let remoteProfile = null;
+      try {
+        const profileSnap = await getDoc(doc(db, "javaPracticeUsers", user.uid));
+        remoteProfile = profileSnap.exists() ? profileSnap.data() : null;
+      } catch {}
+
+      profileSetupCompleted = Boolean(remoteProfile?.profileSetupCompleted || hasLocalProfileSetup(user.uid));
+      const userName = profileSetupCompleted
+        ? (remoteProfile?.displayName || getAuthBaseName(user))
+        : (remoteProfile?.displayName || getAuthBaseName(user));
+      const avatar = profileSetupCompleted
+        ? (remoteProfile?.avatar || getPublicAvatar(userName))
+        : (remoteProfile?.avatar || getAvatarLetter(userName));
+      needsProfileSetup = !profileSetupCompleted;
+
       localStorage.setItem("java-output-practice-auth", "signed-in");
       localStorage.setItem("java-output-practice-auth-scope", user.uid);
       localStorage.setItem(profileNameKey, userName);
       localStorage.setItem(profileDisplayNameKey, userName);
       localStorage.setItem(profileAvatarKey, avatar);
+      if (profileSetupCompleted) {
+        localStorage.setItem(getScopedProfileSetupKey(user.uid), "true");
+      }
     } else {
       localStorage.removeItem("java-output-practice-auth");
       localStorage.removeItem("java-output-practice-auth-scope");
@@ -903,7 +939,9 @@ onAuthStateChanged(auth, async (user) => {
       uid: signedIn ? user.uid : "local",
       name: signedIn ? getPublicName(user) : "User",
       displayName: signedIn ? getPublicName(user) : "User",
-      avatar: signedIn ? getPublicAvatar(getPublicName(user)) : "U"
+      avatar: signedIn ? getPublicAvatar(getPublicName(user)) : "U",
+      needsProfileSetup,
+      profileSetupCompleted
     }
   }));
 
