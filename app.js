@@ -3487,7 +3487,7 @@ const seededTraceRoomUsers = [
   },
   {
     userName: "@yoshihisakohei",
-    displayName: "yoshihisa",
+    displayName: "yoshihisa kohei",
     avatar: "Y",
     status: "ログイン済み",
     lastActiveLabel: "2026/05/15",
@@ -3517,15 +3517,18 @@ function traceRoomUserKey(user) {
 
 function normalizeTraceRoomUser(user) {
   const displayName = user.displayName || "Learner";
-  const activeDate = user.lastActive ? new Date(user.lastActive) : null;
+  const activeSource = user.lastActive || user.lastActiveLabel;
+  const activeDate = activeSource && activeSource !== "常時オンライン" ? new Date(activeSource) : null;
 
   return {
+    uid: user.uid,
     userName: user.userName || `@${displayName.replace(/\s+/g, "") || "Learner"}`,
     displayName,
     avatar: user.avatar || getAvatarLetter(displayName),
     role: user.role || "Learner",
     status: user.status || "Java学習中",
     lastActive: user.lastActiveLabel || (user.lastActive === "常時オンライン" ? user.lastActive : formatActiveTime(activeDate)),
+    lastActiveTime: Number.isNaN(activeDate?.getTime?.()) ? 0 : activeDate?.getTime?.() || 0,
     online: Boolean(user.online),
     mentor: Boolean(user.mentor),
     badge: user.badge,
@@ -3533,6 +3536,14 @@ function normalizeTraceRoomUser(user) {
     lessonsCleared: user.lessonsCleared ?? "取得中",
     seeded: Boolean(user.seeded)
   };
+}
+
+function sortTraceRoomUsers(users) {
+  return [...users].sort((a, b) => {
+    if (a.mentor !== b.mentor) return a.mentor ? -1 : 1;
+    if (a.online !== b.online) return a.online ? -1 : 1;
+    return (b.lastActiveTime || 0) - (a.lastActiveTime || 0);
+  });
 }
 
 function getTraceRoomUsers() {
@@ -3550,6 +3561,7 @@ function getTraceRoomUsers() {
         role: "Learner",
         status: getCurrentLearningStatus(),
         lastActive: formatActiveTime(new Date()),
+        lastActiveTime: Date.now(),
         online: true,
         totalCleared: String(getTotalCompletedExercises()),
         lessonsCleared: `${getCompletedLessonCount()}/${lessonMeta.length}`
@@ -3575,7 +3587,7 @@ function getTraceRoomUsers() {
       });
     });
 
-    return [...usersByName.values()];
+    return sortTraceRoomUsers([...usersByName.values()]);
   }
 
   const usersByName = new Map();
@@ -3585,7 +3597,7 @@ function getTraceRoomUsers() {
       ...user
     });
   });
-  return [...usersByName.values()];
+  return sortTraceRoomUsers([...usersByName.values()]);
 }
 
 function getTraceRoomMembers() {
@@ -3597,13 +3609,14 @@ function getTraceRoomMembers() {
     badge: "Java Guide",
     status: "学習者をサポート中",
     lastActive: "常時オンライン",
+    lastActiveTime: Number.MAX_SAFE_INTEGER,
     online: true,
     mentor: true,
     totalCleared: `${getTotalExerciseCount()}問を案内中`,
     lessonsCleared: `${lessonMeta.length} Lessons`
   };
 
-  return [tracea, ...getTraceRoomUsers()];
+  return sortTraceRoomUsers([tracea, ...getTraceRoomUsers()]);
 }
 
 function createTraceRoomCard(user) {

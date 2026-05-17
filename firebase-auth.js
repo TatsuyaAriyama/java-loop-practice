@@ -51,6 +51,7 @@ let unsubscribeTraceUsers = null;
 let unsubscribeRegisteredUsers = null;
 let tracePresenceUsers = [];
 let registeredTraceUsers = [];
+let traceHeartbeatTimer = null;
 let latestLearningStatus = "Java学習中";
 let latestProgress = {
   totalCleared: 0,
@@ -205,7 +206,7 @@ function startTraceRoomSubscription() {
     try {
       const registeredUsersQuery = query(
         collection(db, "javaPracticeUsers"),
-        orderBy("lastLoginAt", "desc"),
+        orderBy("lastSeenAt", "desc"),
         limit(100)
       );
       unsubscribeRegisteredUsers = onSnapshot(registeredUsersQuery, (snapshot) => {
@@ -220,6 +221,32 @@ function startTraceRoomSubscription() {
       dispatchMergedTraceUsers();
     }
   }
+}
+
+function startTraceHeartbeat(user) {
+  if (traceHeartbeatTimer) {
+    clearInterval(traceHeartbeatTimer);
+  }
+
+  traceHeartbeatTimer = setInterval(() => {
+    if (!auth.currentUser || document.visibilityState !== "visible") return;
+
+    saveTracePresence(user, {
+      status: latestLearningStatus,
+      online: true
+    });
+    saveRegisteredUser(user, {
+      status: latestLearningStatus,
+      online: true,
+      lastSeenAt: serverTimestamp()
+    });
+  }, 30000);
+}
+
+function stopTraceHeartbeat() {
+  if (!traceHeartbeatTimer) return;
+  clearInterval(traceHeartbeatTimer);
+  traceHeartbeatTimer = null;
 }
 
 async function saveRegisteredUser(user, overrides = {}) {
@@ -284,6 +311,13 @@ window.addEventListener("java-practice-learning-status", (event) => {
     status: latestLearningStatus,
     online: true
   });
+  if (auth.currentUser) {
+    saveRegisteredUser(auth.currentUser, {
+      status: latestLearningStatus,
+      online: true,
+      lastSeenAt: serverTimestamp()
+    });
+  }
 });
 
 window.addEventListener("java-practice-progress-updated", (event) => {
@@ -434,6 +468,7 @@ onAuthStateChanged(auth, (user) => {
       tracePresenceRef = null;
       tracePresenceUsers = [];
       registeredTraceUsers = [];
+      stopTraceHeartbeat();
       dispatchMergedTraceUsers();
     }
   } catch {}
@@ -441,6 +476,7 @@ onAuthStateChanged(auth, (user) => {
   if (signedIn) {
     saveRegisteredUser(user);
     saveTracePresence(user);
+    startTraceHeartbeat(user);
     startTraceRoomSubscription();
   }
 
