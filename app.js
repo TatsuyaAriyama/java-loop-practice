@@ -4296,10 +4296,11 @@ function createChatMessageItem(message) {
     meta.appendChild(badge);
   }
 
+  let deleteButton = null;
   const canDelete = Boolean(message.id && message.userId && currentUserId === message.userId && !message.mentor);
   if (canDelete) {
     item.classList.add("deletable");
-    const deleteButton = document.createElement("button");
+    deleteButton = document.createElement("button");
     deleteButton.className = "chat-delete-button";
     deleteButton.type = "button";
     deleteButton.dataset.action = "delete-room-message";
@@ -4307,7 +4308,6 @@ function createChatMessageItem(message) {
     deleteButton.setAttribute("aria-label", "このコメントを削除");
     deleteButton.disabled = deletingRoomMessageIds.has(message.id);
     deleteButton.textContent = deletingRoomMessageIds.has(message.id) ? "..." : "-";
-    item.appendChild(deleteButton);
   }
 
   const text = document.createElement("p");
@@ -4320,6 +4320,9 @@ function createChatMessageItem(message) {
 
   body.append(meta, text, time);
   item.append(avatar, body);
+  if (deleteButton) {
+    item.appendChild(deleteButton);
+  }
   return item;
 }
 
