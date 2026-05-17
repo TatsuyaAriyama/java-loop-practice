@@ -216,7 +216,7 @@ input {
 .site-header {
   border-bottom: 1px solid #d8d8d8;
   background:
-    linear-gradient(90deg, var(--red) 0 72px, transparent 72px),
+    linear-gradient(90deg, var(--red) 0 56px, transparent 56px),
     linear-gradient(180deg, #ffffff 0%, #fbfbfa 100%);
 }
 
@@ -228,16 +228,16 @@ main,
 }
 
 .header-inner {
-  padding: 46px 0 38px 96px;
+  padding: 28px 0 24px 76px;
 }
 
 .lesson-current {
   display: inline-block;
-  margin: 0 0 12px;
-  border-left: 4px solid var(--red);
-  padding: 6px 0 6px 12px;
+  margin: 0 0 8px;
+  border-left: 3px solid var(--red);
+  padding: 5px 0 5px 10px;
   color: var(--ink);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 900;
   letter-spacing: 0.02em;
 }
@@ -276,8 +276,8 @@ main,
 }
 
 .user-summary {
-  width: min(360px, 100%);
-  margin: 12px 0 18px;
+  width: min(340px, 100%);
+  margin: 10px 0 12px;
   border: 1px solid var(--ink);
   background: #ffffff;
   display: grid;
@@ -632,17 +632,21 @@ h1 {
 }
 
 .header-actions {
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid var(--ink);
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 0;
+  background: #ffffff;
 }
 
 .primary-link,
 .secondary-link,
 .action-button {
-  min-height: 42px;
+  min-height: 34px;
   border: 1px solid var(--ink);
-  padding: 10px 18px;
+  padding: 8px 13px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -650,7 +654,22 @@ h1 {
   background: #ffffff;
   text-decoration: none;
   cursor: pointer;
+  font-size: 13px;
+  font-weight: 900;
   transition: transform 160ms ease, background 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.header-actions .primary-link,
+.header-actions .secondary-link {
+  border: 0;
+  border-right: 1px solid var(--line);
+  min-height: 38px;
+  padding: 8px 14px;
+}
+
+.header-actions .primary-link:last-child,
+.header-actions .secondary-link:last-child {
+  border-right: 0;
 }
 
 .primary-link,
@@ -674,23 +693,29 @@ h1 {
 
 .lesson-toggle {
   appearance: none;
+  color: var(--red);
 }
 
 .lesson-panel {
   display: none;
-  margin-top: 18px;
+  width: min(560px, 50vw);
+  max-height: min(680px, calc(100vh - 190px));
+  overflow: auto;
+  margin-top: 12px;
   border: 1px solid var(--ink);
   background: #ffffff;
+  box-shadow: 0 20px 46px rgba(17, 17, 17, 0.08);
 }
 
 .lesson-panel.visible {
   display: grid;
-  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.3fr);
+  grid-template-columns: 1fr;
 }
 
 .lesson-panel-head {
-  border-right: 1px solid var(--ink);
-  padding: 20px;
+  border-right: 0;
+  border-bottom: 1px solid var(--ink);
+  padding: 14px 16px;
 }
 
 .lesson-panel-head .eyebrow {
@@ -698,16 +723,16 @@ h1 {
 }
 
 .lesson-panel-head h2 {
-  margin-bottom: 8px;
-  font-size: 24px;
+  margin-bottom: 5px;
+  font-size: 20px;
   line-height: 1.3;
 }
 
 .lesson-panel-head p:last-child {
   margin-bottom: 0;
   color: #303030;
-  font-size: 13px;
-  line-height: 1.8;
+  font-size: 12px;
+  line-height: 1.65;
 }
 
 .lesson-groups {
@@ -721,10 +746,10 @@ h1 {
 
 .lesson-group-toggle {
   width: 100%;
-  min-height: 58px;
+  min-height: 42px;
   border: 0;
   border-bottom: 1px solid var(--line);
-  padding: 14px 16px;
+  padding: 9px 12px;
   background: #ffffff;
   color: var(--ink);
   display: flex;
@@ -732,6 +757,7 @@ h1 {
   justify-content: space-between;
   gap: 12px;
   cursor: pointer;
+  font-size: 13px;
   font-weight: 900;
   text-align: left;
 }
@@ -740,7 +766,7 @@ h1 {
   content: "+";
   color: var(--red);
   font-family: Menlo, Consolas, "Courier New", monospace;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 900;
 }
 
@@ -751,13 +777,13 @@ h1 {
 .lesson-group-toggle small {
   color: var(--red);
   font-family: Menlo, Consolas, "Courier New", monospace;
-  font-size: 11px;
+  font-size: 10px;
   white-space: nowrap;
 }
 
 .lesson-links {
   display: none;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: 1fr;
 }
 
 .lesson-group.open .lesson-links {
@@ -765,25 +791,22 @@ h1 {
 }
 
 .lesson-links a {
-  min-height: 86px;
-  border-right: 1px solid var(--line);
+  min-height: 42px;
+  border-right: 0;
   border-bottom: 1px solid var(--line);
-  padding: 16px;
+  padding: 9px 12px;
   color: var(--ink);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
   text-decoration: none;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 800;
   transition: background 160ms ease, color 160ms ease;
 }
 
-.lesson-links a:nth-child(4n) {
-  border-right: 0;
-}
-
-.lesson-links a:nth-last-child(-n + 4) {
+.lesson-links a:last-child {
   border-bottom: 0;
 }
 
@@ -807,21 +830,25 @@ h1 {
 .lesson-links span {
   color: var(--red);
   font-family: Menlo, Consolas, "Courier New", monospace;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .lesson-links b {
-  font-size: 15px;
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .lesson-check {
   width: fit-content;
   border: 1px solid var(--line);
-  padding: 3px 7px;
+  padding: 2px 6px;
   color: #3a3a3a;
   background: #ffffff;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 900;
+  white-space: nowrap;
 }
 
 .lesson-links a.lesson-complete .lesson-check {
@@ -2671,21 +2698,26 @@ h1 {
     grid-template-columns: 1fr;
   }
 
+  .lesson-panel {
+    width: 100%;
+    max-height: none;
+  }
+
   .lesson-panel-head {
     border-right: 0;
     border-bottom: 1px solid var(--ink);
   }
 
   .lesson-links {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
   }
 
   .lesson-links a:nth-child(4n) {
-    border-right: 1px solid var(--line);
+    border-right: 0;
   }
 
   .lesson-links a:nth-child(3n) {
-    border-right: 1px solid var(--line);
+    border-right: 0;
   }
 
   .lesson-links a:nth-child(2n) {
