@@ -40,6 +40,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
+const progressSchemaVersion = 3;
 
 const authScreen = document.querySelector("#authScreen");
 const appShell = document.querySelector("#appShell");
@@ -147,6 +148,14 @@ function getPublicAvatar(displayName) {
   }
 }
 
+function getTrustedProgressDisplay(data = {}, uid = "") {
+  const trusted = data.progressSchemaVersion === progressSchemaVersion && data.progressOwnerUid === uid;
+  return {
+    totalCleared: trusted ? (data.totalCleared ?? "未取得") : "未取得",
+    lessonsCleared: trusted ? (data.lessonsCleared ?? "未取得") : "未取得"
+  };
+}
+
 function dispatchTraceUsers(users) {
   window.dispatchEvent(new CustomEvent("java-practice-trace-users", {
     detail: { users }
@@ -155,6 +164,7 @@ function dispatchTraceUsers(users) {
 
 function serializeTraceUser(docSnap) {
   const data = docSnap.data();
+  const progressDisplay = getTrustedProgressDisplay(data, docSnap.id);
   return {
     uid: docSnap.id,
     userName: data.userName || "@Learner",
@@ -164,14 +174,14 @@ function serializeTraceUser(docSnap) {
     status: data.status || "Java学習中",
     lastActive: data.lastActiveAt?.toDate?.()?.toISOString() || null,
     online: Boolean(data.online),
-    totalCleared: data.totalCleared ?? "未取得",
-    lessonsCleared: data.lessonsCleared ?? "未取得"
+    ...progressDisplay
   };
 }
 
 function serializeRegisteredUser(docSnap) {
   const data = docSnap.data();
   const displayName = data.displayName || publicNameFromEmail(data.email);
+  const progressDisplay = getTrustedProgressDisplay(data, docSnap.id);
 
   return {
     uid: docSnap.id,
@@ -182,8 +192,7 @@ function serializeRegisteredUser(docSnap) {
     status: data.status || "ログイン済み",
     lastActive: data.lastSeenAt?.toDate?.()?.toISOString() || data.lastLoginAt?.toDate?.()?.toISOString() || null,
     online: Boolean(data.online),
-    totalCleared: data.totalCleared ?? "未取得",
-    lessonsCleared: data.lessonsCleared ?? "未取得"
+    ...progressDisplay
   };
 }
 
@@ -309,6 +318,14 @@ function normalizeProgressData(data = {}) {
   };
 }
 
+function isTrustedProgressData(data = {}, user) {
+  return Boolean(
+    user?.uid
+    && data.progressSchemaVersion === progressSchemaVersion
+    && data.progressOwnerUid === user.uid
+  );
+}
+
 async function loadAccountProgress(user) {
   if (!user) return null;
 
@@ -319,6 +336,7 @@ async function loadAccountProgress(user) {
     const progressSnap = await getDoc(doc(db, "javaPracticeProgress", user.uid));
     if (progressSnap.exists()) {
       const data = progressSnap.data();
+      if (!isTrustedProgressData(data, user)) return null;
       hasExactProgressSnapshot = true;
       const progress = normalizeProgressData(data);
       latestCompletedByLesson = progress.completedByLesson;
@@ -338,6 +356,7 @@ async function loadAccountProgress(user) {
     const userSnap = await getDoc(doc(db, "javaPracticeUsers", user.uid));
     if (userSnap.exists()) {
       const data = userSnap.data();
+      if (!isTrustedProgressData(data, user)) return null;
       if (data.completedByLesson) {
         hasExactProgressSnapshot = true;
         latestCompletedByLesson = data.completedByLesson || {};
@@ -367,16 +386,19 @@ async function saveAccountProgress(user, progress, completedByLesson) {
   try {
     const userSnap = await getDoc(doc(db, "javaPracticeUsers", user.uid));
     if (userSnap.exists()) {
-      const existing = normalizeProgressData(userSnap.data());
-      mergedCompletedByLesson = mergeCompletedByLesson(existing.completedByLesson, mergedCompletedByLesson);
-      mergedProgress = {
-        totalCleared: Math.max(
-          Number(progress.totalCleared || 0),
-          Number(existing.totalCleared || 0),
-          countCompletedItems(mergedCompletedByLesson)
-        ),
-        lessonsCleared: chooseLessonsClearedLabel(existing.lessonsCleared, progress.lessonsCleared)
-      };
+      const existingData = userSnap.data();
+      if (isTrustedProgressData(existingData, user)) {
+        const existing = normalizeProgressData(existingData);
+        mergedCompletedByLesson = mergeCompletedByLesson(existing.completedByLesson, mergedCompletedByLesson);
+        mergedProgress = {
+          totalCleared: Math.max(
+            Number(progress.totalCleared || 0),
+            Number(existing.totalCleared || 0),
+            countCompletedItems(mergedCompletedByLesson)
+          ),
+          lessonsCleared: chooseLessonsClearedLabel(existing.lessonsCleared, progress.lessonsCleared)
+        };
+      }
     }
   } catch {}
 
@@ -384,7 +406,8 @@ async function saveAccountProgress(user, progress, completedByLesson) {
     await setDoc(doc(db, "javaPracticeProgress", user.uid), {
       ...mergedProgress,
       completedByLesson: mergedCompletedByLesson,
-      progressSchemaVersion: 2,
+      progressSchemaVersion,
+      progressOwnerUid: user.uid,
       updatedAt: serverTimestamp()
     }, { merge: true });
   } catch {}
@@ -393,7 +416,8 @@ async function saveAccountProgress(user, progress, completedByLesson) {
     await setDoc(doc(db, "javaPracticeUsers", user.uid), {
       ...mergedProgress,
       completedByLesson: mergedCompletedByLesson,
-      progressSchemaVersion: 2,
+      progressSchemaVersion,
+      progressOwnerUid: user.uid,
       progressUpdatedAt: serverTimestamp()
     }, { merge: true });
   } catch {}
@@ -418,6 +442,15 @@ function startAccountProgressSubscription(user) {
 
       const data = docSnap.data();
       if (!data.completedByLesson && data.totalCleared == null) return;
+      if (!isTrustedProgressData(data, user)) {
+        resetAccountProgressState();
+        dispatchLoadedProgress({
+          uid: user.uid,
+          ...latestProgress,
+          completedByLesson: latestCompletedByLesson
+        });
+        return;
+      }
 
       const progress = normalizeProgressData(data);
       hasExactProgressSnapshot = Boolean(data.completedByLesson);
@@ -673,7 +706,6 @@ async function saveRegisteredUser(user, overrides = {}) {
       role: "Learner",
       status: latestLearningStatus,
       online: true,
-      ...latestProgress,
       lastLoginAt: serverTimestamp(),
       lastSeenAt: serverTimestamp(),
       ...overrides
@@ -696,7 +728,6 @@ async function saveTracePresence(user, overrides = {}) {
       role: "Learner",
       status: latestLearningStatus,
       online: true,
-      ...latestProgress,
       lastActiveAt: serverTimestamp(),
       ...overrides
     }, { merge: true });
@@ -749,6 +780,8 @@ window.addEventListener("java-practice-progress-updated", (event) => {
 
   updateTracePresence({
     ...latestProgress,
+    progressSchemaVersion,
+    progressOwnerUid: auth.currentUser?.uid || eventUid,
     status: latestLearningStatus,
     online: true
   });
@@ -757,6 +790,8 @@ window.addEventListener("java-practice-progress-updated", (event) => {
     saveAccountProgress(auth.currentUser, latestProgress, latestCompletedByLesson);
     saveRegisteredUser(auth.currentUser, {
       ...latestProgress,
+      progressSchemaVersion,
+      progressOwnerUid: auth.currentUser.uid,
       status: latestLearningStatus,
       lastSeenAt: serverTimestamp()
     });

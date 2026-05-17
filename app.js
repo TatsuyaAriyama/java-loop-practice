@@ -3250,10 +3250,10 @@ const lessonMeta = [
   { id: "classes", total: classQuestions.length }
 ];
 
-const progressPrefix = "java-output-practice-progress-v2";
-const studyLogPrefix = "java-output-practice-study-log-v2";
-const answerUnlockPrefix = "java-output-practice-answer-unlocked-v2";
-const loopUnlockKey = "java-output-practice-loop-unlocked-v2";
+const progressPrefix = "java-output-practice-progress-v3";
+const studyLogPrefix = "java-output-practice-study-log-v3";
+const answerUnlockPrefix = "java-output-practice-answer-unlocked-v3";
+const loopUnlockKey = "java-output-practice-loop-unlocked-v3";
 const authScopeKey = "java-output-practice-auth-scope";
 let progressScope = "local";
 let remoteProgressSummary = null;
