@@ -3775,37 +3775,92 @@ function toggleLessonPanel(forceOpen) {
   });
 }
 
-function createPreparingLessonGroup({ id, title }) {
+function createLessonGroup({ id, title, lessons, open = false }) {
   const section = document.createElement("section");
   section.className = "lesson-group";
   section.dataset.lessonGroup = id;
   section.innerHTML = `
-    <button class="lesson-group-toggle" type="button" aria-expanded="false">
+    <button class="lesson-group-toggle" type="button" aria-expanded="${open}">
       <span>${title}</span>
-      <small>準備中</small>
+      <small>${lessons.length} Lessons</small>
     </button>
     <div class="lesson-links">
-      <a href="#" class="disabled" aria-disabled="true"><span>01</span><b>準備中</b><small>近日追加</small></a>
+      ${lessons.map((lesson, index) => `
+        <a href="${lesson.href}" ${lesson.href === "#" ? 'class="disabled" aria-disabled="true"' : ""} data-lesson-link="${lesson.id}"><span>${String(index + 1).padStart(2, "0")}</span><b>${lesson.title}</b><small class="lesson-check">${lesson.status || "講座"}</small></a>
+      `).join("")}
     </div>
   `;
+  section.classList.toggle("open", open);
   return section;
 }
 
 function createBasicSyntaxLessonGroup() {
-  const section = document.createElement("section");
-  section.className = "lesson-group";
-  section.dataset.lessonGroup = "basic-syntax";
-  section.innerHTML = `
-    <button class="lesson-group-toggle" type="button" aria-expanded="false">
-      <span>Java 基礎文法編</span>
-      <small>2 Lessons</small>
-    </button>
-    <div class="lesson-links">
-      <a href="basic-syntax.html" data-lesson-link="basic-syntax"><span>01</span><b>はじめの文法</b><small class="lesson-check">0/10</small></a>
-      <a href="basic-syntax-values.html" data-lesson-link="basic-syntax-values"><span>02</span><b>値・型・計算</b><small class="lesson-check">0/10</small></a>
-    </div>
-  `;
-  return section;
+  return createLessonGroup({
+    id: "basic-syntax",
+    title: "Java 基礎文法編",
+    lessons: [
+      { id: "basic-syntax", href: "basic-syntax.html", title: "はじめの文法", status: "0/10" },
+      { id: "basic-syntax-values", href: "basic-syntax-values.html", title: "値・型・計算", status: "0/10" }
+    ]
+  });
+}
+
+function createControlLessonGroup() {
+  return createLessonGroup({
+    id: "control",
+    title: "Java 制御構文編",
+    lessons: [
+      { id: "loops", href: "index.html", title: "繰り返し処理", status: "0/20" },
+      { id: "arrays", href: "arrays.html", title: "配列", status: "0/20" },
+      { id: "conditionals", href: "conditionals.html", title: "条件分岐", status: "0/10" },
+      { id: "booleans", href: "booleans.html", title: "真偽値と条件式", status: "0/10" }
+    ]
+  });
+}
+
+function createClassMethodLessonGroup() {
+  return createLessonGroup({
+    id: "class-method",
+    title: "Java クラス・メソッド編",
+    lessons: [
+      { id: "methods-1", href: "methods-1.html", title: "メソッド(1)", status: "0/10" },
+      { id: "methods-2", href: "methods-2.html", title: "メソッド(2)", status: "0/10" },
+      { id: "classes", href: "classes.html", title: "クラス", status: "0/10" }
+    ]
+  });
+}
+
+function createSilverLessonGroup() {
+  return createLessonGroup({
+    id: "silver-se17",
+    title: "Java Silver SE17対策編",
+    lessons: [
+      { id: "strings-arraylist", href: "strings-arraylist.html", title: "StringとArrayList" },
+      { id: "inheritance", href: "inheritance.html", title: "継承とオーバーライド" },
+      { id: "interfaces", href: "interfaces.html", title: "抽象クラスとインタフェース" },
+      { id: "exceptions", href: "exceptions.html", title: "例外処理" },
+      { id: "silver-review", href: "silver-review.html", title: "Silver総合読解" }
+    ]
+  });
+}
+
+function createOopBasicLessonGroup() {
+  return createLessonGroup({
+    id: "oop-basic",
+    title: "Java オブジェクト指向基礎編",
+    lessons: [
+      { id: "oop-basic-soon", href: "#", title: "準備中", status: "近日追加" }
+    ]
+  });
+}
+
+function insertLessonGroupAfter(groups, group, afterSelector) {
+  const after = groups.querySelector(afterSelector);
+  if (after?.nextSibling) {
+    groups.insertBefore(group, after.nextSibling);
+    return;
+  }
+  groups.appendChild(group);
 }
 
 function ensureLessonSeriesGroups() {
@@ -3814,11 +3869,30 @@ function ensureLessonSeriesGroups() {
       groups.prepend(createBasicSyntaxLessonGroup());
     }
 
+    if (!groups.querySelector('[data-lesson-group="control"]')) {
+      insertLessonGroupAfter(groups, createControlLessonGroup(), '[data-lesson-group="basic-syntax"]');
+    }
+
+    if (!groups.querySelector('[data-lesson-group="class-method"]')) {
+      insertLessonGroupAfter(groups, createClassMethodLessonGroup(), '[data-lesson-group="control"]');
+    }
+
+    if (!groups.querySelector('[data-lesson-group="silver-se17"]')) {
+      insertLessonGroupAfter(groups, createSilverLessonGroup(), '[data-lesson-group="class-method"]');
+    }
+
+    if (!groups.querySelector('[data-lesson-group="oop-basic"]')) {
+      insertLessonGroupAfter(groups, createOopBasicLessonGroup(), '[data-lesson-group="silver-se17"]');
+    }
+
     if (!groups.querySelector('[data-lesson-group="oop-advanced"]')) {
-      groups.appendChild(createPreparingLessonGroup({
+      insertLessonGroupAfter(groups, createLessonGroup({
         id: "oop-advanced",
-        title: "Java オブジェクト指向応用編"
-      }));
+        title: "Java オブジェクト指向応用編",
+        lessons: [
+          { id: "oop-advanced-soon", href: "#", title: "準備中", status: "近日追加" }
+        ]
+      }), '[data-lesson-group="oop-basic"]');
     }
   });
 }

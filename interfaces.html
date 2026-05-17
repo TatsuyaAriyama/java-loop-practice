@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Java Silver - 抽象クラスとインタフェース</title>
+  <script>
+    try { if (localStorage.getItem("java-output-practice-auth") === "signed-in") document.documentElement.classList.add("auth-optimistic"); } catch {}
+  </script>
+  <style>
+    body.auth-pending .auth-screen, body.auth-pending .app-shell { display: none !important; }
+    html.auth-optimistic body.auth-pending .app-shell { display: block !important; }
+  </style>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-pending">
+  <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
+    <div class="auth-shell">
+      <div class="auth-brand"><p class="eyebrow">Java Output Practice</p><h1>ログイン</h1><p>メール、パスワード、またはGoogleアカウントで学習ページに入ります。</p></div>
+      <form class="auth-card" id="authForm">
+        <label><span>メールアドレス</span><input type="email" id="authEmail" autocomplete="email" required></label>
+        <label><span>パスワード</span><input type="password" id="authPassword" autocomplete="current-password" required minlength="6"></label>
+        <button class="action-button primary auth-submit" type="submit">メールでログイン</button>
+        <button class="action-button secondary auth-create" type="button" id="createAccountButton">新規作成</button>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="google-button" type="button" id="googleLoginButton"><span>G</span>Googleアカウントでログイン</button>
+        <p class="auth-message" id="authMessage" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell" aria-hidden="true">
+    <header class="site-header">
+      <div class="header-inner">
+        <p class="lesson-current">Java Silver SE17対策編 / Lesson03 抽象クラスとインタフェース</p>
+        <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
+        <div class="header-actions">
+          <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
+          <a href="trace-room.html" class="secondary-link">Trace Room</a>
+          <a href="#guide" class="primary-link">講座を見る</a>
+          <a href="exceptions.html" class="secondary-link">次のLessonへ</a>
+        </div>
+        <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
+          <div class="lesson-panel-head"><p class="eyebrow">Lesson Index</p><h2>Lesson一覧</h2><p>Java Silverで問われる型の読み方を固めます。</p></div>
+          <div class="lesson-groups">
+            <section class="lesson-group open" data-lesson-group="silver-se17">
+              <button class="lesson-group-toggle" type="button" aria-expanded="true"><span>Java Silver SE17対策編</span><small>5 Lessons</small></button>
+              <div class="lesson-links">
+                <a href="strings-arraylist.html" data-lesson-link="strings-arraylist"><span>01</span><b>StringとArrayList</b><small class="lesson-check">講座</small></a>
+                <a href="inheritance.html" data-lesson-link="inheritance"><span>02</span><b>継承とオーバーライド</b><small class="lesson-check">講座</small></a>
+                <a href="interfaces.html" class="active" data-lesson-link="interfaces"><span>03</span><b>抽象クラスとインタフェース</b><small class="lesson-check">講座</small></a>
+                <a href="exceptions.html" data-lesson-link="exceptions"><span>04</span><b>例外処理</b><small class="lesson-check">講座</small></a>
+                <a href="silver-review.html" data-lesson-link="silver-review"><span>05</span><b>Silver総合読解</b><small class="lesson-check">講座</small></a>
+              </div>
+            </section>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="guide" class="syntax-section">
+        <div class="section-heading">
+          <p class="eyebrow">Silver Focus 03</p>
+          <h2>抽象クラスとインタフェースは「契約」を読む。</h2>
+          <p>ここは暗記だけで押し切ると崩れます。何を実装しなければならないか、どのメソッドが自動的にpublicなのか、default/static/privateがどこに書けるかを整理します。</p>
+        </div>
+
+        <div class="syntax-layout">
+          <div class="syntax-code">
+            <pre><code>interface Printable {
+  void print();
+
+  default void log() {
+    System.out.println("log");
+  }
+}
+
+abstract class Report {
+  abstract String title();
+}
+
+class DailyReport extends Report implements Printable {
+  public void print() {
+    System.out.println(title());
+  }
+
+  String title() {
+    return "daily";
+  }
+}</code></pre>
+          </div>
+          <div class="syntax-cards">
+            <article class="topic-card"><span class="syntax-label">abstract</span><h3>抽象メソッドは中身がない約束</h3><p>抽象クラスは状態や実装を持てますが、抽象メソッドを残したままnewできません。具象クラスが実装する必要があります。</p></article>
+            <article class="topic-card"><span class="syntax-label">interface</span><h3>インタフェースは実装の契約</h3><p>実装クラスは、抽象メソッドをすべて実装します。インタフェースのメソッドは基本的に<span class="term">public</span>として扱われます。</p></article>
+            <article class="topic-card"><span class="syntax-label">default</span><h3>defaultメソッドは本体を持てる</h3><p>Java 8以降、インタフェースにも<span class="term">default</span>メソッドを書けます。実装クラスで上書きしない場合はその実装を使えます。</p></article>
+            <article class="topic-card"><span class="syntax-label">static</span><h3>staticメソッドは型名から呼ぶ</h3><p>インタフェースのstaticメソッドは実装クラスへ継承される感覚で呼びません。どの型に属するかを見ます。</p></article>
+            <article class="topic-card"><span class="syntax-label">access</span><h3>弱いアクセスにできない</h3><p>publicな契約を、実装側でpackage-privateやprivateに狭めることはできません。コンパイルエラーの定番です。</p></article>
+            <article class="topic-card"><span class="syntax-label">multiple</span><h3>複数実装の衝突を見る</h3><p>複数インタフェースのdefaultが衝突したら、クラス側で明示的に解決が必要です。曖昧なままにはできません。</p></article>
+          </div>
+        </div>
+
+        <div class="topic-deep-dive">
+          <p class="eyebrow">Tracea Note</p>
+          <h3>「書ける場所」と「呼べる形」を分ける。</h3>
+          <div class="deep-body">
+            <p>抽象クラスはフィールド、コンストラクタ、具象メソッドを持てます。インタフェースは契約が中心ですが、default/static/privateメソッドも扱います。似ているからこそ、何がどこに書けるかを表で持つと強いです。</p>
+            <p>試験では、見た目が正しそうなコードでもアクセス修飾子で落ちます。インタフェース由来のメソッドを実装するとき、publicを落としていないか。そこに赤線を引いて読みましょう。</p>
+          </div>
+        </div>
+
+        <p class="source-note">
+          参考: Oracle Java SE 17 Silver試験チェックリスト、Oracle Java Tutorials の
+          <a href="https://docs.oracle.com/javase/tutorial/java/IandI/abstract.html">Abstract Methods and Classes</a>、
+          <a href="https://docs.oracle.com/javase/tutorial/java/IandI/createinterface.html">Interfaces</a>
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer"><p>Java Silver / abstract・interface・default</p><button class="signout-button" type="button" id="signOutButton">ログアウト</button></footer>
+  </div>
+
+  <script src="app.js?v=silver-lessons-20260517"></script>
+  <script type="module" src="firebase-auth.js?v=silver-lessons-20260517"></script>
+</body>
+</html>

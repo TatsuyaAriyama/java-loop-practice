@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Java Silver - 継承とオーバーライド</title>
+  <script>
+    try { if (localStorage.getItem("java-output-practice-auth") === "signed-in") document.documentElement.classList.add("auth-optimistic"); } catch {}
+  </script>
+  <style>
+    body.auth-pending .auth-screen, body.auth-pending .app-shell { display: none !important; }
+    html.auth-optimistic body.auth-pending .app-shell { display: block !important; }
+  </style>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-pending">
+  <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
+    <div class="auth-shell">
+      <div class="auth-brand"><p class="eyebrow">Java Output Practice</p><h1>ログイン</h1><p>メール、パスワード、またはGoogleアカウントで学習ページに入ります。</p></div>
+      <form class="auth-card" id="authForm">
+        <label><span>メールアドレス</span><input type="email" id="authEmail" autocomplete="email" required></label>
+        <label><span>パスワード</span><input type="password" id="authPassword" autocomplete="current-password" required minlength="6"></label>
+        <button class="action-button primary auth-submit" type="submit">メールでログイン</button>
+        <button class="action-button secondary auth-create" type="button" id="createAccountButton">新規作成</button>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="google-button" type="button" id="googleLoginButton"><span>G</span>Googleアカウントでログイン</button>
+        <p class="auth-message" id="authMessage" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell" aria-hidden="true">
+    <header class="site-header">
+      <div class="header-inner">
+        <p class="lesson-current">Java Silver SE17対策編 / Lesson02 継承とオーバーライド</p>
+        <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
+        <div class="header-actions">
+          <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
+          <a href="trace-room.html" class="secondary-link">Trace Room</a>
+          <a href="#guide" class="primary-link">講座を見る</a>
+          <a href="interfaces.html" class="secondary-link">次のLessonへ</a>
+        </div>
+        <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
+          <div class="lesson-panel-head"><p class="eyebrow">Lesson Index</p><h2>Lesson一覧</h2><p>Java Silverの読解で失点しやすい範囲を順に確認します。</p></div>
+          <div class="lesson-groups">
+            <section class="lesson-group open" data-lesson-group="silver-se17">
+              <button class="lesson-group-toggle" type="button" aria-expanded="true"><span>Java Silver SE17対策編</span><small>5 Lessons</small></button>
+              <div class="lesson-links">
+                <a href="strings-arraylist.html" data-lesson-link="strings-arraylist"><span>01</span><b>StringとArrayList</b><small class="lesson-check">講座</small></a>
+                <a href="inheritance.html" class="active" data-lesson-link="inheritance"><span>02</span><b>継承とオーバーライド</b><small class="lesson-check">講座</small></a>
+                <a href="interfaces.html" data-lesson-link="interfaces"><span>03</span><b>抽象クラスとインタフェース</b><small class="lesson-check">講座</small></a>
+                <a href="exceptions.html" data-lesson-link="exceptions"><span>04</span><b>例外処理</b><small class="lesson-check">講座</small></a>
+                <a href="silver-review.html" data-lesson-link="silver-review"><span>05</span><b>Silver総合読解</b><small class="lesson-check">講座</small></a>
+              </div>
+            </section>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="guide" class="syntax-section">
+        <div class="section-heading">
+          <p class="eyebrow">Silver Focus 02</p>
+          <h2>継承は「参照型」と「実体型」を分けて読む。</h2>
+          <p>Silverの継承問題は、親子関係を知っているだけでは足りません。変数の型で呼べるメソッドが決まり、実行時の実体でオーバーライド先が決まります。この2段階を分けます。</p>
+        </div>
+
+        <div class="syntax-layout">
+          <div class="syntax-code">
+            <pre><code>class Animal {
+  void speak() {
+    System.out.println("...");
+  }
+}
+
+class Dog extends Animal {
+  @Override
+  void speak() {
+    System.out.println("wan");
+  }
+}
+
+Animal a = new Dog();
+a.speak();</code></pre>
+          </div>
+          <div class="syntax-cards">
+            <article class="topic-card"><span class="syntax-label">extends</span><h3>子は親のメンバーを受け継ぐ</h3><p><span class="term">Dog extends Animal</span> は、DogがAnimalの性質を持つという宣言です。ただし、コンストラクタは継承されません。</p></article>
+            <article class="topic-card"><span class="syntax-label">override</span><h3>同じ形で上書きする</h3><p>オーバーライドは、親のメソッドと同じシグネチャで振る舞いを差し替えます。戻り値、アクセス修飾子、例外の条件に注意します。</p></article>
+            <article class="topic-card"><span class="syntax-label">dynamic</span><h3>実行時は実体のメソッドが動く</h3><p><span class="term">Animal a = new Dog();</span> でも、<span class="term">speak()</span>はDog側が実行されます。ここが出力問題の核心です。</p></article>
+            <article class="topic-card"><span class="syntax-label">super</span><h3>superは親側を見る合図</h3><p><span class="term">super()</span> は親コンストラクタ、<span class="term">super.name</span> や <span class="term">super.method()</span> は親のメンバーを指します。</p></article>
+            <article class="topic-card"><span class="syntax-label">constructor</span><h3>親のコンストラクタが先に動く</h3><p>子を作ると、まず親の初期化が走ります。出力順問題では、コンストラクタ内のprintlnを上から追いましょう。</p></article>
+            <article class="topic-card"><span class="syntax-label">compile</span><h3>呼べるかは左側の型で決まる</h3><p>実体がDogでも、変数の型がAnimalならAnimalにないメソッドはそのまま呼べません。コンパイル可否を先に判定します。</p></article>
+          </div>
+        </div>
+
+        <div class="topic-deep-dive">
+          <p class="eyebrow">Tracea Note</p>
+          <h3>「呼べるか」と「何が動くか」を混ぜない。</h3>
+          <div class="deep-body">
+            <p>左側の型は、コンパイル時に見える範囲を決めます。右側の実体は、オーバーライドされたメソッドの実行先を決めます。問題を読んだ瞬間に、左と右を別々に線で結んでください。</p>
+            <p>継承は便利な仕組みですが、試験では「親にない子だけのメソッド」「staticメソッドの隠蔽」「コンストラクタの順序」がよく混ざります。まずコンパイルできるか。次に出力順。焦るほど、この順番です。</p>
+          </div>
+        </div>
+
+        <p class="source-note">
+          参考: Oracle Java SE 17 Silver試験チェックリスト、Oracle Java Tutorials の
+          <a href="https://docs.oracle.com/javase/tutorial/java/IandI/subclasses.html">Inheritance</a>、
+          <a href="https://docs.oracle.com/javase/tutorial/java/IandI/override.html">Overriding and Hiding Methods</a>
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer"><p>Java Silver / inheritance・override・super</p><button class="signout-button" type="button" id="signOutButton">ログアウト</button></footer>
+  </div>
+
+  <script src="app.js?v=silver-lessons-20260517"></script>
+  <script type="module" src="firebase-auth.js?v=silver-lessons-20260517"></script>
+</body>
+</html>

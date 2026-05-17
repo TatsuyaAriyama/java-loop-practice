@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Java Silver - 総合読解</title>
+  <script>
+    try { if (localStorage.getItem("java-output-practice-auth") === "signed-in") document.documentElement.classList.add("auth-optimistic"); } catch {}
+  </script>
+  <style>
+    body.auth-pending .auth-screen, body.auth-pending .app-shell { display: none !important; }
+    html.auth-optimistic body.auth-pending .app-shell { display: block !important; }
+  </style>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-pending">
+  <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
+    <div class="auth-shell">
+      <div class="auth-brand"><p class="eyebrow">Java Output Practice</p><h1>ログイン</h1><p>メール、パスワード、またはGoogleアカウントで学習ページに入ります。</p></div>
+      <form class="auth-card" id="authForm">
+        <label><span>メールアドレス</span><input type="email" id="authEmail" autocomplete="email" required></label>
+        <label><span>パスワード</span><input type="password" id="authPassword" autocomplete="current-password" required minlength="6"></label>
+        <button class="action-button primary auth-submit" type="submit">メールでログイン</button>
+        <button class="action-button secondary auth-create" type="button" id="createAccountButton">新規作成</button>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="google-button" type="button" id="googleLoginButton"><span>G</span>Googleアカウントでログイン</button>
+        <p class="auth-message" id="authMessage" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell" aria-hidden="true">
+    <header class="site-header">
+      <div class="header-inner">
+        <p class="lesson-current">Java Silver SE17対策編 / Lesson05 Silver総合読解</p>
+        <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
+        <div class="header-actions">
+          <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
+          <a href="trace-room.html" class="secondary-link">Trace Room</a>
+          <a href="#guide" class="primary-link">講座を見る</a>
+          <a href="strings-arraylist.html" class="secondary-link">最初に戻る</a>
+        </div>
+        <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
+          <div class="lesson-panel-head"><p class="eyebrow">Lesson Index</p><h2>Lesson一覧</h2><p>出題範囲を横断して、選択肢を消す順番を作ります。</p></div>
+          <div class="lesson-groups">
+            <section class="lesson-group open" data-lesson-group="silver-se17">
+              <button class="lesson-group-toggle" type="button" aria-expanded="true"><span>Java Silver SE17対策編</span><small>5 Lessons</small></button>
+              <div class="lesson-links">
+                <a href="strings-arraylist.html" data-lesson-link="strings-arraylist"><span>01</span><b>StringとArrayList</b><small class="lesson-check">講座</small></a>
+                <a href="inheritance.html" data-lesson-link="inheritance"><span>02</span><b>継承とオーバーライド</b><small class="lesson-check">講座</small></a>
+                <a href="interfaces.html" data-lesson-link="interfaces"><span>03</span><b>抽象クラスとインタフェース</b><small class="lesson-check">講座</small></a>
+                <a href="exceptions.html" data-lesson-link="exceptions"><span>04</span><b>例外処理</b><small class="lesson-check">講座</small></a>
+                <a href="silver-review.html" class="active" data-lesson-link="silver-review"><span>05</span><b>Silver総合読解</b><small class="lesson-check">講座</small></a>
+              </div>
+            </section>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="guide" class="syntax-section">
+        <div class="section-heading">
+          <p class="eyebrow">Silver Focus 05</p>
+          <h2>Silverは、知識問題ではなく「コード読解の試験」として解く。</h2>
+          <p>公式範囲は広いですが、解き方は共通しています。コンパイル可否、型、初期化、実行順、例外、出力。この順に見ると、焦っても戻れる道筋が残ります。</p>
+        </div>
+
+        <div class="basics-grid">
+          <article class="topic-card"><span class="syntax-label">1</span><h3>まずコンパイルできるか</h3><p>アクセス修飾子、型不一致、到達不能なcatch、未初期化ローカル変数。出力を考える前に、落ちるコードを落とします。</p></article>
+          <article class="topic-card"><span class="syntax-label">2</span><h3>左側の型を見る</h3><p>参照変数の型で呼べるメンバーが決まります。実体が何かを見るのは、その次です。</p></article>
+          <article class="topic-card"><span class="syntax-label">3</span><h3>値の変化を表にする</h3><p>for、ArrayList、StringBuilder、代入演算子が並んだら、頭だけで追いません。小さな表を作ります。</p></article>
+          <article class="topic-card"><span class="syntax-label">4</span><h3>Stringと可変オブジェクトを分ける</h3><p>Stringは変わらない。ArrayListやStringBuilderは変わる。戻り値を代入しているかまで見ます。</p></article>
+          <article class="topic-card"><span class="syntax-label">5</span><h3>例外発生行で流れを切る</h3><p>例外が起きたら、その後のtry内処理には進みません。catch、finally、戻り値の順に落ち着いて追います。</p></article>
+          <article class="topic-card"><span class="syntax-label">6</span><h3>SE17要素は形で押さえる</h3><p>switch式、record、sealed class、pattern matchingなどは、細部より先に「どの形が許されるか」を見ます。</p></article>
+        </div>
+
+        <div class="topic-deep-dive">
+          <p class="eyebrow">Tracea Note</p>
+          <h3>本番では、全部を完璧に思い出そうとしない。</h3>
+          <div class="deep-body">
+            <p>選択肢問題は、正解を作るより先に誤答を消す試験です。コンパイルエラー、型の不一致、出力順の矛盾、例外の見落とし。消せる理由を持てるほど、迷いが減ります。</p>
+            <p>このサイトでは次に、各Silver対策Lessonへ10問ずつ演習を追加すると効果が出ます。String/ArrayList、継承、インタフェース、例外、総合読解の5本を中級問題にすると、かなり試験寄りになります。</p>
+          </div>
+        </div>
+
+        <p class="source-note">
+          参考: Oracle Java SE 17 Silver試験チェックリスト、Oracle Java Tutorials、Oracle Java SE 17 API Documentation、Java SE 17 Language Updates
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer"><p>Java Silver / integrated code reading</p><button class="signout-button" type="button" id="signOutButton">ログアウト</button></footer>
+  </div>
+
+  <script src="app.js?v=silver-lessons-20260517"></script>
+  <script type="module" src="firebase-auth.js?v=silver-lessons-20260517"></script>
+</body>
+</html>

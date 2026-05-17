@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Java Silver - StringとArrayList</title>
+  <script>
+    try {
+      if (localStorage.getItem("java-output-practice-auth") === "signed-in") {
+        document.documentElement.classList.add("auth-optimistic");
+      }
+    } catch {}
+  </script>
+  <style>
+    body.auth-pending .auth-screen,
+    body.auth-pending .app-shell { display: none !important; }
+    html.auth-optimistic body.auth-pending .app-shell { display: block !important; }
+  </style>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-pending">
+  <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
+    <div class="auth-shell">
+      <div class="auth-brand">
+        <p class="eyebrow">Java Output Practice</p>
+        <h1>ログイン</h1>
+        <p>メール、パスワード、またはGoogleアカウントで学習ページに入ります。</p>
+      </div>
+      <form class="auth-card" id="authForm">
+        <label><span>メールアドレス</span><input type="email" id="authEmail" autocomplete="email" required></label>
+        <label><span>パスワード</span><input type="password" id="authPassword" autocomplete="current-password" required minlength="6"></label>
+        <button class="action-button primary auth-submit" type="submit">メールでログイン</button>
+        <button class="action-button secondary auth-create" type="button" id="createAccountButton">新規作成</button>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="google-button" type="button" id="googleLoginButton"><span>G</span>Googleアカウントでログイン</button>
+        <p class="auth-message" id="authMessage" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell" aria-hidden="true">
+    <header class="site-header">
+      <div class="header-inner">
+        <p class="lesson-current">Java Silver SE17対策編 / Lesson01 StringとArrayList</p>
+        <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
+        <div class="header-actions">
+          <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
+          <a href="trace-room.html" class="secondary-link">Trace Room</a>
+          <a href="#guide" class="primary-link">講座を見る</a>
+          <a href="inheritance.html" class="secondary-link">次のLessonへ</a>
+        </div>
+        <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
+          <div class="lesson-panel-head">
+            <p class="eyebrow">Lesson Index</p>
+            <h2>Lesson一覧</h2>
+            <p>Java Silverの出題範囲に沿って、読解に必要な知識を積み上げます。</p>
+          </div>
+          <div class="lesson-groups">
+            <section class="lesson-group open" data-lesson-group="silver-se17">
+              <button class="lesson-group-toggle" type="button" aria-expanded="true"><span>Java Silver SE17対策編</span><small>5 Lessons</small></button>
+              <div class="lesson-links">
+                <a href="strings-arraylist.html" class="active" data-lesson-link="strings-arraylist"><span>01</span><b>StringとArrayList</b><small class="lesson-check">講座</small></a>
+                <a href="inheritance.html" data-lesson-link="inheritance"><span>02</span><b>継承とオーバーライド</b><small class="lesson-check">講座</small></a>
+                <a href="interfaces.html" data-lesson-link="interfaces"><span>03</span><b>抽象クラスとインタフェース</b><small class="lesson-check">講座</small></a>
+                <a href="exceptions.html" data-lesson-link="exceptions"><span>04</span><b>例外処理</b><small class="lesson-check">講座</small></a>
+                <a href="silver-review.html" data-lesson-link="silver-review"><span>05</span><b>Silver総合読解</b><small class="lesson-check">講座</small></a>
+              </div>
+            </section>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="guide" class="syntax-section">
+        <div class="section-heading">
+          <p class="eyebrow">Silver Focus 01</p>
+          <h2>StringとArrayListは、出力結果をずらす主役です。</h2>
+          <p>Silverでは「知っているメソッド名」より、呼んだあとに元の値が変わるのか、戻り値だけが新しいのかを見ます。ここで目を止められるかどうかで、選択肢の消し方が変わります。</p>
+        </div>
+
+        <div class="syntax-layout">
+          <div class="syntax-code">
+            <pre><code>String text = "Java";
+text.concat("Silver");
+System.out.println(text);
+
+ArrayList&lt;String&gt; list = new ArrayList&lt;&gt;();
+list.add("A");
+list.add("B");
+list.remove(0);
+System.out.println(list.get(0));</code></pre>
+          </div>
+          <div class="syntax-cards">
+            <article class="topic-card">
+              <span class="syntax-label">immutable</span>
+              <h3>Stringは変更できない</h3>
+              <p><span class="term">concat</span>や<span class="term">replace</span>は、新しい文字列を返します。元の変数に代入していなければ、表示される値は変わりません。</p>
+            </article>
+            <article class="topic-card">
+              <span class="syntax-label">index</span>
+              <h3>文字もリストも0番から数える</h3>
+              <p><span class="term">charAt(0)</span>は先頭、<span class="term">get(0)</span>も先頭です。人間の「1番目」とJavaの<span class="term">0</span>がずれます。</p>
+            </article>
+            <article class="topic-card">
+              <span class="syntax-label">equals</span>
+              <h3>文字列比較はequalsを見る</h3>
+              <p><span class="term">==</span>は同じ参照かを見ます。内容が同じかを問う問題では、基本的に<span class="term">equals</span>が主役です。</p>
+            </article>
+            <article class="topic-card">
+              <span class="syntax-label">ArrayList</span>
+              <h3>ArrayListは要素数が変わる</h3>
+              <p><span class="term">add</span>、<span class="term">remove</span>で中身が動きます。削除後は後ろの要素が前へ詰まる。この一歩を雑に読むと出力を外します。</p>
+            </article>
+            <article class="topic-card">
+              <span class="syntax-label">overload</span>
+              <h3>removeは引数で意味が変わる</h3>
+              <p><span class="term">remove(0)</span>は0番を消し、<span class="term">remove("0")</span>は値としての"0"を探します。型を見ます。そこです。</p>
+            </article>
+            <article class="topic-card">
+              <span class="syntax-label">pitfall</span>
+              <h3>試験では「変わったつもり」を狙う</h3>
+              <p>Stringは変わらない。ArrayListは変わる。まずこの対比を置いてから、1行ずつ値を追いましょう。</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="topic-deep-dive">
+          <p class="eyebrow">Tracea Note</p>
+          <h3>戻り値を捨てていないか、変更が本体に効くのか。</h3>
+          <div class="deep-body">
+            <p>Stringのメソッドは、結果を返しても元のStringオブジェクトは変えません。つまり <span class="term">text.concat("Silver");</span> だけでは、textはまだ "Java" です。ここを見落とすと、正解は一気に遠ざかります。</p>
+            <p>一方でArrayListは中身を変えます。removeした瞬間、要素の位置は詰まります。問題文に複数のadd/removeが並んだら、頭の中だけで耐えず、0番、1番、2番と小さな表を作るのが勝ち筋です。</p>
+          </div>
+        </div>
+
+        <p class="source-note">
+          参考: Oracle Java SE 17 Silver試験チェックリスト、Oracle Java API Documentation の
+          <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a>、
+          <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ArrayList.html">ArrayList</a>
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Java Silver / String・ArrayList</p>
+      <button class="signout-button" type="button" id="signOutButton">ログアウト</button>
+    </footer>
+  </div>
+
+  <script src="app.js?v=silver-lessons-20260517"></script>
+  <script type="module" src="firebase-auth.js?v=silver-lessons-20260517"></script>
+</body>
+</html>

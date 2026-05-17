@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Java Silver - 例外処理</title>
+  <script>
+    try { if (localStorage.getItem("java-output-practice-auth") === "signed-in") document.documentElement.classList.add("auth-optimistic"); } catch {}
+  </script>
+  <style>
+    body.auth-pending .auth-screen, body.auth-pending .app-shell { display: none !important; }
+    html.auth-optimistic body.auth-pending .app-shell { display: block !important; }
+  </style>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-pending">
+  <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
+    <div class="auth-shell">
+      <div class="auth-brand"><p class="eyebrow">Java Output Practice</p><h1>ログイン</h1><p>メール、パスワード、またはGoogleアカウントで学習ページに入ります。</p></div>
+      <form class="auth-card" id="authForm">
+        <label><span>メールアドレス</span><input type="email" id="authEmail" autocomplete="email" required></label>
+        <label><span>パスワード</span><input type="password" id="authPassword" autocomplete="current-password" required minlength="6"></label>
+        <button class="action-button primary auth-submit" type="submit">メールでログイン</button>
+        <button class="action-button secondary auth-create" type="button" id="createAccountButton">新規作成</button>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="google-button" type="button" id="googleLoginButton"><span>G</span>Googleアカウントでログイン</button>
+        <p class="auth-message" id="authMessage" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell" aria-hidden="true">
+    <header class="site-header">
+      <div class="header-inner">
+        <p class="lesson-current">Java Silver SE17対策編 / Lesson04 例外処理</p>
+        <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
+        <div class="header-actions">
+          <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
+          <a href="trace-room.html" class="secondary-link">Trace Room</a>
+          <a href="#guide" class="primary-link">講座を見る</a>
+          <a href="silver-review.html" class="secondary-link">次のLessonへ</a>
+        </div>
+        <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
+          <div class="lesson-panel-head"><p class="eyebrow">Lesson Index</p><h2>Lesson一覧</h2><p>Java Silverの終盤で効く例外処理を、順番と到達可能性で読みます。</p></div>
+          <div class="lesson-groups">
+            <section class="lesson-group open" data-lesson-group="silver-se17">
+              <button class="lesson-group-toggle" type="button" aria-expanded="true"><span>Java Silver SE17対策編</span><small>5 Lessons</small></button>
+              <div class="lesson-links">
+                <a href="strings-arraylist.html" data-lesson-link="strings-arraylist"><span>01</span><b>StringとArrayList</b><small class="lesson-check">講座</small></a>
+                <a href="inheritance.html" data-lesson-link="inheritance"><span>02</span><b>継承とオーバーライド</b><small class="lesson-check">講座</small></a>
+                <a href="interfaces.html" data-lesson-link="interfaces"><span>03</span><b>抽象クラスとインタフェース</b><small class="lesson-check">講座</small></a>
+                <a href="exceptions.html" class="active" data-lesson-link="exceptions"><span>04</span><b>例外処理</b><small class="lesson-check">講座</small></a>
+                <a href="silver-review.html" data-lesson-link="silver-review"><span>05</span><b>Silver総合読解</b><small class="lesson-check">講座</small></a>
+              </div>
+            </section>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="guide" class="syntax-section">
+        <div class="section-heading">
+          <p class="eyebrow">Silver Focus 04</p>
+          <h2>例外処理は、catchより先に「どこで例外が起きるか」を読む。</h2>
+          <p>try、catch、finallyは形だけなら簡単です。ただし試験では、例外が起きた行より後が実行されるのか、catchの順番は正しいのか、finallyが最後に走るのかを問います。</p>
+        </div>
+
+        <div class="syntax-layout">
+          <div class="syntax-code">
+            <pre><code>try {
+  System.out.println("A");
+  int n = 10 / 0;
+  System.out.println("B");
+} catch (ArithmeticException e) {
+  System.out.println("C");
+} finally {
+  System.out.println("D");
+}</code></pre>
+          </div>
+          <div class="syntax-cards">
+            <article class="topic-card"><span class="syntax-label">try</span><h3>tryは危ない処理を囲む</h3><p>例外が起きると、その行から先のtry内処理は飛ばされ、対応するcatchを探します。</p></article>
+            <article class="topic-card"><span class="syntax-label">catch</span><h3>catchは上から順に判定する</h3><p>親クラスの例外を先にcatchすると、子クラスのcatchへ到達できません。順番でコンパイルエラーになります。</p></article>
+            <article class="topic-card"><span class="syntax-label">finally</span><h3>finallyは原則最後に走る</h3><p>例外が起きても起きなくても、finallyは実行されます。出力順の最後に入ることが多いので、忘れないでください。</p></article>
+            <article class="topic-card"><span class="syntax-label">checked</span><h3>チェック例外は処理が必要</h3><p>コンパイル時に処理を求められる例外があります。throwsかtry-catchが必要かを見る問題があります。</p></article>
+            <article class="topic-card"><span class="syntax-label">runtime</span><h3>実行時例外は突然出る</h3><p><span class="term">ArithmeticException</span>、<span class="term">NullPointerException</span>、<span class="term">ArrayIndexOutOfBoundsException</span>などは読解でよく出ます。</p></article>
+            <article class="topic-card"><span class="syntax-label">flow</span><h3>出力は例外発生行で切れる</h3><p>例外が起きた行より後のtry内printlnは出ません。どの文字が表示されないかを先に消します。</p></article>
+          </div>
+        </div>
+
+        <div class="topic-deep-dive">
+          <p class="eyebrow">Tracea Note</p>
+          <h3>例外問題は、出力順を声に出すくらい丁寧に。</h3>
+          <div class="deep-body">
+            <p>上のコードなら、Aを表示したあとにゼロ除算で例外が起きます。Bには進みません。ArithmeticExceptionのcatchに入りCを表示し、最後にfinallyでDを表示します。結果はA、C、Dです。</p>
+            <p>もしcatchの順番が親から子になっていたら、実行以前にコンパイルエラーです。Silverでは「実行結果」だけでなく「そもそも通るコードか」を必ず先に見ます。</p>
+          </div>
+        </div>
+
+        <p class="source-note">
+          参考: Oracle Java SE 17 Silver試験チェックリスト、Oracle Java Tutorials の
+          <a href="https://docs.oracle.com/javase/tutorial/essential/exceptions/index.html">Exceptions</a>、
+          <a href="https://docs.oracle.com/javase/tutorial/essential/exceptions/finally.html">finally Block</a>
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer"><p>Java Silver / try・catch・finally</p><button class="signout-button" type="button" id="signOutButton">ログアウト</button></footer>
+  </div>
+
+  <script src="app.js?v=silver-lessons-20260517"></script>
+  <script type="module" src="firebase-auth.js?v=silver-lessons-20260517"></script>
+</body>
+</html>
