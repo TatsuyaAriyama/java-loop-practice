@@ -1045,6 +1045,63 @@ function hasTraceaTarget(source, targetText) {
   return targetText && source.includes(targetText);
 }
 
+function getTraceaBlankAnswers(parts) {
+  return parts
+    .filter((part) => typeof part === "object" && part?.answer)
+    .map((part) => part.answer);
+}
+
+function getTraceaFocusMessage(question, hint, index, parts) {
+  const answers = getTraceaBlankAnswers(parts);
+  const answer = answers[index] || answers[0] || "";
+  const target = hint.targetText;
+  const concept = String(question.concept || "").toLowerCase();
+  const output = question.output ? `目標出力は「${String(question.output).replace(/\n/g, " / ")}」です。` : "";
+
+  if (index === 0) {
+    return `まず問題名「${question.title}」と目標出力をつなげて読みましょう。${output} ${target} は、処理の入口として最初に確認したい場所です。`;
+  }
+
+  if (concept.includes("for") || target.includes("for") || target.includes("i <") || target.includes("i <=")) {
+    return `ここでは「最初の値・続ける条件・増え方」を分けて追います。${answer ? `空欄候補は ${answer} の形に近いです。` : ""} 出力に最後の値が含まれるかを見落とさないでください。`;
+  }
+
+  if (concept.includes("while") || target.includes("while")) {
+    return `whileは条件しか書かないので、変数を増やす行が別に必要です。${answer ? `今の空欄は ${answer} に近い役割です。` : ""} 同じ値のまま止まらない流れになっていないか確認しましょう。`;
+  }
+
+  if (concept.includes("if") || concept.includes("condition") || target.includes("if") || target.includes("else")) {
+    return `条件分岐は、trueになった道だけを通ります。${target} の条件が、今回の値で成立するかを先に判定してから、出力へ進みましょう。`;
+  }
+
+  const targetLooksArray = /(\[|\]|length|String\[\]|int\[\]|最初|最後)/.test(target);
+  if (targetLooksArray) {
+    return `配列は0番から始まります。${target} が「何番目」を見ているのか、人間の数え方から1つずらして考えましょう。${answer ? `空欄は ${answer} 付近を狙います。` : ""}`;
+  }
+
+  if (concept.includes("array")) {
+    return `配列問題では、配列の中身を読む行と、結果をためる変数を分けて見ます。${target} はどちら側の役割かを確認しましょう。${answer ? `空欄は ${answer} に近い形です。` : ""}`;
+  }
+
+  if (concept.includes("boolean") || target.includes("boolean") || target.includes("true") || target.includes("false")) {
+    return `booleanはtrueかfalseのどちらかです。${target} が最終的にどちらになるかを、比較演算子の結果として読んでみましょう。`;
+  }
+
+  if (concept.includes("method") || target.includes("(")) {
+    return `メソッドは「呼び出す → 引数が渡る → 戻り値を見る」の順で追います。${target} の前後で値がどこへ移るかを確認しましょう。`;
+  }
+
+  if (concept.includes("class") || target.includes("class") || target.includes("new")) {
+    return `クラス問題では、設計図と実体を分けて読みます。${target} がクラス側の話か、作ったオブジェクト側の話かを見極めましょう。`;
+  }
+
+  if (answer) {
+    return `${hint.message} この問題では、空欄が ${answer} の役割に近いかを考えると進みやすいです。`;
+  }
+
+  return `${hint.message} 問題文の「何を表示するか」と照らし合わせて、ここが流れの中で何を決めているか確認しましょう。`;
+}
+
 function buildTraceaHints(question, parts) {
   const source = `${question.title}\n${question.prompt}\n${getStaticCode(parts)}`;
   const picked = [];
@@ -1077,7 +1134,7 @@ function buildTraceaHints(question, parts) {
 
   return picked.slice(0, 3).map((hint, index) => ({
     targetText: hint.targetText,
-    message: hint.message,
+    message: getTraceaFocusMessage(question, hint, index, parts),
     styleType: traceaStyleCycle.includes(hint.styleType) ? hint.styleType : traceaStyleCycle[index % traceaStyleCycle.length]
   }));
 }
@@ -4608,9 +4665,31 @@ function getTraceaTotal(card) {
   return steps.length > 0 ? Math.max(...steps) : 0;
 }
 
+function setTraceaLiveText(element, text, shouldType) {
+  if (!element) return;
+
+  if (element._traceaStopTyping) {
+    element._traceaStopTyping();
+    element._traceaStopTyping = null;
+  }
+
+  if (shouldType) {
+    element._traceaStopTyping = typeTextIntoElement(element, text, {
+      speed: 18,
+      typingClass: "is-typing"
+    });
+    return;
+  }
+
+  element.textContent = text;
+  element.classList.remove("is-typing");
+}
+
 function updateTraceaState(card) {
   const step = Number(card.dataset.traceaStep || 0);
   const total = getTraceaTotal(card);
+  const previousStep = Number(card.dataset.traceaRenderedStep || 0);
+  const shouldType = step > 0 && step !== previousStep;
   const askButton = card.querySelector('button[data-action="tracea"]');
   const resetButton = card.querySelector('button[data-action="tracea-reset"]');
   const status = card.querySelector(".tracea-status");
@@ -4633,11 +4712,11 @@ function updateTraceaState(card) {
   if (status) {
     status.classList.toggle("thinking", step > 0 && step < total);
     if (step === 0) {
-      status.textContent = "Traceaは、答えではなく見る場所を示します。";
+      setTraceaLiveText(status, "Traceaは、答えではなく見る場所を示します。", false);
     } else if (step >= total) {
-      status.textContent = "Tracea: ここまで見れば、自力でかなり近づけます。";
+      setTraceaLiveText(status, "Tracea: 最後の補助線です。答えを書く前に、出力の流れを一度だけ頭の中で実行してみましょう。", shouldType);
     } else {
-      status.textContent = "Tracea: もう少しだけ、視線を進めてみましょう。";
+      setTraceaLiveText(status, "Tracea: 今の空欄だけを見ずに、出力から逆算して流れを追っています。次の印へ進みましょう。", shouldType);
     }
   }
 
@@ -4651,11 +4730,21 @@ function updateTraceaState(card) {
         const number = document.createElement("span");
         const message = document.createElement("p");
         number.textContent = mark.dataset.traceaStep;
-        message.textContent = mark.dataset.traceaMessage;
+        const isCurrent = Number(mark.dataset.traceaStep) === step;
+        if (isCurrent && shouldType) {
+          typeTextIntoElement(message, mark.dataset.traceaMessage, {
+            speed: 16,
+            typingClass: "is-typing"
+          });
+        } else {
+          message.textContent = mark.dataset.traceaMessage;
+        }
         item.append(number, message);
         notes.appendChild(item);
       });
   }
+
+  card.dataset.traceaRenderedStep = String(step);
 }
 
 function advanceTracea(card) {
@@ -4669,6 +4758,7 @@ function advanceTracea(card) {
 
 function resetTracea(card) {
   card.dataset.traceaStep = "0";
+  card.dataset.traceaRenderedStep = "0";
   updateTraceaState(card);
 }
 

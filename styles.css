@@ -2428,6 +2428,18 @@ h1 {
   animation: traceaDots 1100ms steps(3, end) infinite;
 }
 
+.tracea-status.is-typing::after,
+.tracea-notes p.is-typing::after {
+  display: inline-block;
+  width: 7px;
+  height: 1.1em;
+  margin-left: 3px;
+  background: var(--red);
+  vertical-align: -0.16em;
+  content: "";
+  animation: caretBlink 900ms steps(1) infinite;
+}
+
 .tracea-ask {
   border-color: var(--red);
   color: var(--red);
@@ -2529,6 +2541,7 @@ h1 {
 }
 
 .tracea-notes p {
+  min-height: 1.65em;
   margin: 0;
   color: #262626;
   font-size: 13px;
