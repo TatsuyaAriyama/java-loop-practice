@@ -7,6 +7,11 @@
   --red: #c8102e;
   --red-dark: #8f0d20;
   --ok: #176b3a;
+  --ease-ui: cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-soft: 0 14px 34px rgba(17, 17, 17, 0.07);
+  --shadow-lift: 0 22px 52px rgba(17, 17, 17, 0.11);
+  --red-ring: 0 0 0 3px rgba(200, 16, 46, 0.12);
+  --red-glow: 0 18px 40px rgba(200, 16, 46, 0.13);
   --font-sans: "Helvetica Neue", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", Arial, sans-serif;
 }
 
@@ -245,6 +250,8 @@ main,
   align-content: start;
   background: linear-gradient(180deg, #ffffff 0%, #fffafa 100%);
   box-shadow: 0 14px 34px rgba(17, 17, 17, 0.08);
+  transition: border-color 220ms var(--ease-ui), box-shadow 220ms var(--ease-ui), transform 220ms var(--ease-ui);
+  will-change: transform;
 }
 
 .lesson-current {
@@ -298,6 +305,8 @@ main,
   background: #ffffff;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
+  transition: border-color 220ms var(--ease-ui), box-shadow 220ms var(--ease-ui), transform 220ms var(--ease-ui), background 220ms var(--ease-ui);
+  will-change: transform;
 }
 
 .user-summary-head {
@@ -350,10 +359,14 @@ main,
   cursor: pointer;
   font-size: 10px;
   font-weight: 900;
+  transition: border-color 170ms var(--ease-ui), box-shadow 170ms var(--ease-ui), transform 170ms var(--ease-ui), background 170ms var(--ease-ui);
 }
 
 .user-edit-button:hover {
   border-color: var(--red);
+  background: #fffafa;
+  box-shadow: 0 8px 18px rgba(200, 16, 46, 0.08);
+  transform: translateY(-1px);
 }
 
 .user-metrics {
@@ -672,7 +685,14 @@ h1 {
   cursor: pointer;
   font-size: 13px;
   font-weight: 900;
-  transition: transform 160ms ease, background 160ms ease, color 160ms ease, border-color 160ms ease;
+  background-size: 180% 100%;
+  transition:
+    transform 170ms var(--ease-ui),
+    background 190ms var(--ease-ui),
+    color 170ms var(--ease-ui),
+    border-color 170ms var(--ease-ui),
+    box-shadow 190ms var(--ease-ui);
+  will-change: transform;
 }
 
 .header-actions .primary-link,
@@ -698,13 +718,40 @@ h1 {
 .primary-link:hover,
 .secondary-link:hover,
 .action-button:hover {
-  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-2px) scale(1.01);
 }
 
 .secondary-link:hover,
 .action-button.secondary:hover {
   border-color: var(--red);
   color: var(--red);
+  background: #fffafa;
+}
+
+.primary-link:hover,
+.action-button.primary:hover {
+  background: linear-gradient(105deg, var(--red-dark) 0%, var(--red) 52%, #df2443 100%);
+  box-shadow: var(--red-glow);
+}
+
+.primary-link:active,
+.secondary-link:active,
+.action-button:active,
+.chat-send-button:active:not(:disabled),
+.trace-room-switch:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.primary-link:focus-visible,
+.secondary-link:focus-visible,
+.action-button:focus-visible,
+.chat-send-button:focus-visible,
+.trace-room-switch:focus-visible,
+.signout-button:focus-visible,
+.user-edit-button:focus-visible {
+  outline: none;
+  box-shadow: var(--red-ring), var(--shadow-soft);
 }
 
 .lesson-toggle {
@@ -1140,6 +1187,7 @@ h1 {
 }
 
 .trace-user-card {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(210px, 0.9fr) minmax(0, 2fr);
   gap: 16px;
@@ -1147,6 +1195,26 @@ h1 {
   padding: 12px 18px;
   border-bottom: 1px solid var(--line);
   background: #ffffff;
+  transition:
+    background 220ms var(--ease-ui),
+    box-shadow 220ms var(--ease-ui),
+    transform 220ms var(--ease-ui),
+    border-color 220ms var(--ease-ui);
+  will-change: transform;
+}
+
+.trace-user-card::before {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 0;
+  width: 3px;
+  background: var(--red);
+  content: "";
+  opacity: 0;
+  transform: scaleY(0.3);
+  transform-origin: center;
+  transition: opacity 220ms var(--ease-ui), transform 220ms var(--ease-ui);
 }
 
 .trace-user-card:last-child,
@@ -1157,6 +1225,16 @@ h1 {
 .trace-user-card.mentor {
   border-left: 3px solid var(--red);
   background: linear-gradient(90deg, #fff6f7 0%, #ffffff 42%);
+}
+
+.trace-user-card.mentor::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 10% 20%, rgba(200, 16, 46, 0.11), transparent 32%);
+  content: "";
+  opacity: 0;
+  transition: opacity 240ms var(--ease-ui);
 }
 
 .trace-user-top {
@@ -1223,6 +1301,7 @@ h1 {
   border: 1px solid #777777;
   border-radius: 50%;
   background: #ffffff;
+  transition: box-shadow 220ms var(--ease-ui), transform 220ms var(--ease-ui), border-color 220ms var(--ease-ui);
 }
 
 .trace-online-dot.online {
@@ -1282,6 +1361,7 @@ h1 {
   border: 1px solid var(--ink);
   background: #ffffff;
   box-shadow: 0 18px 42px rgba(15, 15, 15, 0.06);
+  transition: border-color 220ms var(--ease-ui), box-shadow 220ms var(--ease-ui), transform 220ms var(--ease-ui);
 }
 
 .chat-heading {
@@ -1345,6 +1425,8 @@ h1 {
   gap: 12px;
   align-items: start;
   animation: chatMessageIn 240ms ease both;
+  transition: transform 200ms var(--ease-ui);
+  will-change: transform;
 }
 
 .chat-message.deletable {
@@ -1381,6 +1463,7 @@ h1 {
   padding: 13px 15px;
   background: #ffffff;
   box-shadow: 0 12px 30px rgba(18, 18, 18, 0.07);
+  transition: border-color 200ms var(--ease-ui), box-shadow 200ms var(--ease-ui), background 200ms var(--ease-ui), transform 200ms var(--ease-ui);
 }
 
 .chat-message-meta {
@@ -1497,7 +1580,7 @@ h1 {
   font-weight: 750;
   line-height: 1.65;
   outline: none;
-  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+  transition: border-color 180ms var(--ease-ui), box-shadow 180ms var(--ease-ui), background 180ms var(--ease-ui);
 }
 
 .chat-input-row textarea:hover {
@@ -1520,13 +1603,14 @@ h1 {
   font-size: 14px;
   font-weight: 900;
   cursor: pointer;
-  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+  transition: transform 170ms var(--ease-ui), box-shadow 190ms var(--ease-ui), background 190ms var(--ease-ui);
+  will-change: transform;
 }
 
 .chat-send-button:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 12px 22px rgba(200, 16, 46, 0.18);
-  background: var(--red-dark);
+  box-shadow: var(--red-glow);
+  background: linear-gradient(105deg, var(--red-dark) 0%, var(--red) 55%, #df2443 100%);
 }
 
 .chat-send-button:active:not(:disabled) {
@@ -1586,13 +1670,15 @@ h1 {
   background: #ffffff;
   text-decoration: none;
   box-shadow: 0 10px 30px rgba(14, 14, 14, 0.05);
-  transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  transition: border-color 180ms var(--ease-ui), transform 180ms var(--ease-ui), box-shadow 180ms var(--ease-ui), background 180ms var(--ease-ui);
+  will-change: transform;
 }
 
 .trace-room-switch:hover {
   border-color: var(--red);
-  transform: translateY(-1px);
-  box-shadow: 0 14px 34px rgba(200, 16, 46, 0.1);
+  background: #fffafa;
+  transform: translateY(-2px);
+  box-shadow: var(--red-glow);
 }
 
 .trace-room-switch.active {
@@ -2195,8 +2281,11 @@ h1 {
 }
 
 .question-card {
+  position: relative;
   border: 1px solid var(--ink);
   background: #ffffff;
+  transition: border-color 220ms var(--ease-ui), box-shadow 220ms var(--ease-ui), transform 220ms var(--ease-ui), background 220ms var(--ease-ui);
+  will-change: transform;
 }
 
 .question-top {
@@ -2580,6 +2669,7 @@ h1 {
   margin-top: 12px;
   border-color: rgba(200, 16, 46, 0.26);
   background: linear-gradient(180deg, #ffffff 0%, #fffafa 100%);
+  transition: border-color 220ms var(--ease-ui), box-shadow 220ms var(--ease-ui), transform 220ms var(--ease-ui), background 220ms var(--ease-ui);
 }
 
 .tracea-panel h4 {
@@ -2827,11 +2917,103 @@ h1 {
   cursor: pointer;
   font-size: 12px;
   font-weight: 800;
+  transition: border-color 170ms var(--ease-ui), box-shadow 170ms var(--ease-ui), transform 170ms var(--ease-ui), color 170ms var(--ease-ui), background 170ms var(--ease-ui);
 }
 
 .signout-button:hover {
   border-color: var(--red);
   color: var(--red);
+  background: #fffafa;
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-1px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .question-card:hover,
+  .topic-card:hover,
+  .user-summary:hover,
+  .study-log-panel:hover,
+  .trace-room-chat:hover {
+    border-color: rgba(200, 16, 46, 0.72);
+    background: #ffffff;
+    box-shadow: var(--shadow-lift);
+    transform: translateY(-3px);
+  }
+
+  .question-card:hover .question-copy h3,
+  .topic-card:hover h3,
+  .trace-user-card:hover .trace-user-name-line h3,
+  .chat-message:hover .chat-message-meta strong {
+    color: var(--red-dark);
+  }
+
+  .question-card:hover .question-number {
+    text-shadow: 0 10px 28px rgba(200, 16, 46, 0.18);
+  }
+
+  .trace-user-card:hover {
+    background: linear-gradient(90deg, #fff8f9 0%, #ffffff 56%);
+    box-shadow: var(--shadow-soft);
+    transform: translateY(-2px);
+  }
+
+  .trace-user-card:hover::before {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+
+  .trace-user-card.mentor:hover {
+    box-shadow: var(--red-glow);
+  }
+
+  .trace-user-card.mentor:hover::after {
+    opacity: 1;
+  }
+
+  .trace-user-card:hover .trace-online-dot.online {
+    box-shadow: 0 0 0 6px rgba(23, 107, 58, 0.14), 0 0 18px rgba(23, 107, 58, 0.24);
+    transform: scale(1.12);
+  }
+
+  .chat-message:hover {
+    transform: translateY(-2px);
+  }
+
+  .chat-message:hover .chat-message-body {
+    border-color: rgba(200, 16, 46, 0.28);
+    background: #ffffff;
+    box-shadow: var(--shadow-lift);
+  }
+
+  .chat-message.mentor:hover .chat-message-body,
+  .tracea-panel:hover,
+  .tracea-prompt:hover,
+  .prerequisite-note:hover {
+    border-color: rgba(200, 16, 46, 0.42);
+    box-shadow: var(--red-glow);
+  }
+
+  .code-input:hover,
+  .unlock-input:hover,
+  .user-profile-editor input:hover,
+  .auth-card input:hover {
+    box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
 }
 
 @media (max-width: 900px) {
