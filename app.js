@@ -3189,6 +3189,10 @@ try {
 } catch {}
 
 function progressKey(lessonId) {
+  return `${progressPrefix}:${progressScope}:${lessonId}`;
+}
+
+function legacyProgressKey(lessonId) {
   return `${progressPrefix}:${lessonId}`;
 }
 
@@ -3199,7 +3203,11 @@ function scopedLoopUnlockKey() {
 function readCompletedQuestions(lessonId) {
   try {
     const saved = JSON.parse(localStorage.getItem(progressKey(lessonId)) || "[]");
-    return new Set(Array.isArray(saved) ? saved : []);
+    const legacySaved = JSON.parse(localStorage.getItem(legacyProgressKey(lessonId)) || "[]");
+    return new Set([
+      ...(Array.isArray(saved) ? saved : []),
+      ...(Array.isArray(legacySaved) ? legacySaved : [])
+    ]);
   } catch {
     return new Set();
   }
@@ -3208,6 +3216,9 @@ function readCompletedQuestions(lessonId) {
 function writeCompletedQuestions(lessonId, completed) {
   try {
     localStorage.setItem(progressKey(lessonId), JSON.stringify([...completed]));
+    if (progressScope !== "local") {
+      localStorage.setItem(legacyProgressKey(lessonId), JSON.stringify([...completed]));
+    }
   } catch {
     // Progress is helpful, but answering questions should still work if storage is unavailable.
   }

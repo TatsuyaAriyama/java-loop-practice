@@ -50,6 +50,7 @@ const authMessage = document.querySelector("#authMessage");
 let tracePresenceRef = null;
 let unsubscribeTraceUsers = null;
 let unsubscribeRegisteredUsers = null;
+let unsubscribeAccountProgress = null;
 let tracePresenceUsers = [];
 let registeredTraceUsers = [];
 let traceHeartbeatTimer = null;
@@ -60,6 +61,7 @@ let latestProgress = {
 };
 let latestCompletedByLesson = {};
 let hasExactProgressSnapshot = false;
+let isApplyingRemoteProgress = false;
 const profileNameKey = "java-output-practice-auth-name";
 const profileDisplayNameKey = "java-output-practice-auth-display-name";
 const profileAvatarKey = "java-output-practice-auth-avatar";
@@ -190,6 +192,14 @@ function dispatchLoadedProgress(progress) {
   }));
 }
 
+function normalizeProgressData(data = {}) {
+  return {
+    totalCleared: data.totalCleared ?? 0,
+    lessonsCleared: data.lessonsCleared || latestProgress.lessonsCleared,
+    completedByLesson: data.completedByLesson || {}
+  };
+}
+
 async function loadAccountProgress(user) {
   if (!user) return null;
 
@@ -201,10 +211,11 @@ async function loadAccountProgress(user) {
     if (progressSnap.exists()) {
       const data = progressSnap.data();
       hasExactProgressSnapshot = true;
-      latestCompletedByLesson = data.completedByLesson || {};
+      const progress = normalizeProgressData(data);
+      latestCompletedByLesson = progress.completedByLesson;
       latestProgress = {
-        totalCleared: data.totalCleared ?? 0,
-        lessonsCleared: data.lessonsCleared || latestProgress.lessonsCleared
+        totalCleared: progress.totalCleared,
+        lessonsCleared: progress.lessonsCleared
       };
       return {
         ...latestProgress,
@@ -221,9 +232,10 @@ async function loadAccountProgress(user) {
         hasExactProgressSnapshot = true;
         latestCompletedByLesson = data.completedByLesson || {};
       }
+      const progress = normalizeProgressData(data);
       latestProgress = {
-        totalCleared: data.totalCleared ?? latestProgress.totalCleared,
-        lessonsCleared: data.lessonsCleared || latestProgress.lessonsCleared
+        totalCleared: progress.totalCleared,
+        lessonsCleared: progress.lessonsCleared
       };
       return {
         ...latestProgress,
@@ -252,6 +264,43 @@ async function saveAccountProgress(user, progress, completedByLesson) {
       completedByLesson: completedByLesson || {},
       progressUpdatedAt: serverTimestamp()
     }, { merge: true });
+  } catch {}
+}
+
+function stopAccountProgressSubscription() {
+  if (!unsubscribeAccountProgress) return;
+  unsubscribeAccountProgress();
+  unsubscribeAccountProgress = null;
+}
+
+function startAccountProgressSubscription(user) {
+  stopAccountProgressSubscription();
+  if (!user) return;
+
+  try {
+    unsubscribeAccountProgress = onSnapshot(doc(db, "javaPracticeUsers", user.uid), (docSnap) => {
+      if (!docSnap.exists()) return;
+
+      const data = docSnap.data();
+      if (!data.completedByLesson && data.totalCleared == null) return;
+
+      const progress = normalizeProgressData(data);
+      hasExactProgressSnapshot = Boolean(data.completedByLesson);
+      latestCompletedByLesson = progress.completedByLesson;
+      latestProgress = {
+        totalCleared: progress.totalCleared,
+        lessonsCleared: progress.lessonsCleared
+      };
+
+      isApplyingRemoteProgress = true;
+      dispatchLoadedProgress({
+        ...latestProgress,
+        completedByLesson: latestCompletedByLesson
+      });
+      window.setTimeout(() => {
+        isApplyingRemoteProgress = false;
+      }, 0);
+    });
   } catch {}
 }
 
@@ -395,6 +444,8 @@ window.addEventListener("java-practice-learning-status", (event) => {
 });
 
 window.addEventListener("java-practice-progress-updated", (event) => {
+  if (isApplyingRemoteProgress) return;
+
   const incomingProgress = {
     totalCleared: event.detail?.totalCleared ?? latestProgress.totalCleared,
     lessonsCleared: event.detail?.lessonsCleared ?? latestProgress.lessonsCleared
@@ -556,6 +607,8 @@ onAuthStateChanged(auth, async (user) => {
       registeredTraceUsers = [];
       latestCompletedByLesson = {};
       hasExactProgressSnapshot = false;
+      isApplyingRemoteProgress = false;
+      stopAccountProgressSubscription();
       stopTraceHeartbeat();
       dispatchMergedTraceUsers();
     }
@@ -566,6 +619,7 @@ onAuthStateChanged(auth, async (user) => {
     if (loadedProgress) {
       dispatchLoadedProgress(loadedProgress);
     }
+    startAccountProgressSubscription(user);
     saveRegisteredUser(user);
     saveTracePresence(user);
     startTraceHeartbeat(user);
