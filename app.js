@@ -3593,6 +3593,77 @@ function traceRoomUserKey(user) {
     .toLowerCase();
 }
 
+function normalizeTraceIdentity(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/^@/, "")
+    .replace(/\s+/g, "")
+    .replace(/[^a-z0-9一-龥ぁ-んァ-ヶー]/g, "");
+}
+
+function traceRoomFallbackKey(user) {
+  const userName = normalizeTraceIdentity(user.userName);
+  if (userName) return `name:${userName}`;
+
+  const displayName = normalizeTraceIdentity(user.displayName);
+  return displayName ? `display:${displayName}` : "";
+}
+
+function mergeTraceRoomUser(base = {}, next = {}) {
+  const merged = { ...base, ...next };
+
+  if (!next.uid && base.uid) merged.uid = base.uid;
+  if ((next.totalCleared === "未取得" || next.totalCleared === "取得中" || next.totalCleared == null) && base.totalCleared != null) {
+    merged.totalCleared = base.totalCleared;
+  }
+  if ((next.lessonsCleared === "未取得" || next.lessonsCleared === "取得中" || next.lessonsCleared == null) && base.lessonsCleared != null) {
+    merged.lessonsCleared = base.lessonsCleared;
+  }
+  if (!next.online && base.online) merged.online = base.online;
+  if ((next.lastActiveTime || 0) < (base.lastActiveTime || 0)) {
+    merged.lastActiveTime = base.lastActiveTime;
+    merged.lastActive = base.lastActive;
+  }
+
+  return merged;
+}
+
+function mergeTraceRoomUserList(users) {
+  const byUid = new Map();
+  const byFallback = new Map();
+
+  users.forEach((user) => {
+    const uidKey = user.uid ? `uid:${String(user.uid).toLowerCase()}` : "";
+    const fallbackKey = traceRoomFallbackKey(user);
+    const fallbackExistingKey = fallbackKey ? byFallback.get(fallbackKey) : "";
+    const fallbackExisting = fallbackExistingKey ? byUid.get(fallbackExistingKey) : null;
+    const canMergeByFallback = Boolean(
+      fallbackExistingKey
+      && (!user.uid || !fallbackExisting?.uid || user.uid === currentUserId || fallbackExisting.uid === currentUserId)
+    );
+    const existingKey = uidKey && byUid.has(uidKey)
+      ? uidKey
+      : canMergeByFallback
+        ? fallbackExistingKey
+        : uidKey || fallbackKey || traceRoomUserKey(user);
+
+    const existing = byUid.get(existingKey);
+    const merged = mergeTraceRoomUser(existing, user);
+    byUid.set(existingKey, merged);
+
+    if (uidKey) byUid.set(uidKey, merged);
+    if (fallbackKey) {
+      byUid.set(fallbackKey, merged);
+      if (!byFallback.has(fallbackKey) || canMergeByFallback || !user.uid) {
+        byFallback.set(fallbackKey, uidKey || existingKey);
+      }
+    }
+  });
+
+  return [...new Set(byUid.values())];
+}
+
 function normalizeTraceRoomUser(user) {
   const displayName = user.displayName || "Learner";
   const activeSource = user.lastActive || user.lastActiveLabel;
@@ -3633,6 +3704,7 @@ function getTraceRoomUsers() {
       const displayName = localStorage.getItem(profileDisplayNameKey) || currentDisplayName || "Learner";
       const avatar = localStorage.getItem(profileAvatarKey) || currentUserAvatar || getAvatarLetter(displayName);
       localUsers.push({
+        uid: currentUserId !== "local" ? currentUserId : undefined,
         userName: `@${displayName.replace(/\s+/g, "") || "Learner"}`,
         displayName,
         avatar,
@@ -3648,34 +3720,14 @@ function getTraceRoomUsers() {
   } catch {}
 
   if (remoteTraceRoomUsers.length > 0) {
-    const usersByName = new Map();
-
-    seededUsers.forEach((user) => {
-      usersByName.set(traceRoomUserKey(user), user);
-    });
-
-    remoteTraceRoomUsers.map(normalizeTraceRoomUser).forEach((user) => {
-      usersByName.set(traceRoomUserKey(user), user);
-    });
-
-    localUsers.forEach((user) => {
-      usersByName.set(traceRoomUserKey(user), {
-        ...usersByName.get(traceRoomUserKey(user)),
-        ...user
-      });
-    });
-
-    return sortTraceRoomUsers([...usersByName.values()]);
+    return sortTraceRoomUsers(mergeTraceRoomUserList([
+      ...seededUsers,
+      ...remoteTraceRoomUsers.map(normalizeTraceRoomUser),
+      ...localUsers
+    ]));
   }
 
-  const usersByName = new Map();
-  [...seededUsers, ...localUsers].forEach((user) => {
-    usersByName.set(traceRoomUserKey(user), {
-      ...usersByName.get(traceRoomUserKey(user)),
-      ...user
-    });
-  });
-  return sortTraceRoomUsers([...usersByName.values()]);
+  return sortTraceRoomUsers(mergeTraceRoomUserList([...seededUsers, ...localUsers]));
 }
 
 function getTraceRoomMembers() {
