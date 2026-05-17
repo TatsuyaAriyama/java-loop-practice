@@ -342,6 +342,7 @@ const roomChatFeedback = document.querySelector("#roomChatFeedback");
 const roomChatCount = document.querySelector("#roomChatCount");
 const roomChatTyping = document.querySelector("#roomChatTyping");
 let currentLevel = "beginner";
+let currentUserId = "local";
 let currentUserName = "User";
 let currentDisplayName = "User";
 let currentUserAvatar = "U";
@@ -349,6 +350,7 @@ let remoteTraceRoomUsers = [];
 let roomMessages = [];
 let roomTypingUsers = [];
 let chatSubmitPending = false;
+let deletingRoomMessageIds = new Set();
 
 const profileNameKey = "java-output-practice-auth-name";
 const profileDisplayNameKey = "java-output-practice-auth-display-name";
@@ -3820,6 +3822,7 @@ function createChatAvatar(message) {
 function createChatMessageItem(message) {
   const item = document.createElement("article");
   item.className = `chat-message${message.mentor ? " mentor" : ""}`;
+  item.dataset.messageId = message.id || "";
 
   const avatar = createChatAvatar(message);
 
@@ -3840,6 +3843,19 @@ function createChatMessageItem(message) {
     meta.appendChild(badge);
   }
 
+  const canDelete = Boolean(message.id && message.userId && currentUserId === message.userId && !message.mentor);
+  if (canDelete) {
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "chat-delete-button";
+    deleteButton.type = "button";
+    deleteButton.dataset.action = "delete-room-message";
+    deleteButton.dataset.messageId = message.id;
+    deleteButton.setAttribute("aria-label", "このコメントを削除");
+    deleteButton.disabled = deletingRoomMessageIds.has(message.id);
+    deleteButton.textContent = deletingRoomMessageIds.has(message.id) ? "削除中" : "削除";
+    meta.appendChild(deleteButton);
+  }
+
   const text = document.createElement("p");
   text.className = "chat-message-text";
   text.textContent = message.text || "";
@@ -3851,6 +3867,18 @@ function createChatMessageItem(message) {
   body.append(meta, text, time);
   item.append(avatar, body);
   return item;
+}
+
+function deleteRoomMessage(messageId) {
+  if (!messageId || deletingRoomMessageIds.has(messageId)) return;
+  if (!window.confirm("このコメントを削除しますか？")) return;
+
+  deletingRoomMessageIds = new Set([...deletingRoomMessageIds, messageId]);
+  renderTraceRoomChat();
+  setChatFeedback("");
+  window.dispatchEvent(new CustomEvent("java-practice-room-message-delete", {
+    detail: { messageId }
+  }));
 }
 
 function renderChatTyping() {
@@ -4978,6 +5006,7 @@ if (hasLoopUnlock()) {
 }
 window.addEventListener("java-practice-auth-ready", (event) => {
   progressScope = event.detail?.uid || "local";
+  currentUserId = event.detail?.uid || "local";
   currentUserName = event.detail?.name || currentUserName || "User";
   currentDisplayName = event.detail?.displayName || currentUserName;
   currentUserAvatar = event.detail?.avatar || currentUserAvatar || getAvatarLetter(currentDisplayName);
@@ -4985,6 +5014,7 @@ window.addEventListener("java-practice-auth-ready", (event) => {
   updateLessonProgress();
   notifyLearningStatus();
   renderTraceRoom();
+  renderTraceRoomChat();
   if (hasLoopUnlock()) {
     applyLoopUnlock();
   }
@@ -5026,7 +5056,20 @@ window.addEventListener("java-practice-room-message-sent", () => {
   setChatPending(false);
   setChatFeedback("");
 });
+window.addEventListener("java-practice-room-message-deleted", (event) => {
+  const messageId = event.detail?.messageId;
+  if (messageId) {
+    deletingRoomMessageIds = new Set([...deletingRoomMessageIds].filter((id) => id !== messageId));
+  }
+  setChatFeedback("");
+  renderTraceRoomChat();
+});
 window.addEventListener("java-practice-room-message-error", (event) => {
+  const messageId = event.detail?.messageId;
+  if (messageId) {
+    deletingRoomMessageIds = new Set([...deletingRoomMessageIds].filter((id) => id !== messageId));
+    renderTraceRoomChat();
+  }
   setChatPending(false);
   setChatFeedback(event.detail?.message || "投稿に失敗しました。少し時間を置いてもう一度試してください。", "no");
 });
@@ -5170,6 +5213,12 @@ if (classList) {
 }
 
 if (roomChatForm && roomChatInput) {
+  roomChatList?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-action='delete-room-message']");
+    if (!button) return;
+    deleteRoomMessage(button.dataset.messageId);
+  });
+
   roomChatForm.addEventListener("submit", (event) => {
     event.preventDefault();
     submitRoomChat();

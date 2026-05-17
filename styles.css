@@ -1079,6 +1079,8 @@ h1 {
   gap: 8px;
   align-items: center;
   margin-bottom: 7px;
+  position: relative;
+  padding-right: 52px;
 }
 
 .chat-message-meta strong {
@@ -1095,6 +1097,36 @@ h1 {
   font-family: Menlo, Consolas, "Courier New", monospace;
   font-size: 9px;
   font-weight: 900;
+}
+
+.chat-delete-button {
+  position: absolute;
+  top: -2px;
+  right: 0;
+  min-width: 44px;
+  min-height: 28px;
+  border: 1px solid rgba(31, 31, 31, 0.08);
+  border-radius: 999px;
+  padding: 0 9px;
+  color: #777777;
+  background: #ffffff;
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: color 150ms ease, border-color 150ms ease, background 150ms ease, transform 150ms ease;
+}
+
+.chat-delete-button:hover:not(:disabled),
+.chat-delete-button:focus-visible:not(:disabled) {
+  border-color: rgba(200, 16, 46, 0.32);
+  color: var(--red);
+  background: #fff2f4;
+  transform: translateY(-1px);
+}
+
+.chat-delete-button:disabled {
+  opacity: 0.55;
+  cursor: wait;
 }
 
 .chat-message-text {

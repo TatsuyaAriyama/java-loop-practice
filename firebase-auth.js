@@ -12,6 +12,7 @@ import {
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getFirestore,
@@ -210,6 +211,7 @@ function serializeRoomMessage(docSnap) {
 
   return {
     id: docSnap.id,
+    userId: data.userId || "",
     userName: displayName,
     userAvatar: data.userAvatar || getAvatarLetter(displayName),
     text: data.text || "",
@@ -571,6 +573,35 @@ async function postRoomMessage(text) {
   }
 }
 
+async function deleteRoomMessage(messageId) {
+  const user = auth.currentUser;
+  const cleanId = String(messageId || "").trim();
+
+  if (!user || !cleanId) {
+    window.dispatchEvent(new CustomEvent("java-practice-room-message-error", {
+      detail: {
+        messageId: cleanId,
+        message: !user ? "ログイン後に削除できます。" : "削除対象のコメントを確認できません。"
+      }
+    }));
+    return;
+  }
+
+  try {
+    await deleteDoc(doc(db, "roomMessages", cleanId));
+    window.dispatchEvent(new CustomEvent("java-practice-room-message-deleted", {
+      detail: { messageId: cleanId }
+    }));
+  } catch {
+    window.dispatchEvent(new CustomEvent("java-practice-room-message-error", {
+      detail: {
+        messageId: cleanId,
+        message: "削除に失敗しました。Firestoreルールで本人のみ削除が許可されているか確認してください。"
+      }
+    }));
+  }
+}
+
 function startTraceHeartbeat(user) {
   if (traceHeartbeatTimer) {
     clearInterval(traceHeartbeatTimer);
@@ -729,6 +760,10 @@ window.addEventListener("java-practice-profile-updated", async (event) => {
 
 window.addEventListener("java-practice-room-message-submit", (event) => {
   postRoomMessage(event.detail?.text);
+});
+
+window.addEventListener("java-practice-room-message-delete", (event) => {
+  deleteRoomMessage(event.detail?.messageId);
 });
 
 window.addEventListener("java-practice-room-typing", (event) => {
