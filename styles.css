@@ -1684,17 +1684,17 @@ h1 {
 }
 
 .chat-message {
-  grid-template-columns: 36px minmax(0, max-content);
+  grid-template-columns: 36px minmax(220px, min(620px, calc(100% - 48px)));
   max-width: min(760px, 100%);
   align-items: end;
 }
 
 .chat-message.deletable {
-  grid-template-columns: 36px minmax(0, max-content) 22px;
+  grid-template-columns: 36px minmax(220px, min(620px, calc(100% - 78px))) 22px;
 }
 
 .chat-message-body {
-  min-width: min(100%, 220px);
+  min-width: 0;
   max-width: min(620px, 100%);
   border: 1px solid rgba(31, 31, 31, 0.08);
   border-radius: 8px 8px 8px 2px;
@@ -1727,6 +1727,8 @@ h1 {
 .chat-message-text {
   font-size: 14px;
   line-height: 1.65;
+  word-break: normal;
+  overflow-wrap: anywhere;
 }
 
 .chat-message-time {
@@ -3170,6 +3172,14 @@ h1 {
   .chat-message-list {
     max-height: 380px;
     padding: 16px;
+  }
+
+  .chat-message {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .chat-message.deletable {
+    grid-template-columns: 34px minmax(0, 1fr) 22px;
   }
 
   .chat-input-form {
