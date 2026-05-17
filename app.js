@@ -4968,6 +4968,10 @@ if (classList) {
   });
 }
 
+document.addEventListener("keydown", (event) => {
+  handleQuestionKeydown(event);
+});
+
 if (topicCards.length > 0) {
   topicCards.forEach((card) => {
     card.addEventListener("click", () => {
@@ -5024,4 +5028,14 @@ function handleQuestionAction(event) {
   if (action === "tracea-reset") resetTracea(card);
   if (action === "answer") toggleAnswer(card, button);
   if (action === "reset") resetQuestion(card);
+}
+
+function handleQuestionKeydown(event) {
+  if (event.key !== "Enter" || event.isComposing || !event.target.matches(".code-input")) return;
+
+  const card = event.target.closest(".question-card");
+  if (!card) return;
+
+  event.preventDefault();
+  checkQuestion(card);
 }
