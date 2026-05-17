@@ -10,11 +10,13 @@ import {
   updateProfile
 } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import {
+  addDoc,
   collection,
   doc,
   getDoc,
   getFirestore,
   limit,
+  limitToLast,
   onSnapshot,
   orderBy,
   query,
@@ -47,10 +49,12 @@ const googleLoginButton = document.querySelector("#googleLoginButton");
 const createAccountButton = document.querySelector("#createAccountButton");
 const signOutButton = document.querySelector("#signOutButton");
 const authMessage = document.querySelector("#authMessage");
+const hasRoomChat = Boolean(document.querySelector("#roomChatList"));
 let tracePresenceRef = null;
 let unsubscribeTraceUsers = null;
 let unsubscribeRegisteredUsers = null;
 let unsubscribeAccountProgress = null;
+let unsubscribeRoomMessages = null;
 let tracePresenceUsers = [];
 let registeredTraceUsers = [];
 let traceHeartbeatTimer = null;
@@ -184,6 +188,26 @@ function mergeTraceUsers() {
 
 function dispatchMergedTraceUsers() {
   dispatchTraceUsers(mergeTraceUsers());
+}
+
+function dispatchRoomMessages(messages) {
+  window.dispatchEvent(new CustomEvent("java-practice-room-messages", {
+    detail: { messages }
+  }));
+}
+
+function serializeRoomMessage(docSnap) {
+  const data = docSnap.data();
+  const displayName = data.userName || "Learner";
+
+  return {
+    id: docSnap.id,
+    userName: displayName,
+    userAvatar: data.userAvatar || getAvatarLetter(displayName),
+    text: data.text || "",
+    createdAt: data.createdAt?.toDate?.()?.toISOString() || null,
+    mentor: Boolean(data.mentor)
+  };
 }
 
 function dispatchLoadedProgress(progress) {
@@ -407,6 +431,63 @@ function startTraceRoomSubscription() {
   }
 }
 
+function stopRoomMessageSubscription() {
+  if (!unsubscribeRoomMessages) return;
+  unsubscribeRoomMessages();
+  unsubscribeRoomMessages = null;
+}
+
+function startRoomMessageSubscription() {
+  if (!hasRoomChat) return;
+  if (unsubscribeRoomMessages) return;
+
+  try {
+    const roomMessagesQuery = query(
+      collection(db, "roomMessages"),
+      orderBy("createdAt", "asc"),
+      limitToLast(50)
+    );
+
+    unsubscribeRoomMessages = onSnapshot(roomMessagesQuery, (snapshot) => {
+      dispatchRoomMessages(snapshot.docs.map(serializeRoomMessage));
+    }, () => {
+      dispatchRoomMessages([]);
+    });
+  } catch {
+    dispatchRoomMessages([]);
+  }
+}
+
+async function postRoomMessage(text) {
+  const user = auth.currentUser;
+  const cleanText = String(text || "").trim().slice(0, 200);
+
+  if (!user || !cleanText) {
+    window.dispatchEvent(new CustomEvent("java-practice-room-message-error", {
+      detail: { message: !user ? "ログイン後に投稿できます。" : "空のコメントは投稿できません。" }
+    }));
+    return;
+  }
+
+  const displayName = getPublicName(user);
+  const avatar = user.photoURL || getPublicAvatar(displayName);
+
+  try {
+    await addDoc(collection(db, "roomMessages"), {
+      userId: user.uid,
+      userName: displayName,
+      userAvatar: avatar,
+      text: cleanText,
+      createdAt: serverTimestamp()
+    });
+    window.dispatchEvent(new CustomEvent("java-practice-room-message-sent"));
+  } catch {
+    window.dispatchEvent(new CustomEvent("java-practice-room-message-error", {
+      detail: { message: "投稿に失敗しました。通信状態やFirestoreルールを確認してください。" }
+    }));
+  }
+}
+
 function startTraceHeartbeat(user) {
   if (traceHeartbeatTimer) {
     clearInterval(traceHeartbeatTimer);
@@ -563,6 +644,10 @@ window.addEventListener("java-practice-profile-updated", async (event) => {
   });
 });
 
+window.addEventListener("java-practice-room-message-submit", (event) => {
+  postRoomMessage(event.detail?.text);
+});
+
 document.addEventListener("visibilitychange", () => {
   updateTracePresence({
     online: document.visibilityState === "visible",
@@ -666,8 +751,10 @@ onAuthStateChanged(auth, async (user) => {
       hasExactProgressSnapshot = false;
       isApplyingRemoteProgress = false;
       stopAccountProgressSubscription();
+      stopRoomMessageSubscription();
       stopTraceHeartbeat();
       dispatchMergedTraceUsers();
+      dispatchRoomMessages([]);
     }
   } catch {}
 
@@ -681,6 +768,7 @@ onAuthStateChanged(auth, async (user) => {
     saveTracePresence(user);
     startTraceHeartbeat(user);
     startTraceRoomSubscription();
+    startRoomMessageSubscription();
   }
 
   window.dispatchEvent(new CustomEvent("java-practice-auth-ready", {

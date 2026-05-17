@@ -21,7 +21,7 @@
       display: block !important;
     }
   </style>
-  <link rel="stylesheet" href="styles.css?v=account-progress-union-20260517">
+  <link rel="stylesheet" href="styles.css?v=trace-room-chat-20260517">
 </head>
 <body class="auth-pending">
   <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
@@ -123,6 +123,31 @@
           </div>
           <div class="trace-room-list" id="traceRoomList" aria-live="polite"></div>
         </div>
+
+        <section class="trace-room-chat" aria-labelledby="roomChatTitle">
+          <div class="chat-heading">
+            <div>
+              <p class="eyebrow">Room Chat</p>
+              <h3 id="roomChatTitle">Room Chat</h3>
+              <p>今この部屋にいる学習者と、気づきを共有しましょう</p>
+            </div>
+            <span class="chat-live-badge">Realtime</span>
+          </div>
+          <div class="chat-message-list" id="roomChatList" aria-live="polite" aria-label="Room Chat メッセージ一覧">
+            <p class="chat-empty">まだコメントはありません。最初の気づきを投稿してみましょう。</p>
+          </div>
+          <form class="chat-input-form" id="roomChatForm">
+            <label class="chat-input-label" for="roomChatInput">コメント</label>
+            <div class="chat-input-row">
+              <textarea id="roomChatInput" maxlength="200" rows="2" placeholder="学習中の気づきや詰まったところを書いてみる..."></textarea>
+              <button class="chat-send-button" type="submit">送信</button>
+            </div>
+            <div class="chat-form-footer">
+              <p class="chat-feedback" id="roomChatFeedback" aria-live="polite"></p>
+              <p class="chat-count"><span id="roomChatCount">0</span>/200</p>
+            </div>
+          </form>
+        </section>
       </section>
     </main>
 
@@ -132,7 +157,7 @@
     </footer>
   </div>
 
-  <script src="app.js?v=account-progress-union-20260517"></script>
-  <script type="module" src="firebase-auth.js?v=account-progress-union-20260517"></script>
+  <script src="app.js?v=trace-room-chat-20260517"></script>
+  <script type="module" src="firebase-auth.js?v=trace-room-chat-20260517"></script>
 </body>
 </html>

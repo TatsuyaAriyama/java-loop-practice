@@ -334,11 +334,18 @@ const lessonPanel = document.querySelector("#lessonPanel");
 const topicCards = [...document.querySelectorAll(".topic-card")];
 const arrayDeepDive = document.querySelector("#arrayDeepDive");
 const traceRoomList = document.querySelector("#traceRoomList");
+const roomChatList = document.querySelector("#roomChatList");
+const roomChatForm = document.querySelector("#roomChatForm");
+const roomChatInput = document.querySelector("#roomChatInput");
+const roomChatFeedback = document.querySelector("#roomChatFeedback");
+const roomChatCount = document.querySelector("#roomChatCount");
 let currentLevel = "beginner";
 let currentUserName = "User";
 let currentDisplayName = "User";
 let currentUserAvatar = "U";
 let remoteTraceRoomUsers = [];
+let roomMessages = [];
+let chatSubmitPending = false;
 
 const profileNameKey = "java-output-practice-auth-name";
 const profileDisplayNameKey = "java-output-practice-auth-display-name";
@@ -3766,6 +3773,141 @@ function renderTraceRoom() {
   }
 }
 
+function formatChatTime(value) {
+  if (!value) return "送信中";
+
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "たった今";
+
+  const diff = Date.now() - date.getTime();
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (minutes < 1) return "たった今";
+  if (minutes < 60) return `${minutes}分前`;
+  if (hours < 24) return `${hours}時間前`;
+  if (days < 7) return `${days}日前`;
+
+  return new Intl.DateTimeFormat("ja-JP", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(date);
+}
+
+function createChatAvatar(message) {
+  const avatar = document.createElement("div");
+  avatar.className = "chat-avatar";
+  const avatarValue = message.userAvatar || getAvatarLetter(message.userName);
+
+  if (/^https?:\/\//.test(String(avatarValue))) {
+    const image = document.createElement("img");
+    image.src = avatarValue;
+    image.alt = "";
+    avatar.appendChild(image);
+    return avatar;
+  }
+
+  avatar.textContent = avatarValue;
+  return avatar;
+}
+
+function createChatMessageItem(message) {
+  const item = document.createElement("article");
+  item.className = `chat-message${message.mentor ? " mentor" : ""}`;
+
+  const avatar = createChatAvatar(message);
+
+  const body = document.createElement("div");
+  body.className = "chat-message-body";
+
+  const meta = document.createElement("div");
+  meta.className = "chat-message-meta";
+
+  const name = document.createElement("strong");
+  name.textContent = message.userName || "Learner";
+  meta.appendChild(name);
+
+  if (message.mentor) {
+    const badge = document.createElement("span");
+    badge.className = "chat-mentor-badge";
+    badge.textContent = "Tracea";
+    meta.appendChild(badge);
+  }
+
+  const text = document.createElement("p");
+  text.className = "chat-message-text";
+  text.textContent = message.text || "";
+
+  const time = document.createElement("time");
+  time.className = "chat-message-time";
+  time.textContent = message.createdAtLabel || formatChatTime(message.createdAt);
+
+  body.append(meta, text, time);
+  item.append(avatar, body);
+  return item;
+}
+
+function renderTraceRoomChat() {
+  if (!roomChatList) return;
+
+  roomChatList.textContent = "";
+
+  if (roomMessages.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "chat-empty";
+    empty.textContent = "まだコメントはありません。最初の気づきを投稿してみましょう。";
+    roomChatList.appendChild(empty);
+  } else {
+    roomMessages.forEach((message) => {
+      roomChatList.appendChild(createChatMessageItem(message));
+    });
+  }
+
+  requestAnimationFrame(() => {
+    roomChatList.scrollTop = roomChatList.scrollHeight;
+  });
+}
+
+function setChatFeedback(message, tone = "") {
+  if (!roomChatFeedback) return;
+  roomChatFeedback.className = `chat-feedback ${tone}`;
+  roomChatFeedback.textContent = message;
+}
+
+function setChatPending(isPending) {
+  chatSubmitPending = isPending;
+  const button = roomChatForm?.querySelector(".chat-send-button");
+  if (button) {
+    button.disabled = isPending;
+    button.textContent = isPending ? "送信中" : "送信";
+  }
+}
+
+function updateChatCount() {
+  if (!roomChatCount || !roomChatInput) return;
+  roomChatCount.textContent = String(roomChatInput.value.length);
+}
+
+function submitRoomChat() {
+  if (!roomChatInput || chatSubmitPending) return;
+
+  const text = roomChatInput.value.trim();
+  if (!text) {
+    setChatFeedback("空のコメントは投稿できません。", "no");
+    return;
+  }
+
+  const clippedText = text.slice(0, 200);
+  setChatPending(true);
+  setChatFeedback("");
+  window.dispatchEvent(new CustomEvent("java-practice-room-message-submit", {
+    detail: { text: clippedText }
+  }));
+}
+
 function hasLoopUnlock() {
   try {
     return localStorage.getItem(scopedLoopUnlockKey()) === "true" || localStorage.getItem(loopUnlockKey) === "true";
@@ -4846,6 +4988,22 @@ window.addEventListener("java-practice-trace-users", (event) => {
   remoteTraceRoomUsers = Array.isArray(event.detail?.users) ? event.detail.users : [];
   renderTraceRoom();
 });
+window.addEventListener("java-practice-room-messages", (event) => {
+  roomMessages = Array.isArray(event.detail?.messages) ? event.detail.messages : [];
+  renderTraceRoomChat();
+});
+window.addEventListener("java-practice-room-message-sent", () => {
+  if (roomChatInput) {
+    roomChatInput.value = "";
+  }
+  updateChatCount();
+  setChatPending(false);
+  setChatFeedback("");
+});
+window.addEventListener("java-practice-room-message-error", (event) => {
+  setChatPending(false);
+  setChatFeedback(event.detail?.message || "投稿に失敗しました。少し時間を置いてもう一度試してください。", "no");
+});
 if (typeLogo) {
   startTypeLogo();
 }
@@ -4983,6 +5141,27 @@ if (classList) {
   classList.addEventListener("click", (event) => {
     handleQuestionAction(event);
   });
+}
+
+if (roomChatForm && roomChatInput) {
+  roomChatForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    submitRoomChat();
+  });
+
+  roomChatInput.addEventListener("input", () => {
+    updateChatCount();
+    setChatFeedback("");
+  });
+
+  roomChatInput.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" || event.shiftKey || event.isComposing) return;
+    event.preventDefault();
+    submitRoomChat();
+  });
+
+  updateChatCount();
+  renderTraceRoomChat();
 }
 
 document.addEventListener("keydown", (event) => {
