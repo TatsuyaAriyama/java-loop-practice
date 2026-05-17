@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Java 値・型・計算</title>
+  <title>Java 演算子・型変換・スコープ</title>
   <script>
     try {
       if (localStorage.getItem("java-output-practice-auth") === "signed-in") {
@@ -21,7 +21,7 @@
       display: block !important;
     }
   </style>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=exam-prompts-20260517">
 </head>
 <body class="auth-pending">
   <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
@@ -55,7 +55,7 @@
   <div class="app-shell" id="appShell" aria-hidden="true">
     <header class="site-header">
       <div class="header-inner">
-        <p class="lesson-current">Java 基礎文法編 / Lesson02 値・型・計算</p>
+        <p class="lesson-current">Java 演算子・型変換・スコープ編 / Lesson01 演算子・型変換・スコープ</p>
         <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
         <div class="header-actions">
           <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
@@ -71,14 +71,22 @@
             <p>知識ゼロから順番に、必要な土台を積み上げていきます。</p>
           </div>
           <div class="lesson-groups">
-            <section class="lesson-group open" data-lesson-group="basic-syntax">
-              <button class="lesson-group-toggle" type="button" aria-expanded="true">
+            <section class="lesson-group" data-lesson-group="basic-syntax">
+              <button class="lesson-group-toggle" type="button" aria-expanded="false">
                 <span>Java 基礎文法編</span>
-                <small>2 Lessons</small>
+                <small>1 Lessons</small>
               </button>
               <div class="lesson-links">
                 <a href="basic-syntax.html" data-lesson-link="basic-syntax"><span>01</span><b>はじめの文法</b><small class="lesson-check">0/10</small></a>
-                <a href="basic-syntax-values.html" class="active" data-lesson-link="basic-syntax-values"><span>02</span><b>値・型・計算</b><small class="lesson-check">0/10</small></a>
+              </div>
+            </section>
+            <section class="lesson-group open" data-lesson-group="operators-casting-scope">
+              <button class="lesson-group-toggle" type="button" aria-expanded="true">
+                <span>Java 演算子・型変換・スコープ編</span>
+                <small>1 Lessons</small>
+              </button>
+              <div class="lesson-links">
+                <a href="basic-syntax-values.html" class="active" data-lesson-link="basic-syntax-values"><span>01</span><b>演算子・型変換・スコープ</b><small class="lesson-check">0/10</small></a>
               </div>
             </section>
             <section class="lesson-group" data-lesson-group="control">
@@ -112,8 +120,8 @@
     <main>
       <section id="basicSyntaxValueGuide" class="syntax-section">
         <div class="section-heading">
-          <p class="eyebrow">Basic Syntax Lesson 02</p>
-          <h2>値・型・計算を、箱と道具として読む</h2>
+          <p class="eyebrow">Operator Lesson</p>
+          <h2>演算子・型変換・スコープを、試験で崩れない読み方にする</h2>
           <p>Lesson01でclass、main、表示、変数を確認したら、次は値の種類と計算です。値を「箱に入れるもの」、型を「箱の種類」、演算子を「値を変える道具」として整理します。</p>
         </div>
 
@@ -182,7 +190,7 @@
     </footer>
   </div>
 
-  <script src="app.js?v=lesson-boxes-20260517"></script>
-  <script type="module" src="firebase-auth.js?v=lesson-boxes-20260517"></script>
+  <script src="app.js?v=exam-prompts-20260517"></script>
+  <script type="module" src="firebase-auth.js?v=exam-prompts-20260517"></script>
 </body>
 </html>

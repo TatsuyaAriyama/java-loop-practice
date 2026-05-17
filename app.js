@@ -3799,8 +3799,7 @@ function createBasicSyntaxLessonGroup() {
     id: "basic-syntax",
     title: "Java 基礎文法編",
     lessons: [
-      { id: "basic-syntax", href: "basic-syntax.html", title: "はじめの文法", status: "0/10" },
-      { id: "basic-syntax-values", href: "basic-syntax-values.html", title: "値・型・計算", status: "0/10" }
+      { id: "basic-syntax", href: "basic-syntax.html", title: "はじめの文法", status: "0/10" }
     ]
   });
 }
@@ -3823,7 +3822,7 @@ function createOperatorsLessonGroup() {
     id: "operators-casting-scope",
     title: "Java 演算子・型変換・スコープ編",
     lessons: [
-      { id: "operators-casting-scope-soon", href: "#", title: "準備中", status: "近日追加" }
+      { id: "basic-syntax-values", href: "basic-syntax-values.html", title: "演算子・型変換・スコープ", status: "0/10" }
     ]
   });
 }
@@ -4247,6 +4246,26 @@ function resetQuestion(card) {
   resetTracea(card);
 }
 
+function renderExamPrompt(question, hints, options = {}) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "exam-prompt";
+
+  const label = document.createElement("p");
+  label.className = "exam-prompt-label";
+  label.textContent = options.label || "問題";
+
+  const instruction = document.createElement("p");
+  instruction.className = "exam-prompt-main";
+  instruction.textContent = options.instruction || "次のJavaコードについて、目標の出力と一致するように赤い空欄へ入る適切なコードを答えなさい。";
+
+  const condition = document.createElement("div");
+  condition.className = "exam-prompt-condition tracea-prompt";
+  condition.appendChild(renderTraceableParagraph(question.prompt, hints));
+
+  wrapper.append(label, instruction, condition);
+  return wrapper;
+}
+
 function renderQuestions() {
   if (!list) return;
 
@@ -4270,8 +4289,8 @@ function renderQuestions() {
             <h3>${view.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
+          <div class="exam-prompt-slot"></div>
           <div class="prerequisite-slot"></div>
-          <div class="tracea-prompt"></div>
         </div>
       </div>
       <div class="question-body">
@@ -4312,8 +4331,10 @@ function renderQuestions() {
     `;
 
     card.dataset.traceaStep = "0";
+    card.querySelector(".exam-prompt-slot").appendChild(renderExamPrompt(view, view.hints, {
+      instruction: `次のJavaコードについて、${currentLevel === "beginner" ? "赤い空欄" : "まとまった空欄"}へ入る適切なコードを答えなさい。`
+    }));
     card.querySelector(".prerequisite-slot").appendChild(renderPrerequisitePanel(view));
-    card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(view.prompt, view.hints));
     card.querySelector(".code-panel").appendChild(renderCode(level.parts, index, level.hints));
     card.querySelector(".output-box pre").textContent = view.output;
     card.querySelector(".explain-box p").textContent = view.explanation;
@@ -4346,8 +4367,8 @@ function renderArrayQuestions() {
             <h3>${view.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
+          <div class="exam-prompt-slot"></div>
           <div class="prerequisite-slot"></div>
-          <div class="tracea-prompt"></div>
         </div>
       </div>
       <div class="question-body">
@@ -4388,8 +4409,10 @@ function renderArrayQuestions() {
     `;
 
     card.dataset.traceaStep = "0";
+    card.querySelector(".exam-prompt-slot").appendChild(renderExamPrompt(view, view.hints, {
+      instruction: `次のJavaコードについて、${currentLevel === "beginner" ? "赤い空欄" : "まとまった空欄"}へ入る適切なコードを答えなさい。`
+    }));
     card.querySelector(".prerequisite-slot").appendChild(renderPrerequisitePanel(view));
-    card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(view.prompt, view.hints));
     card.querySelector(".code-panel").appendChild(renderCode(view.parts, index, view.hints));
     card.querySelector(".output-box pre").textContent = view.output;
     card.querySelector(".explain-box p").textContent = view.explanation;
@@ -4419,8 +4442,8 @@ function renderConditionalQuestions() {
             <h3>${question.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
+          <div class="exam-prompt-slot"></div>
           <div class="prerequisite-slot"></div>
-          <div class="tracea-prompt"></div>
         </div>
       </div>
       <div class="question-body">
@@ -4461,8 +4484,8 @@ function renderConditionalQuestions() {
     `;
 
     card.dataset.traceaStep = "0";
+    card.querySelector(".exam-prompt-slot").appendChild(renderExamPrompt(question, question.hints));
     card.querySelector(".prerequisite-slot").appendChild(renderPrerequisitePanel(question));
-    card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(question.prompt, question.hints));
     card.querySelector(".code-panel").appendChild(renderCode(question.parts, index, question.hints));
     card.querySelector(".output-box pre").textContent = question.output;
     card.querySelector(".explain-box p").textContent = question.explanation;
@@ -4492,8 +4515,8 @@ function renderBooleanQuestions() {
             <h3>${question.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
+          <div class="exam-prompt-slot"></div>
           <div class="prerequisite-slot"></div>
-          <div class="tracea-prompt"></div>
         </div>
       </div>
       <div class="question-body">
@@ -4534,8 +4557,8 @@ function renderBooleanQuestions() {
     `;
 
     card.dataset.traceaStep = "0";
+    card.querySelector(".exam-prompt-slot").appendChild(renderExamPrompt(question, question.hints));
     card.querySelector(".prerequisite-slot").appendChild(renderPrerequisitePanel(question));
-    card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(question.prompt, question.hints));
     card.querySelector(".code-panel").appendChild(renderCode(question.parts, index, question.hints));
     card.querySelector(".output-box pre").textContent = question.output;
     card.querySelector(".explain-box p").textContent = question.explanation;
@@ -4567,16 +4590,8 @@ function renderClassMethodQuestions(targetList, targetQuestions, options) {
             <h3>${question.title}</h3>
             <span class="progress-mark">${completed ? "完了" : "未完了"}</span>
           </div>
-          ${isBasicSyntaxLesson ? `
-            <div class="question-focus">
-              <p class="question-focus-label">この問題でやること</p>
-              <div class="tracea-prompt"></div>
-            </div>
-            <div class="prerequisite-slot"></div>
-          ` : `
-            <div class="prerequisite-slot"></div>
-            <div class="tracea-prompt"></div>
-          `}
+          <div class="exam-prompt-slot"></div>
+          <div class="prerequisite-slot"></div>
         </div>
       </div>
       <div class="question-body">
@@ -4617,8 +4632,12 @@ function renderClassMethodQuestions(targetList, targetQuestions, options) {
     `;
 
     card.dataset.traceaStep = "0";
+    card.querySelector(".exam-prompt-slot").appendChild(renderExamPrompt(question, question.hints, {
+      instruction: isBasicSyntaxLesson
+        ? "次のJavaコードについて、目標の出力と一致するように赤い空欄へ入る適切な語句または記号を答えなさい。"
+        : "次のJavaコードについて、目標の出力と一致するように赤い空欄へ入る適切なコードを答えなさい。"
+    }));
     card.querySelector(".prerequisite-slot").appendChild(renderPrerequisitePanel(question));
-    card.querySelector(".tracea-prompt").appendChild(renderTraceableParagraph(question.prompt, question.hints));
     card.querySelector(".code-panel").appendChild(renderCode(question.parts, index, question.hints));
     card.querySelector(".output-box pre").textContent = question.output;
     card.querySelector(".explain-box p").textContent = question.explanation;

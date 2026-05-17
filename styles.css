@@ -1407,15 +1407,43 @@ h1 {
   line-height: 1.8;
 }
 
+.exam-prompt {
+  margin: 14px 0 0;
+  border-left: 4px solid var(--red);
+  background: #fffafa;
+  padding: 14px 16px 16px;
+}
+
+.exam-prompt-label {
+  margin: 0 0 8px;
+  color: var(--red);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.exam-prompt-main {
+  margin: 0 0 10px;
+  color: var(--ink);
+  font-size: 17px;
+  font-weight: 900;
+  line-height: 1.75;
+}
+
+.exam-prompt-condition {
+  border-top: 1px solid rgba(17, 17, 17, 0.08);
+  padding-top: 10px;
+}
+
+.exam-prompt-condition p {
+  font-size: 15px;
+  font-weight: 700;
+}
+
 .tracea-prompt p {
   margin-bottom: 0;
   color: #303030;
   line-height: 1.85;
-}
-
-.basic-syntax-question .question-copy {
-  display: grid;
-  gap: 14px;
 }
 
 .basic-syntax-question .question-title-line {
@@ -2147,6 +2175,18 @@ h1 {
     font-size: 15px;
     font-weight: 600;
     line-height: 1.9;
+  }
+
+  .exam-prompt {
+    padding: 12px;
+  }
+
+  .exam-prompt-main {
+    font-size: 15px;
+  }
+
+  .exam-prompt-condition p {
+    font-size: 14px;
   }
 
   .basics-grid {
