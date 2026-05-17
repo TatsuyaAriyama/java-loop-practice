@@ -3412,6 +3412,12 @@ function updateLessonProgress() {
     });
   });
   updateUserSummary();
+  window.dispatchEvent(new CustomEvent("java-practice-progress-updated", {
+    detail: {
+      totalCleared: getTotalCompletedExercises(),
+      lessonsCleared: `${getCompletedLessonCount()}/${lessonMeta.length}`
+    }
+  }));
 }
 
 function getCurrentLearningStatus() {
@@ -3446,6 +3452,69 @@ function notifyLearningStatus() {
   }));
 }
 
+const seededTraceRoomUsers = [
+  {
+    userName: "@hiromusage",
+    displayName: "hiromusage",
+    avatar: "H",
+    status: "ログイン済み",
+    lastActiveLabel: "2026/05/17",
+    online: false
+  },
+  {
+    userName: "@zerounedeuxtrois",
+    displayName: "zero",
+    avatar: "Z",
+    status: "ログイン済み",
+    lastActiveLabel: "2026/05/17",
+    online: false
+  },
+  {
+    userName: "@800and1500",
+    displayName: "800and1500",
+    avatar: "8",
+    status: "ログイン済み",
+    lastActiveLabel: "2026/05/16",
+    online: false
+  },
+  {
+    userName: "@tnwznwykn",
+    displayName: "tnwznwykn",
+    avatar: "T",
+    status: "ログイン済み",
+    lastActiveLabel: "2026/05/16",
+    online: false
+  },
+  {
+    userName: "@yoshihisakohei",
+    displayName: "yoshihisa",
+    avatar: "Y",
+    status: "ログイン済み",
+    lastActiveLabel: "2026/05/15",
+    online: false
+  },
+  {
+    userName: "@ari",
+    displayName: "Ari",
+    avatar: "int",
+    status: "ログイン済み",
+    lastActiveLabel: "2026/05/15",
+    online: false
+  }
+].map((user) => ({
+  ...user,
+  role: "Learner",
+  totalCleared: "未取得",
+  lessonsCleared: "未取得",
+  seeded: true
+}));
+
+function traceRoomUserKey(user) {
+  return String(user.uid || user.userName || user.displayName || "")
+    .trim()
+    .toLowerCase();
+}
+
 function normalizeTraceRoomUser(user) {
   const displayName = user.displayName || "Learner";
   const activeDate = user.lastActive ? new Date(user.lastActive) : null;
@@ -3456,16 +3525,18 @@ function normalizeTraceRoomUser(user) {
     avatar: user.avatar || getAvatarLetter(displayName),
     role: user.role || "Learner",
     status: user.status || "Java学習中",
-    lastActive: user.lastActive === "常時オンライン" ? user.lastActive : formatActiveTime(activeDate),
+    lastActive: user.lastActiveLabel || (user.lastActive === "常時オンライン" ? user.lastActive : formatActiveTime(activeDate)),
     online: Boolean(user.online),
     mentor: Boolean(user.mentor),
     badge: user.badge,
     totalCleared: user.totalCleared ?? "取得中",
-    lessonsCleared: user.lessonsCleared ?? "取得中"
+    lessonsCleared: user.lessonsCleared ?? "取得中",
+    seeded: Boolean(user.seeded)
   };
 }
 
 function getTraceRoomUsers() {
+  const seededUsers = seededTraceRoomUsers.map(normalizeTraceRoomUser);
   const localUsers = [];
 
   try {
@@ -3489,13 +3560,17 @@ function getTraceRoomUsers() {
   if (remoteTraceRoomUsers.length > 0) {
     const usersByName = new Map();
 
+    seededUsers.forEach((user) => {
+      usersByName.set(traceRoomUserKey(user), user);
+    });
+
     remoteTraceRoomUsers.map(normalizeTraceRoomUser).forEach((user) => {
-      usersByName.set(user.userName || user.displayName, user);
+      usersByName.set(traceRoomUserKey(user), user);
     });
 
     localUsers.forEach((user) => {
-      usersByName.set(user.userName || user.displayName, {
-        ...usersByName.get(user.userName || user.displayName),
+      usersByName.set(traceRoomUserKey(user), {
+        ...usersByName.get(traceRoomUserKey(user)),
         ...user
       });
     });
@@ -3503,7 +3578,14 @@ function getTraceRoomUsers() {
     return [...usersByName.values()];
   }
 
-  return localUsers;
+  const usersByName = new Map();
+  [...seededUsers, ...localUsers].forEach((user) => {
+    usersByName.set(traceRoomUserKey(user), {
+      ...usersByName.get(traceRoomUserKey(user)),
+      ...user
+    });
+  });
+  return [...usersByName.values()];
 }
 
 function getTraceRoomMembers() {

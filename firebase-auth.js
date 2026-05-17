@@ -52,6 +52,10 @@ let unsubscribeRegisteredUsers = null;
 let tracePresenceUsers = [];
 let registeredTraceUsers = [];
 let latestLearningStatus = "Java学習中";
+let latestProgress = {
+  totalCleared: 0,
+  lessonsCleared: "0/7"
+};
 const profileNameKey = "java-output-practice-auth-name";
 const profileDisplayNameKey = "java-output-practice-auth-display-name";
 const profileAvatarKey = "java-output-practice-auth-avatar";
@@ -90,6 +94,16 @@ function getPublicName(user) {
   }
 }
 
+function publicNameFromEmail(email) {
+  const localPart = String(email || "").split("@")[0] || "Learner";
+  const cleaned = localPart
+    .replace(/[._-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return cleaned || "Learner";
+}
+
 function getAvatarLetter(name) {
   return (name || "U").trim().charAt(0).toUpperCase() || "U";
 }
@@ -118,13 +132,15 @@ function serializeTraceUser(docSnap) {
     role: "Learner",
     status: data.status || "Java学習中",
     lastActive: data.lastActiveAt?.toDate?.()?.toISOString() || null,
-    online: Boolean(data.online)
+    online: Boolean(data.online),
+    totalCleared: data.totalCleared ?? "未取得",
+    lessonsCleared: data.lessonsCleared ?? "未取得"
   };
 }
 
 function serializeRegisteredUser(docSnap) {
   const data = docSnap.data();
-  const displayName = data.displayName || data.email || "Learner";
+  const displayName = data.displayName || publicNameFromEmail(data.email);
 
   return {
     uid: docSnap.id,
@@ -134,7 +150,9 @@ function serializeRegisteredUser(docSnap) {
     role: "Learner",
     status: data.status || "ログイン済み",
     lastActive: data.lastSeenAt?.toDate?.()?.toISOString() || data.lastLoginAt?.toDate?.()?.toISOString() || null,
-    online: Boolean(data.online)
+    online: Boolean(data.online),
+    totalCleared: data.totalCleared ?? "未取得",
+    lessonsCleared: data.lessonsCleared ?? "未取得"
   };
 }
 
@@ -219,6 +237,7 @@ async function saveRegisteredUser(user, overrides = {}) {
       role: "Learner",
       status: latestLearningStatus,
       online: true,
+      ...latestProgress,
       lastLoginAt: serverTimestamp(),
       lastSeenAt: serverTimestamp(),
       ...overrides
@@ -241,6 +260,7 @@ async function saveTracePresence(user, overrides = {}) {
       role: "Learner",
       status: latestLearningStatus,
       online: true,
+      ...latestProgress,
       lastActiveAt: serverTimestamp(),
       ...overrides
     }, { merge: true });
@@ -264,6 +284,27 @@ window.addEventListener("java-practice-learning-status", (event) => {
     status: latestLearningStatus,
     online: true
   });
+});
+
+window.addEventListener("java-practice-progress-updated", (event) => {
+  latestProgress = {
+    totalCleared: event.detail?.totalCleared ?? latestProgress.totalCleared,
+    lessonsCleared: event.detail?.lessonsCleared ?? latestProgress.lessonsCleared
+  };
+
+  updateTracePresence({
+    ...latestProgress,
+    status: latestLearningStatus,
+    online: true
+  });
+
+  if (auth.currentUser) {
+    saveRegisteredUser(auth.currentUser, {
+      ...latestProgress,
+      status: latestLearningStatus,
+      lastSeenAt: serverTimestamp()
+    });
+  }
 });
 
 window.addEventListener("java-practice-profile-updated", async (event) => {
