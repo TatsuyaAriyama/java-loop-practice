@@ -582,7 +582,7 @@ async function updateRoomTyping(isTyping) {
   if (!hasRoomChat || !user) return;
 
   const displayName = getPublicName(user);
-  const avatar = user.photoURL || getPublicAvatar(displayName);
+  const avatar = getPublicAvatar(displayName);
 
   if (roomTypingTimer) {
     clearTimeout(roomTypingTimer);
@@ -617,7 +617,7 @@ async function postRoomMessage(text) {
   }
 
   const displayName = getPublicName(user);
-  const avatar = user.photoURL || getPublicAvatar(displayName);
+  const avatar = getPublicAvatar(displayName);
 
   try {
     await addDoc(collection(db, "roomMessages"), {

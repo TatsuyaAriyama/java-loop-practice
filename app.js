@@ -4257,13 +4257,14 @@ function formatChatTime(value) {
 function createChatAvatar(message) {
   const avatar = document.createElement("div");
   avatar.className = "chat-avatar";
-  const avatarValue = message.userAvatar || getAvatarLetter(message.userName);
+  const profileUser = remoteTraceRoomUsers.find((user) => user.uid && user.uid === message.userId);
+  const avatarValue = profileUser?.avatar
+    || (message.userId === currentUserId ? currentUserAvatar : "")
+    || message.userAvatar
+    || getAvatarLetter(message.userName);
 
   if (/^https?:\/\//.test(String(avatarValue))) {
-    const image = document.createElement("img");
-    image.src = avatarValue;
-    image.alt = "";
-    avatar.appendChild(image);
+    avatar.textContent = getAvatarLetter(message.userName);
     return avatar;
   }
 
