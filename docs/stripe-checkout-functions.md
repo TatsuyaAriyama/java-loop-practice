@@ -21,6 +21,22 @@
 5. Checkout作成履歴を Firestore に保存する
 6. Webhookで `checkout.session.completed` や `customer.subscription.updated` を受け、Firestoreの決済状態を更新する
 
+## 現在のPrice ID
+
+月額プラン用のPrice IDは、Firebase Functions側で次の環境変数に設定してください。
+
+```text
+STRIPE_MONTHLY_PRICE_ID=price_1TYK62R04gxdDcT8Ok26saqS
+```
+
+`支援する` ボタンを1回払いとして使う場合は、Stripe Dashboardで別途1回払い用のPriceを作成し、次の環境変数へ設定します。
+
+```text
+STRIPE_SUPPORT_PRICE_ID=price_xxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+Price ID自体は秘密鍵ではありませんが、料金の選択ロジックはFunctions側に置きます。フロントから任意のPrice IDを送らせないことで、想定外の価格へ差し替えられる余地を減らします。
+
 ## Firestore保存先の例
 
 - `billingCheckoutSessions/{sessionId}`
