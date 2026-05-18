@@ -466,6 +466,51 @@ function t(key) {
   return uiCopy[currentLanguage]?.[key] || uiCopy.ja[key] || key;
 }
 
+function getAvatarIconMarkup(value) {
+  const key = String(value || "").trim().toLowerCase();
+  const icons = {
+    cat: `
+      <svg class="avatar-icon avatar-icon-cat" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M5.2 9.1 6.1 4l4 3.1a8.1 8.1 0 0 1 3.8 0L17.9 4l.9 5.1a7.4 7.4 0 0 1 1.2 4.1c0 4.1-3.4 6.8-8 6.8s-8-2.7-8-6.8c0-1.5.4-2.9 1.2-4.1Z" />
+        <circle class="avatar-icon-dot" cx="9.2" cy="13.1" r=".7" />
+        <circle class="avatar-icon-dot" cx="14.8" cy="13.1" r=".7" />
+        <path d="M11.1 15.2h1.8M12 15.3v1.4M8.2 15.4l-2.4.6M15.8 15.4l2.4.6M8.5 17l-2.1 1M15.5 17l2.1 1" />
+      </svg>
+    `,
+    pc: `
+      <svg class="avatar-icon avatar-icon-pc" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <rect x="4" y="5" width="16" height="11" rx="1.6" />
+        <path d="M9.3 19h5.4M12 16v3M7.4 8.7h4.2M7.4 11.4h2.8M15 8.7h1.9" />
+      </svg>
+    `
+  };
+
+  return icons[key] || "";
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function renderAvatarMarkup(value) {
+  return getAvatarIconMarkup(value) || escapeHtml(value);
+}
+
+function setAvatarVisual(element, value) {
+  if (!element) return;
+  const iconMarkup = getAvatarIconMarkup(value);
+  if (iconMarkup) {
+    element.innerHTML = iconMarkup;
+    return;
+  }
+  element.textContent = String(value || "");
+}
+
 function applyLanguageToDynamicUi() {
   document.documentElement.lang = currentLanguage === "en" ? "en" : "ja";
   document.querySelectorAll("[data-i18n]").forEach((element) => {
@@ -3755,7 +3800,7 @@ function updateUserSummary() {
   const lessonCount = panel.querySelector("[data-lessons-cleared]");
 
   if (name) name.textContent = currentDisplayName;
-  if (avatar) avatar.textContent = currentUserAvatar || getAvatarLetter(currentDisplayName);
+  setAvatarVisual(avatar, currentUserAvatar || getAvatarLetter(currentDisplayName));
   if (input) input.value = currentDisplayName;
   const localTotal = getTotalCompletedExercises();
   const remoteTotal = Number(remoteProgressSummary?.totalCleared);
@@ -3856,7 +3901,7 @@ function ensureUserSummary() {
       </label>
       <div class="avatar-choice-group" role="group" aria-label="${t("avatarChoice")}" data-i18n-aria="avatarChoice">
         ${userAvatarOptions.map((option) => `
-          <button class="avatar-choice" type="button" data-action="avatar-choice" data-avatar-choice="${option.value}" aria-label="${option.label}" aria-pressed="false">${option.value}</button>
+          <button class="avatar-choice" type="button" data-action="avatar-choice" data-avatar-choice="${option.value}" aria-label="${option.label}" aria-pressed="false">${renderAvatarMarkup(option.value)}</button>
         `).join("")}
       </div>
       <div class="profile-actions">
@@ -4453,7 +4498,7 @@ function createTraceRoomCard(user) {
 
   const avatar = document.createElement("div");
   avatar.className = "trace-user-avatar";
-  avatar.textContent = user.avatar;
+  setAvatarVisual(avatar, user.avatar);
 
   const identity = document.createElement("div");
   identity.className = "trace-user-identity";
@@ -4568,7 +4613,7 @@ function createChatAvatar(message) {
     return avatar;
   }
 
-  avatar.textContent = avatarValue;
+  setAvatarVisual(avatar, avatarValue);
   return avatar;
 }
 
