@@ -343,6 +343,7 @@ const roomChatInput = document.querySelector("#roomChatInput");
 const roomChatFeedback = document.querySelector("#roomChatFeedback");
 const roomChatCount = document.querySelector("#roomChatCount");
 const roomChatTyping = document.querySelector("#roomChatTyping");
+const practiceEditorRoot = document.querySelector("[data-practice-editor]");
 let currentLevel = "beginner";
 let currentUserId = "local";
 let currentUserName = "User";
@@ -5069,7 +5070,8 @@ function createOperatorsLessonGroup() {
     id: "operators-casting-scope",
     title: "Java 演算子・型変換・スコープ編",
     lessons: [
-      { id: "basic-syntax-values", href: "basic-syntax-values.html", title: "演算子・型変換・スコープ", status: "0/10" }
+      { id: "basic-syntax-values", href: "basic-syntax-values.html", title: "演算子・型変換・スコープ", status: "0/10" },
+      { id: "practice-editor", href: "practice-editor.html", title: "+= を実際に動かしてみよう", status: "実践" }
     ]
   });
 }
@@ -5561,6 +5563,216 @@ function resetQuestion(card) {
   feedback.className = "feedback";
   feedback.textContent = "";
   resetTracea(card);
+}
+
+const practiceInitialCode = `public class Main {
+    public static void main(String[] args) {
+        int x = 0;
+
+        x += 1;
+
+        System.out.println(x);
+    }
+}`;
+
+const javaHighlightKeywords = new Set([
+  "public",
+  "class",
+  "static",
+  "void",
+  "int",
+  "String",
+  "System",
+  "out",
+  "println",
+  "args",
+  "main",
+  "new",
+  "return"
+]);
+
+function highlightJavaLine(line) {
+  let index = 0;
+  let html = "";
+
+  while (index < line.length) {
+    const rest = line.slice(index);
+
+    if (rest.startsWith("//")) {
+      html += `<span class="tok-comment">${escapeHtml(rest)}</span>`;
+      break;
+    }
+
+    const char = line[index];
+
+    if (char === "\"") {
+      let end = index + 1;
+      while (end < line.length) {
+        if (line[end] === "\"" && line[end - 1] !== "\\") {
+          end += 1;
+          break;
+        }
+        end += 1;
+      }
+      html += `<span class="tok-string">${escapeHtml(line.slice(index, end))}</span>`;
+      index = end;
+      continue;
+    }
+
+    if (/\d/.test(char) || (char === "-" && /\d/.test(line[index + 1] || ""))) {
+      let end = index + 1;
+      while (end < line.length && /\d/.test(line[end])) end += 1;
+      html += `<span class="tok-number">${escapeHtml(line.slice(index, end))}</span>`;
+      index = end;
+      continue;
+    }
+
+    if (/[A-Za-z_$]/.test(char)) {
+      let end = index + 1;
+      while (end < line.length && /[A-Za-z0-9_$]/.test(line[end])) end += 1;
+      const word = line.slice(index, end);
+      const tokenClass = javaHighlightKeywords.has(word) ? "tok-keyword" : "";
+      html += tokenClass ? `<span class="${tokenClass}">${escapeHtml(word)}</span>` : escapeHtml(word);
+      index = end;
+      continue;
+    }
+
+    html += escapeHtml(char);
+    index += 1;
+  }
+
+  return html;
+}
+
+function highlightJavaCode(code) {
+  return String(code || "").split("\n").map(highlightJavaLine).join("\n");
+}
+
+function runPracticePseudoJava(code) {
+  const source = String(code || "");
+  const initialMatch = source.match(/\bint\s+x\s*=\s*(-?\d+)\s*;/);
+  const addMatches = [...source.matchAll(/\bx\s*\+=\s*(-?\d+)\s*;/g)];
+  const printsX = /\bSystem\s*\.\s*out\s*\.\s*println\s*\(\s*x\s*\)\s*;/.test(source);
+
+  if (!initialMatch) {
+    return {
+      ok: false,
+      message: "Tracea: まず `int x = 0;` の形を残してみましょう。xの出発点が見えないと、結果を追いにくくなります。"
+    };
+  }
+
+  if (addMatches.length === 0) {
+    return {
+      ok: false,
+      message: "Tracea: `x += 数字;` の行を探しています。+= の右側に整数を置いて、もう一度実行してみましょう。"
+    };
+  }
+
+  if (!printsX) {
+    return {
+      ok: false,
+      message: "Tracea: 最後に `System.out.println(x);` でxを表示すると、変化した値を確認できます。"
+    };
+  }
+
+  const initialValue = Number(initialMatch[1]);
+  const additions = addMatches.map((match) => Number(match[1]));
+  const outputValue = additions.reduce((sum, value) => sum + value, initialValue);
+
+  return {
+    ok: true,
+    output: String(outputValue),
+    additions,
+    initialValue
+  };
+}
+
+function setPracticeStatus(root, message, state = "") {
+  const status = root?.querySelector("[data-practice-status]");
+  if (!status) return;
+  status.textContent = message;
+  status.dataset.state = state;
+}
+
+function syncPracticeEditor(root) {
+  const input = root?.querySelector("[data-practice-code]");
+  const highlight = root?.querySelector("[data-practice-highlight]");
+  const lineNumbers = root?.querySelector("[data-practice-lines]");
+  if (!input || !highlight || !lineNumbers) return;
+
+  const code = input.value;
+  const lineCount = Math.max(1, code.split("\n").length);
+  lineNumbers.textContent = Array.from({ length: lineCount }, (_, index) => String(index + 1)).join("\n");
+  highlight.innerHTML = highlightJavaCode(code) || " ";
+}
+
+function runPracticeEditor(root) {
+  const input = root?.querySelector("[data-practice-code]");
+  const consoleOutput = root?.querySelector("[data-practice-console]");
+  if (!input || !consoleOutput) return;
+
+  const result = runPracticePseudoJava(input.value);
+  if (!result.ok) {
+    consoleOutput.textContent = `> java Main\n${result.message}`;
+    setPracticeStatus(root, result.message.replace(/^Tracea:\s*/, ""), "error");
+    return;
+  }
+
+  const changeText = result.additions.map((value) => `x += ${value}`).join(" / ");
+  consoleOutput.textContent = `> javac Main.java\n> java Main\n${result.output}`;
+  setPracticeStatus(root, `${changeText} を順番に反映しました。今のxは ${result.output} です。`, "success");
+}
+
+function resetPracticeEditor(root) {
+  const input = root?.querySelector("[data-practice-code]");
+  const consoleOutput = root?.querySelector("[data-practice-console]");
+  if (!input || !consoleOutput) return;
+
+  input.value = practiceInitialCode;
+  consoleOutput.textContent = "> 実行すると、ここに出力が表示されます。";
+  setPracticeStatus(root, "数字を変えてから実行してみましょう。xの値がどう動くかを見ます。");
+  syncPracticeEditor(root);
+  input.focus();
+}
+
+function initPracticeEditor() {
+  if (!practiceEditorRoot) return;
+
+  const input = practiceEditorRoot.querySelector("[data-practice-code]");
+  const highlight = practiceEditorRoot.querySelector("[data-practice-highlight]");
+  if (!input || !highlight) return;
+
+  input.value = practiceInitialCode;
+  syncPracticeEditor(practiceEditorRoot);
+
+  input.addEventListener("input", () => {
+    syncPracticeEditor(practiceEditorRoot);
+    setPracticeStatus(practiceEditorRoot, "入力を見ています。`x += 数字;` の数字を変えると、出力も変わります。");
+  });
+
+  input.addEventListener("scroll", () => {
+    const highlightFrame = highlight.parentElement;
+    if (highlightFrame) {
+      highlightFrame.scrollTop = input.scrollTop;
+      highlightFrame.scrollLeft = input.scrollLeft;
+    }
+    const lines = practiceEditorRoot.querySelector("[data-practice-lines]");
+    if (lines) lines.scrollTop = input.scrollTop;
+  });
+
+  input.addEventListener("keydown", (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+      event.preventDefault();
+      runPracticeEditor(practiceEditorRoot);
+    }
+  });
+
+  practiceEditorRoot.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+    if (button.dataset.action === "practice-run") runPracticeEditor(practiceEditorRoot);
+    if (button.dataset.action === "practice-reset") resetPracticeEditor(practiceEditorRoot);
+  });
 }
 
 function renderExamPrompt(question, hints, options = {}) {
@@ -6065,6 +6277,7 @@ renderClassMethodQuestions(oopBasicList, oopBasicQuestions, {
   numberPrefix: "O-",
   panelLabel: "オブジェクト指向コード"
 });
+initPracticeEditor();
 ensureLessonSeriesGroups();
 ensureTraceRoomLogo();
 ensureUserSummary();

@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Practice Editor - += を実際に動かしてみよう</title>
+  <script>
+    try {
+      if (localStorage.getItem("java-output-practice-auth") === "signed-in") {
+        document.documentElement.classList.add("auth-optimistic");
+      }
+    } catch {}
+  </script>
+  <style>
+    body.auth-pending .auth-screen,
+    body.auth-pending .app-shell { display: none !important; }
+    html.auth-optimistic body.auth-pending .app-shell { display: block !important; }
+  </style>
+  <link rel="stylesheet" href="styles.css?v=practice-editor-20260518">
+</head>
+<body class="auth-pending">
+  <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
+    <div class="auth-shell">
+      <div class="auth-brand">
+        <p class="eyebrow">Java Output Practice</p>
+        <h1>ログイン</h1>
+        <p>メール、パスワード、またはGoogleアカウントで学習ページに入ります。</p>
+      </div>
+      <form class="auth-card" id="authForm">
+        <label><span>メールアドレス</span><input type="email" id="authEmail" autocomplete="email" required></label>
+        <label><span>パスワード</span><input type="password" id="authPassword" autocomplete="current-password" required minlength="6"></label>
+        <button class="action-button primary auth-submit" type="submit">メールでログイン</button>
+        <button class="action-button secondary auth-create" type="button" id="createAccountButton">新規作成</button>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="google-button" type="button" id="googleLoginButton"><span>G</span>Googleアカウントでログイン</button>
+        <p class="auth-message" id="authMessage" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell" aria-hidden="true">
+    <header class="site-header">
+      <div class="header-inner">
+        <p class="lesson-current">Java 演算子・型変換・スコープ編 / Lesson02 += を実際に動かしてみよう</p>
+        <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
+        <div class="header-actions">
+          <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
+          <a href="trace-room.html" class="secondary-link">Trace Room</a>
+          <a href="#practiceEditor" class="primary-link">エディタを開く</a>
+          <a href="basic-syntax-values.html" class="secondary-link">演算子Lessonへ</a>
+          <a href="index.html" class="secondary-link">制御構文へ</a>
+        </div>
+        <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
+          <div class="lesson-panel-head">
+            <p class="eyebrow">Lesson Index</p>
+            <h2>Lesson一覧</h2>
+            <p>読むだけで終わらせず、短いコードを手で動かして確認します。</p>
+          </div>
+          <div class="lesson-groups">
+            <section class="lesson-group" data-lesson-group="basic-syntax">
+              <button class="lesson-group-toggle" type="button" aria-expanded="false">
+                <span>Java 基礎文法編</span>
+                <small>1 Lessons</small>
+              </button>
+              <div class="lesson-links">
+                <a href="basic-syntax.html" data-lesson-link="basic-syntax"><span>01</span><b>はじめの文法</b><small class="lesson-check">0/10</small></a>
+              </div>
+            </section>
+            <section class="lesson-group open" data-lesson-group="operators-casting-scope">
+              <button class="lesson-group-toggle" type="button" aria-expanded="true">
+                <span>Java 演算子・型変換・スコープ編</span>
+                <small>2 Lessons</small>
+              </button>
+              <div class="lesson-links">
+                <a href="basic-syntax-values.html" data-lesson-link="basic-syntax-values"><span>01</span><b>演算子・型変換・スコープ</b><small class="lesson-check">0/10</small></a>
+                <a href="practice-editor.html" class="active" data-lesson-link="practice-editor"><span>02</span><b>+= を実際に動かしてみよう</b><small class="lesson-check">実践</small></a>
+              </div>
+            </section>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="syntax-section practice-hero">
+        <div class="section-heading">
+          <p class="eyebrow">Free Practice Editor</p>
+          <h2>+= を実際に動かしてみよう</h2>
+          <p>このLessonは無料で使えます。コードの数字を書き換えて、実行結果がどう変わるかをその場で確かめます。</p>
+        </div>
+        <div class="practice-points">
+          <article>
+            <span class="syntax-label">point 01</span>
+            <h3>+= は「足してから代入」</h3>
+            <p><span class="term">x += 1</span> は、今のxに1を足して、もう一度xへ入れる書き方です。</p>
+          </article>
+          <article>
+            <span class="syntax-label">point 02</span>
+            <h3>x = x + 1 と同じ意味</h3>
+            <p>短く書いているだけで、値が変わる流れは同じです。右側を先に計算します。</p>
+          </article>
+          <article>
+            <span class="syntax-label">point 03</span>
+            <h3>数字を変えると出力も変わる</h3>
+            <p><span class="term">x += 5;</span> にすると、最終的に表示されるxも5になります。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="practiceEditor" class="practice-editor-section" data-practice-editor>
+        <div class="practice-editor-head">
+          <div>
+            <p class="eyebrow">Practice Editor</p>
+            <h2>コードを書き換えて、出力を確認する</h2>
+          </div>
+          <span class="free-badge">FREE LESSON</span>
+        </div>
+
+        <div class="practice-editor-shell">
+          <aside class="practice-tracea-guide" aria-label="Traceaの補足">
+            <div class="tracea-mini-avatar">T</div>
+            <p class="eyebrow">Tracea Guide</p>
+            <h3>まずは1か所だけ変えましょう。</h3>
+            <p data-practice-status>数字を変えてから実行してみましょう。xの値がどう動くかを見ます。</p>
+            <ul>
+              <li><span>x += 1;</span> の数字に注目</li>
+              <li>実行結果は下のConsoleに表示</li>
+              <li><kbd>⌘</kbd> + <kbd>Enter</kbd> でも実行できます</li>
+            </ul>
+          </aside>
+
+          <div class="practice-workbench">
+            <div class="practice-window-bar">
+              <div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+              <strong>Main.java</strong>
+              <small>pseudo Java runner</small>
+            </div>
+
+            <div class="code-editor" data-code-editor>
+              <pre class="practice-line-numbers" data-practice-lines aria-hidden="true"></pre>
+              <div class="practice-highlight-frame" aria-hidden="true">
+                <pre class="practice-highlight"><code data-practice-highlight></code></pre>
+              </div>
+              <textarea class="practice-code-input" data-practice-code spellcheck="false" aria-label="Javaコードエディタ"></textarea>
+            </div>
+
+            <div class="practice-actions">
+              <button class="action-button primary run-button" type="button" data-action="practice-run">実行</button>
+              <button class="action-button secondary" type="button" data-action="practice-reset">リセット</button>
+            </div>
+
+            <div class="console-output">
+              <div class="console-title">
+                <span>Console</span>
+                <small>期待する出力: 1</small>
+              </div>
+              <pre data-practice-console>&gt; 実行すると、ここに出力が表示されます。</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Java Practice Editor / +=</p>
+      <button class="signout-button" type="button" id="signOutButton">ログアウト</button>
+    </footer>
+  </div>
+
+  <script src="app.js?v=practice-editor-20260518"></script>
+  <script type="module" src="firebase-auth.js?v=practice-editor-20260518"></script>
+</body>
+</html>
