@@ -3485,7 +3485,25 @@ const basicSyntaxQuestions = [
   makeClassMethodQuestion({ title: "Stringの箱に文字を入れる", concept: "String / variable", prompt: "nameという名前の箱にAoiを入れて表示します。", output: "Aoi", explanation: "Stringは文字列用の箱です。文字列は\"Aoi\"のようにダブルクォーテーションで囲みます。", parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "String", chars: 7 }, " name = ", { answer: "\"Aoi\"", chars: 7 }, ";\n    System.out.println(name);\n  }\n}"] }),
   makeClassMethodQuestion({ title: "変数の中身を表示する", concept: "variable / println", prompt: "messageという箱の中身を表示します。変数名はクォーテーションで囲みません。", output: "ready", explanation: "変数の中身を表示するときは、System.out.println(message)のように変数名をそのまま書きます。", parts: ["class Main {\n  public static void main(String[] args) {\n    String message = \"ready\";\n    System.out.println(", { answer: "message", chars: 8 }, ");\n  }\n}"] }),
   makeClassMethodQuestion({ title: "同じ変数に新しい値を入れる", concept: "assignment", prompt: "levelの中身を1から2に入れ替えて、最後の値を表示します。", output: "2", explanation: "=は右の値を左の箱へ入れる記号です。あとから入れ直すと、前の値は新しい値に変わります。", parts: ["class Main {\n  public static void main(String[] args) {\n    int level = 1;\n    level = ", { answer: "2", chars: 2 }, ";\n    System.out.println(level);\n  }\n}"] }),
-  makeClassMethodQuestion({ title: "2つの命令を上から読む", concept: "order", prompt: "Javaはmainの中の命令を上から順番に動かします。", output: "first\nsecond", explanation: "上のprintlnが先、下のprintlnが後です。コードを読むときは、まず上から下へ目で追います。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(\"first\");\n    System.out.println(", { answer: "\"second\"", chars: 9 }, ");\n  }\n}"] })
+  makeClassMethodQuestion({ title: "2つの命令を上から読む", concept: "order", prompt: "Javaはmainの中の命令を上から順番に動かします。", output: "first\nsecond", explanation: "上のprintlnが先、下のprintlnが後です。コードを読むときは、まず上から下へ目で追います。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(\"first\");\n    System.out.println(", { answer: "\"second\"", chars: 9 }, ");\n  }\n}"] }),
+  makeClassMethodQuestion({
+    title: "変数の上書きと文字列連結を読む",
+    concept: "assignment / concat",
+    difficultyLabel: "中級",
+    prompt: "statusの中身をdraftからreadyへ上書きし、最後の値を文字列とつなげて表示します。",
+    output: "status: ready",
+    explanation: "変数はあとから入れ直すと最後の値が残ります。左側に文字列がある+は、数式ではなく文字をつなげる働きになります。",
+    parts: ["class Main {\n  public static void main(String[] args) {\n    String status = \"draft\";\n    status = ", { answer: "\"ready\"", chars: 8 }, ";\n\n    System.out.println(", { answer: "\"status: \" + status", accepts: ["\"status: \" + status", "\"status: \"+status"], chars: 20 }, ");\n  }\n}"]
+  }),
+  makeClassMethodQuestion({
+    title: "実践: 自分で短い表示プログラムを完成させる",
+    concept: "class / variable / println",
+    difficultyLabel: "実践",
+    prompt: "nameとlevelを変数に入れて、2行でプロフィールのように表示します。型、代入、表示命令をまとめて使います。",
+    output: "name: Ari\nlevel: 1",
+    explanation: "実践では、1つの知識だけでなく、String、int、System.out.printlnを組み合わせます。変数名はクォーテーションで囲まず、文字列と+でつなげます。",
+    parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "String", chars: 7 }, " name = \"Ari\";\n    ", { answer: "int", chars: 4 }, " level = 1;\n\n    System.out.println(", { answer: "\"name: \" + name", accepts: ["\"name: \" + name", "\"name: \"+name"], chars: 17 }, ");\n    System.out.println(", { answer: "\"level: \" + level", accepts: ["\"level: \" + level", "\"level: \"+level"], chars: 19 }, ");\n  }\n}"]
+  })
 ];
 
 const basicSyntaxValueQuestions = [
@@ -5112,7 +5130,7 @@ function createBasicSyntaxLessonGroup() {
     id: "basic-syntax",
     title: "Java 基礎文法編",
     lessons: [
-      { id: "basic-syntax", href: "basic-syntax.html", title: "はじめの文法", status: "0/10" }
+      { id: "basic-syntax", href: "basic-syntax.html", title: "はじめの文法", status: "0/12" }
     ]
   });
 }
@@ -6375,7 +6393,7 @@ function renderClassMethodQuestions(targetList, targetQuestions, options) {
         <div class="code-panel">
           <div class="panel-title">
             <span>${options.panelLabel}</span>
-            <span class="concept">${question.concept} / 初級</span>
+            <span class="concept">${question.concept} / ${question.difficultyLabel || "初級"}</span>
           </div>
         </div>
         <div class="side-panel">
