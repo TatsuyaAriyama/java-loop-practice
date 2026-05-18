@@ -3572,6 +3572,89 @@ h1 {
   white-space: pre-wrap;
 }
 
+.practice-tutorial-open {
+  overflow: hidden;
+}
+
+.practice-tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background:
+    radial-gradient(circle at 20% 12%, rgba(200, 16, 46, 0.12), transparent 28%),
+    rgba(255, 255, 255, 0.92);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms var(--ease-ui);
+  backdrop-filter: blur(18px);
+}
+
+.practice-tutorial-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.practice-tutorial-frame {
+  width: min(1500px, 100%);
+  max-height: min(920px, calc(100vh - 44px));
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  border: 1px solid var(--ink);
+  background: #ffffff;
+  box-shadow: 0 34px 90px rgba(17, 17, 17, 0.18);
+  transform: translateY(14px) scale(0.985);
+  transition: transform 240ms var(--ease-ui);
+  overflow: hidden;
+}
+
+.practice-tutorial-overlay.visible .practice-tutorial-frame {
+  transform: translateY(0) scale(1);
+}
+
+.practice-tutorial-frame .practice-editor-shell {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.practice-tutorial-frame .practice-tracea-guide,
+.practice-tutorial-frame .practice-workbench {
+  min-height: 0;
+  overflow: auto;
+}
+
+.practice-tutorial-frame .code-editor {
+  height: min(500px, 48vh);
+}
+
+.tutorial-close-button {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  background: #ffffff;
+  color: var(--ink);
+  font-weight: 900;
+  cursor: pointer;
+  transition: border-color 180ms var(--ease-ui), color 180ms var(--ease-ui), transform 180ms var(--ease-ui), box-shadow 180ms var(--ease-ui);
+}
+
+.tutorial-close-button:hover {
+  border-color: var(--red);
+  color: var(--red);
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-1px);
+}
+
+.tutorial-complete-button {
+  display: none;
+}
+
+.tutorial-success .tutorial-complete-button {
+  display: inline-flex;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .question-card:hover,
   .topic-card:hover,
@@ -4194,5 +4277,18 @@ h1 {
   .practice-highlight,
   .practice-code-input {
     padding: 18px 12px;
+  }
+
+  .practice-tutorial-overlay {
+    padding: 10px;
+    align-items: stretch;
+  }
+
+  .practice-tutorial-frame {
+    max-height: calc(100vh - 20px);
+  }
+
+  .practice-tutorial-frame .code-editor {
+    height: 340px;
   }
 }

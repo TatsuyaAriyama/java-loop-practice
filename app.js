@@ -361,6 +361,7 @@ const profileAvatarKey = "java-output-practice-auth-avatar";
 const profileScopeKey = "java-output-practice-auth-profile-scope";
 const profileSetupKeyPrefix = "java-output-practice-profile-setup-complete";
 const profileNudgeDismissKeyPrefix = "java-output-practice-profile-nudge-dismissed";
+const onboardingTutorialKeyPrefix = "java-output-practice-onboarding-tutorial-complete";
 const languageKey = "java-output-practice-language";
 let profileNudgeTypingTimer = null;
 let currentLanguage = "ja";
@@ -3966,6 +3967,24 @@ function markProfileSetupComplete(uid = currentUserId) {
   } catch {}
 }
 
+function hasCompletedOnboardingTutorial(uid = currentUserId) {
+  if (!uid || uid === "local") return true;
+
+  try {
+    return localStorage.getItem(getScopedProfileKey(onboardingTutorialKeyPrefix, uid)) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function markOnboardingTutorialComplete(uid = currentUserId) {
+  if (!uid || uid === "local") return;
+
+  try {
+    localStorage.setItem(getScopedProfileKey(onboardingTutorialKeyPrefix, uid), "true");
+  } catch {}
+}
+
 function dismissProfileNudge(uid = currentUserId) {
   if (!uid || uid === "local") return;
 
@@ -4324,6 +4343,7 @@ function readSavedUserProfile() {
 function saveUserProfile() {
   const input = document.querySelector("[data-profile-name-input]");
   const nextName = input?.value.trim().replace(/\s+/g, " ").slice(0, 18);
+  const shouldShowTutorial = !hasCompletedOnboardingTutorial();
 
   if (!nextName) {
     setProfileMessage(t("profileNameRequired"), "no");
@@ -4354,7 +4374,10 @@ function saveUserProfile() {
     }
   }));
   setProfileMessage(t("profileSaved"), "ok");
-  window.setTimeout(() => toggleProfileEditor(false), 520);
+  window.setTimeout(() => {
+    toggleProfileEditor(false);
+    if (shouldShowTutorial) showOnboardingTutorial();
+  }, 520);
 }
 
 function updateLessonProgress() {
@@ -5575,6 +5598,17 @@ const practiceInitialCode = `public class Main {
     }
 }`;
 
+function createTutorialInitialCode(name = currentDisplayName) {
+  const displayName = String(name || "User").replace(/[\\"]/g, "");
+  return `public class Main {
+    public static void main(String[] args) {
+        // Tracea: ようこそ、${displayName}さん。
+        // 下の""の中に、Traceaへの返事を書いて実行しましょう。
+        System.out.println("");
+    }
+}`;
+}
+
 const javaHighlightKeywords = new Set([
   "public",
   "class",
@@ -5687,6 +5721,32 @@ function runPracticePseudoJava(code) {
   };
 }
 
+function runTutorialPseudoJava(code) {
+  const source = String(code || "");
+  const printMatch = source.match(/\bSystem\s*\.\s*out\s*\.\s*println\s*\(\s*"([^"]*)"\s*\)\s*;/);
+
+  if (!printMatch) {
+    return {
+      ok: false,
+      message: "Tracea: `System.out.println(\"返事\");` の形で、私への返事を画面に出してみましょう。"
+    };
+  }
+
+  const reply = printMatch[1].trim();
+  if (!reply) {
+    return {
+      ok: false,
+      message: "Tracea: まだ返事が空です。短くて大丈夫。\"よろしくお願いします\" のように書いてみましょう。"
+    };
+  }
+
+  return {
+    ok: true,
+    output: reply,
+    message: `Tracea: 受け取りました。${currentDisplayName}さん、ここから一緒にJavaを手で動かしていきましょう。`
+  };
+}
+
 function setPracticeStatus(root, message, state = "") {
   const status = root?.querySelector("[data-practice-status]");
   if (!status) return;
@@ -5711,10 +5771,19 @@ function runPracticeEditor(root) {
   const consoleOutput = root?.querySelector("[data-practice-console]");
   if (!input || !consoleOutput) return;
 
-  const result = runPracticePseudoJava(input.value);
+  const isTutorial = root?.dataset.practiceMode === "tutorial";
+  const result = isTutorial ? runTutorialPseudoJava(input.value) : runPracticePseudoJava(input.value);
   if (!result.ok) {
     consoleOutput.textContent = `> java Main\n${result.message}`;
     setPracticeStatus(root, result.message.replace(/^Tracea:\s*/, ""), "error");
+    return;
+  }
+
+  if (isTutorial) {
+    consoleOutput.textContent = `> javac Main.java\n> java Main\n${result.output}`;
+    setPracticeStatus(root, result.message.replace(/^Tracea:\s*/, ""), "success");
+    root.classList.add("tutorial-success");
+    markOnboardingTutorialComplete();
     return;
   }
 
@@ -5728,9 +5797,15 @@ function resetPracticeEditor(root) {
   const consoleOutput = root?.querySelector("[data-practice-console]");
   if (!input || !consoleOutput) return;
 
-  input.value = practiceInitialCode;
+  input.value = root?.dataset.practiceMode === "tutorial" ? createTutorialInitialCode() : practiceInitialCode;
   consoleOutput.textContent = "> 実行すると、ここに出力が表示されます。";
-  setPracticeStatus(root, "数字を変えてから実行してみましょう。xの値がどう動くかを見ます。");
+  root?.classList.remove("tutorial-success");
+  setPracticeStatus(
+    root,
+    root?.dataset.practiceMode === "tutorial"
+      ? "Traceaのようこそに返す文章を、ダブルクォーテーションの中へ入力しましょう。"
+      : "数字を変えてから実行してみましょう。xの値がどう動くかを見ます。"
+  );
   syncPracticeEditor(root);
   input.focus();
 }
@@ -5742,7 +5817,7 @@ function initPracticeEditor() {
   const highlight = practiceEditorRoot.querySelector("[data-practice-highlight]");
   if (!input || !highlight) return;
 
-  input.value = practiceInitialCode;
+  input.value = practiceEditorRoot.dataset.practiceMode === "tutorial" ? createTutorialInitialCode() : practiceInitialCode;
   syncPracticeEditor(practiceEditorRoot);
 
   input.addEventListener("input", () => {
@@ -5773,6 +5848,137 @@ function initPracticeEditor() {
     if (button.dataset.action === "practice-run") runPracticeEditor(practiceEditorRoot);
     if (button.dataset.action === "practice-reset") resetPracticeEditor(practiceEditorRoot);
   });
+}
+
+function createOnboardingTutorial() {
+  const overlay = document.createElement("section");
+  overlay.className = "practice-tutorial-overlay";
+  overlay.dataset.practiceEditor = "";
+  overlay.dataset.practiceMode = "tutorial";
+  overlay.setAttribute("aria-label", "Practice Editor tutorial");
+  overlay.innerHTML = `
+    <div class="practice-tutorial-frame">
+      <div class="practice-editor-head">
+        <div>
+          <p class="eyebrow">Tracea Tutorial</p>
+          <h2>最初のコードで、Traceaに返事をする</h2>
+        </div>
+        <button class="tutorial-close-button" type="button" data-action="tutorial-close" aria-label="チュートリアルを閉じる">閉じる</button>
+      </div>
+
+      <div class="practice-editor-shell">
+        <aside class="practice-tracea-guide" aria-label="Traceaの案内">
+          <div class="tracea-mini-avatar">T</div>
+          <p class="eyebrow">Tracea</p>
+          <h3>ようこそ、${escapeHtml(currentDisplayName)}さん。</h3>
+          <p data-practice-status>Traceaのようこそに返す文章を、ダブルクォーテーションの中へ入力しましょう。</p>
+          <ul>
+            <li><span>""</span> の中だけを書き換える</li>
+            <li>日本語でも英語でも大丈夫</li>
+            <li>実行するとConsoleに返事が表示されます</li>
+          </ul>
+        </aside>
+
+        <div class="practice-workbench">
+          <div class="practice-window-bar">
+            <div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+            <strong>Main.java</strong>
+            <small>first reply</small>
+          </div>
+
+          <div class="code-editor" data-code-editor>
+            <pre class="practice-line-numbers" data-practice-lines aria-hidden="true"></pre>
+            <div class="practice-highlight-frame" aria-hidden="true">
+              <pre class="practice-highlight"><code data-practice-highlight></code></pre>
+            </div>
+            <textarea class="practice-code-input" data-practice-code spellcheck="false" aria-label="Traceaへの返事を書くJavaコード"></textarea>
+          </div>
+
+          <div class="practice-actions">
+            <button class="action-button primary run-button" type="button" data-action="practice-run">実行</button>
+            <button class="action-button secondary" type="button" data-action="practice-reset">リセット</button>
+            <button class="action-button secondary tutorial-complete-button" type="button" data-action="tutorial-close">学習を始める</button>
+          </div>
+
+          <div class="console-output">
+            <div class="console-title">
+              <span>Console</span>
+              <small>Traceaへの最初の返事</small>
+            </div>
+            <pre data-practice-console>&gt; 実行すると、ここに出力が表示されます。</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  return overlay;
+}
+
+function wirePracticeEditor(root) {
+  const input = root?.querySelector("[data-practice-code]");
+  const highlight = root?.querySelector("[data-practice-highlight]");
+  if (!input || !highlight) return;
+
+  input.value = root.dataset.practiceMode === "tutorial" ? createTutorialInitialCode() : practiceInitialCode;
+  syncPracticeEditor(root);
+
+  input.addEventListener("input", () => {
+    syncPracticeEditor(root);
+    setPracticeStatus(
+      root,
+      root.dataset.practiceMode === "tutorial"
+        ? "入力を見ています。返事は短くても大丈夫です。書けたら実行しましょう。"
+        : "入力を見ています。`x += 数字;` の数字を変えると、出力も変わります。"
+    );
+  });
+
+  input.addEventListener("scroll", () => {
+    const highlightFrame = highlight.parentElement;
+    if (highlightFrame) {
+      highlightFrame.scrollTop = input.scrollTop;
+      highlightFrame.scrollLeft = input.scrollLeft;
+    }
+    const lines = root.querySelector("[data-practice-lines]");
+    if (lines) lines.scrollTop = input.scrollTop;
+  });
+
+  input.addEventListener("keydown", (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+      event.preventDefault();
+      runPracticeEditor(root);
+    }
+  });
+
+  root.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+    if (button.dataset.action === "practice-run") runPracticeEditor(root);
+    if (button.dataset.action === "practice-reset") resetPracticeEditor(root);
+    if (button.dataset.action === "tutorial-close") closeOnboardingTutorial(root);
+  });
+}
+
+function showOnboardingTutorial() {
+  if (hasCompletedOnboardingTutorial() || document.querySelector(".practice-tutorial-overlay")) return;
+
+  const overlay = createOnboardingTutorial();
+  document.body.appendChild(overlay);
+  document.body.classList.add("practice-tutorial-open");
+  wirePracticeEditor(overlay);
+  window.setTimeout(() => {
+    overlay.classList.add("visible");
+    overlay.querySelector("[data-practice-code]")?.focus();
+  }, 30);
+}
+
+function closeOnboardingTutorial(root) {
+  const overlay = root?.closest(".practice-tutorial-overlay") || document.querySelector(".practice-tutorial-overlay");
+  if (!overlay) return;
+
+  markOnboardingTutorialComplete();
+  overlay.classList.remove("visible");
+  document.body.classList.remove("practice-tutorial-open");
+  window.setTimeout(() => overlay.remove(), 220);
 }
 
 function renderExamPrompt(question, hints, options = {}) {
