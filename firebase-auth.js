@@ -214,6 +214,31 @@ function getCheckoutReturnUrl(path) {
   return `${window.location.origin}${directory}${path}`;
 }
 
+function checkoutErrorMessage(errorCode) {
+  if (errorCode.includes("stripe-secret-key-missing")) {
+    return "Stripe秘密鍵がFunctions側に設定されていません。STRIPE_SECRET_KEYを設定してください。";
+  }
+  if (errorCode.includes("stripe-secret-key-invalid-prefix")) {
+    return "Stripe秘密鍵の形式が違います。pk_liveではなく、sk_liveで始まる秘密鍵を設定してください。";
+  }
+  if (errorCode.includes("stripe-secret-key-rejected")) {
+    return "Stripe秘密鍵がStripeに拒否されました。ライブ環境のsk_liveキーが正しいか確認してください。";
+  }
+  if (errorCode.includes("stripe-price-not-found")) {
+    return "StripeのPrice IDが見つかりません。秘密鍵とPrice IDが同じライブ環境のものか確認してください。";
+  }
+  if (errorCode.includes("monthly-price-missing")) {
+    return "月額プランのPrice IDがFunctions側に設定されていません。";
+  }
+  if (errorCode.includes("support-price-missing")) {
+    return "支援用のPrice IDがFunctions側に設定されていません。";
+  }
+  if (errorCode.includes("Failed to fetch")) {
+    return "Checkout用のFirebase Functionsに接続できません。ページを再読み込みして、もう一度試してください。";
+  }
+  return "Checkout画面を作成できませんでした。Firebase Functionsの設定を確認してください。";
+}
+
 async function startStripeCheckout(plan) {
   const user = auth.currentUser;
   const cleanPlan = plan === "monthly" ? "monthly" : "support";
@@ -261,15 +286,7 @@ async function startStripeCheckout(plan) {
     window.location.assign(data.url);
   } catch (error) {
     const errorCode = error?.message || "";
-    const message = errorCode.includes("stripe-secret-key-missing")
-      ? "Stripe秘密鍵がFunctions側に設定されていません。STRIPE_SECRET_KEYを設定してください。"
-      : errorCode.includes("monthly-price-missing")
-        ? "月額プランのPrice IDがFunctions側に設定されていません。"
-        : errorCode.includes("support-price-missing")
-          ? "支援用のPrice IDがFunctions側に設定されていません。"
-          : errorCode.includes("Failed to fetch")
-            ? "Checkout用のFirebase Functionsに接続できません。ページを再読み込みして、もう一度試してください。"
-            : "Checkout画面を作成できませんでした。Firebase Functionsの設定を確認してください。";
+    const message = checkoutErrorMessage(errorCode);
 
     window.dispatchEvent(new CustomEvent("java-practice-checkout-error", {
       detail: { message }

@@ -56,9 +56,32 @@ function getStripe() {
   if (!stripeSecretKey) {
     throw new Error("stripe-secret-key-missing");
   }
+  if (!stripeSecretKey.startsWith("sk_")) {
+    throw new Error("stripe-secret-key-invalid-prefix");
+  }
   return new Stripe(stripeSecretKey, {
     apiVersion: "2024-12-18.acacia"
   });
+}
+
+function checkoutErrorCode(error) {
+  const message = error?.message || "checkout-session-failed";
+  const stripeCode = error?.code || "";
+  const stripeType = error?.type || "";
+
+  if (message.includes("No such price") || stripeCode === "resource_missing") {
+    return "stripe-price-not-found";
+  }
+  if (stripeType === "StripeAuthenticationError") {
+    return "stripe-secret-key-rejected";
+  }
+  if (message.includes("Invalid API Key")) {
+    return "stripe-secret-key-rejected";
+  }
+  if (message.includes("No API key provided")) {
+    return "stripe-secret-key-missing";
+  }
+  return message;
 }
 
 function assertAllowedReturnUrl(value, fallbackPath) {
@@ -140,9 +163,14 @@ exports.createStripeCheckoutSession = functions
 
       return res.json({ url: session.url });
     } catch (error) {
-      const message = error?.message || "checkout-session-failed";
-      const status = message.includes("missing") ? 500 : 400;
-      return res.status(status).json({ error: message });
+      const errorCode = checkoutErrorCode(error);
+      console.error("checkout-session-error", {
+        code: errorCode,
+        stripeType: error?.type || null,
+        stripeCode: error?.code || null
+      });
+      const status = errorCode.includes("missing") ? 500 : 400;
+      return res.status(status).json({ error: errorCode });
     }
   });
 
