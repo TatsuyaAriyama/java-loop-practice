@@ -241,7 +241,7 @@ function checkoutErrorMessage(errorCode) {
 
 async function startStripeCheckout(plan) {
   const user = auth.currentUser;
-  const cleanPlan = plan === "monthly" ? "monthly" : "support";
+  const cleanPlan = plan === "support" ? "support" : "monthly";
 
   if (!user) {
     window.dispatchEvent(new CustomEvent("java-practice-checkout-error", {

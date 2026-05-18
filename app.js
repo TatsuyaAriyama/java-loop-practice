@@ -413,6 +413,7 @@ const uiCopy = {
     intermediate: "中級",
     timesSuffix: "回",
     support: "支援する",
+    supportSoon: "支援する（準備中）",
     monthlyPlan: "月額プランに参加する",
     checkoutPreparing: "Stripe Checkoutへ移動します。",
     checkoutRedirecting: "Stripe Checkoutへ移動しています。",
@@ -447,6 +448,7 @@ const uiCopy = {
     intermediate: "Intermediate",
     timesSuffix: "x",
     support: "Support",
+    supportSoon: "Support coming soon",
     monthlyPlan: "Join monthly plan",
     checkoutPreparing: "Opening Stripe Checkout.",
     checkoutRedirecting: "Redirecting to Stripe Checkout.",
@@ -3955,9 +3957,10 @@ function ensureBillingActions() {
   const supportButton = document.createElement("button");
   supportButton.className = "secondary-link billing-link";
   supportButton.type = "button";
-  supportButton.dataset.billingPlan = "support";
-  supportButton.dataset.i18n = "support";
-  supportButton.textContent = t("support");
+  supportButton.disabled = true;
+  supportButton.dataset.i18n = "supportSoon";
+  supportButton.textContent = t("supportSoon");
+  supportButton.title = "支援用のStripe Price IDを設定すると有効になります。";
 
   const monthlyButton = document.createElement("button");
   monthlyButton.className = "primary-link billing-link";
