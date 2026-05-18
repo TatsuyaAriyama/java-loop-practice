@@ -32,7 +32,9 @@ const allowedOrigins = new Set([
 
 function setCors(req, res) {
   const origin = req.get("origin") || "";
-  if (allowedOrigins.has(origin)) {
+  if (origin === "null") {
+    res.set("Access-Control-Allow-Origin", "*");
+  } else if (allowedOrigins.has(origin)) {
     res.set("Access-Control-Allow-Origin", origin);
   } else {
     res.set("Access-Control-Allow-Origin", "https://tatsuyaariyama.github.io");
