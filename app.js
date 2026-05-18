@@ -418,7 +418,9 @@ const uiCopy = {
     checkoutRedirecting: "Stripe Checkoutへ移動しています。",
     checkoutSecureNote: "カード情報はStripe上で安全に入力します。",
     billingActive: "月額プランは有効です。",
-    billingSupported: "支援ありがとうございます。決済状態は保存されています。"
+    billingSupported: "支援ありがとうございます。決済状態は保存されています。",
+    traceRoomLogoAria: "Trace Roomへ移動",
+    traceRoomTagline: "学習者が集まる共有ラボ"
   },
   en: {
     userInfo: "User information",
@@ -450,7 +452,9 @@ const uiCopy = {
     checkoutRedirecting: "Redirecting to Stripe Checkout.",
     checkoutSecureNote: "Card details are entered securely on Stripe.",
     billingActive: "Your monthly plan is active.",
-    billingSupported: "Thank you for your support. Payment status is saved."
+    billingSupported: "Thank you for your support. Payment status is saved.",
+    traceRoomLogoAria: "Open Trace Room",
+    traceRoomTagline: "Shared lab for Java learners"
   }
 };
 
@@ -3917,6 +3921,33 @@ function ensureStudyLogPanel() {
   renderStudyLog();
 }
 
+function ensureTraceRoomLogo() {
+  if (!headerInner || headerInner.querySelector(".trace-room-logo")) return;
+
+  const logo = document.createElement("a");
+  logo.className = "trace-room-logo";
+  logo.href = "trace-room.html";
+  logo.setAttribute("aria-label", t("traceRoomLogoAria"));
+  logo.setAttribute("data-i18n-aria", "traceRoomLogoAria");
+  logo.innerHTML = `
+    <span class="trace-room-mark" aria-hidden="true">
+      <span class="trace-room-mark-core">TR</span>
+    </span>
+    <span class="trace-room-word">
+      <strong>TRACE ROOM</strong>
+      <small data-i18n="traceRoomTagline">${t("traceRoomTagline")}</small>
+    </span>
+  `;
+
+  const typeLogoElement = headerInner.querySelector(".type-logo");
+  if (typeLogoElement) {
+    headerInner.insertBefore(logo, typeLogoElement);
+  } else {
+    headerInner.prepend(logo);
+  }
+  applyLanguageToDynamicUi();
+}
+
 function ensureBillingActions() {
   const actions = headerInner?.querySelector(".header-actions");
   if (!actions || actions.querySelector("[data-billing-plan]")) return;
@@ -5807,6 +5838,7 @@ renderClassMethodQuestions(classList, classQuestions, {
   panelLabel: "クラスコード"
 });
 ensureLessonSeriesGroups();
+ensureTraceRoomLogo();
 ensureUserSummary();
 ensureStudyLogPanel();
 ensureBillingActions();
