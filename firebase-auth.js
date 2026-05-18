@@ -230,6 +230,18 @@ function checkoutErrorMessage(errorCode) {
   if (errorCode.includes("monthly-price-missing")) {
     return "月額プランのPrice IDがFunctions側に設定されていません。";
   }
+  if (errorCode.includes("monthly-price-not-recurring")) {
+    return "月額プランのPrice IDが単発決済用になっています。Stripeでrecurringの月額Priceを作成し、そのPrice IDをFunctions側に設定してください。";
+  }
+  if (errorCode.includes("monthly-price-inactive")) {
+    return "月額プランのPriceがStripe側で無効です。StripeでPriceが有効か確認してください。";
+  }
+  if (errorCode.includes("support-price-is-recurring")) {
+    return "支援用のPrice IDが月額課金用になっています。単発支援にはone-timeのPrice IDを設定してください。";
+  }
+  if (errorCode.includes("support-price-inactive")) {
+    return "支援用のPriceがStripe側で無効です。StripeでPriceが有効か確認してください。";
+  }
   if (errorCode.includes("support-price-missing")) {
     return "支援用のPrice IDがFunctions側に設定されていません。";
   }

@@ -116,6 +116,32 @@ function resolveCheckoutPlan(rawPlan) {
   };
 }
 
+async function assertCheckoutPrice(stripe, { plan, mode, price }) {
+  let stripePrice;
+  try {
+    stripePrice = await stripe.prices.retrieve(price);
+  } catch (error) {
+    if (error?.code === "resource_missing") {
+      throw new Error("stripe-price-not-found");
+    }
+    throw error;
+  }
+
+  if (!stripePrice?.active) {
+    throw new Error(`${plan}-price-inactive`);
+  }
+
+  if (mode === "subscription" && !stripePrice.recurring) {
+    throw new Error("monthly-price-not-recurring");
+  }
+
+  if (mode === "payment" && stripePrice.recurring) {
+    throw new Error("support-price-is-recurring");
+  }
+
+  return stripePrice;
+}
+
 exports.createStripeCheckoutSession = functions
   .runWith(publicCheckoutOptions)
   .region("us-central1")
@@ -133,6 +159,7 @@ exports.createStripeCheckoutSession = functions
       const successUrl = assertAllowedReturnUrl(req.body?.successUrl, "success/");
       const cancelUrl = assertAllowedReturnUrl(req.body?.cancelUrl, "cancel/");
       const stripe = getStripe();
+      await assertCheckoutPrice(stripe, { plan, mode, price });
 
       const session = await stripe.checkout.sessions.create({
         mode,
