@@ -1395,6 +1395,19 @@ h1 {
   color: var(--muted);
 }
 
+.trace-room-heading {
+  margin-bottom: 20px;
+  border-left-width: 4px;
+  padding: 6px 0 6px 16px;
+}
+
+.trace-room-title-mark {
+  margin-bottom: 10px;
+  color: var(--red);
+  font-size: 17px;
+  letter-spacing: 0.08em;
+}
+
 .basics-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1982,34 +1995,43 @@ h1 {
 }
 
 .trace-room-switcher {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin: -8px 0 22px;
+  display: inline-grid;
+  grid-template-columns: repeat(2, minmax(116px, 1fr));
+  gap: 4px;
+  width: min(420px, 100%);
+  margin: -4px 0 24px;
+  border: 1px solid rgba(17, 17, 17, 0.14);
+  border-radius: 999px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 18px 44px rgba(17, 17, 17, 0.07);
+  backdrop-filter: blur(14px);
 }
 
 .trace-room-switch {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 14px 16px;
+  position: relative;
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 18px;
   color: var(--ink);
-  background: #ffffff;
+  background: transparent;
   text-decoration: none;
-  box-shadow: 0 10px 30px rgba(14, 14, 14, 0.05);
-  transition: border-color 180ms var(--ease-ui), transform 180ms var(--ease-ui), box-shadow 180ms var(--ease-ui), background 180ms var(--ease-ui);
+  text-align: center;
+  box-shadow: none;
+  transition: color 180ms var(--ease-ui), transform 180ms var(--ease-ui), box-shadow 180ms var(--ease-ui), background 180ms var(--ease-ui);
   will-change: transform;
 }
 
 .trace-room-switch:hover {
-  border-color: var(--red);
-  background: #fffafa;
-  transform: translateY(-2px);
-  box-shadow: var(--red-glow);
+  background: rgba(200, 16, 46, 0.06);
+  color: var(--red);
+  transform: translateY(-1px);
 }
 
 .trace-room-switch.active {
-  border-color: var(--red);
-  background: #fff7f8;
+  background: #111111;
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(17, 17, 17, 0.15);
 }
 
 .trace-room-switch span,
@@ -2018,15 +2040,17 @@ h1 {
 }
 
 .trace-room-switch span {
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 950;
+  letter-spacing: 0.02em;
 }
 
 .trace-room-switch small {
-  margin-top: 4px;
-  color: var(--muted);
-  font-size: 11px;
+  margin-top: 2px;
+  color: currentColor;
+  font-size: 9px;
   font-weight: 850;
+  opacity: 0.55;
 }
 
 .trace-room-chat {
