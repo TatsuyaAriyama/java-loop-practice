@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Java Silver前提仕様編</title>
+  <script>
+    try { if (localStorage.getItem("java-output-practice-auth") === "signed-in") document.documentElement.classList.add("auth-optimistic"); } catch {}
+  </script>
+  <style>
+    body.auth-pending .auth-screen, body.auth-pending .app-shell { display: none !important; }
+    html.auth-optimistic body.auth-pending .app-shell { display: block !important; }
+  </style>
+  <link rel="stylesheet" href="styles.css?v=silver-specs-20260518">
+</head>
+<body class="auth-pending">
+  <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
+    <div class="auth-shell">
+      <div class="auth-brand"><p class="eyebrow">Java Output Practice</p><h1>ログイン</h1><p>メール、パスワード、またはGoogleアカウントで学習ページに入ります。</p></div>
+      <form class="auth-card" id="authForm">
+        <label><span>メールアドレス</span><input type="email" id="authEmail" autocomplete="email" required></label>
+        <label><span>パスワード</span><input type="password" id="authPassword" autocomplete="current-password" required minlength="6"></label>
+        <button class="action-button primary auth-submit" type="submit">メールでログイン</button>
+        <button class="action-button secondary auth-create" type="button" id="createAccountButton">新規作成</button>
+        <div class="auth-divider"><span>or</span></div>
+        <button class="google-button" type="button" id="googleLoginButton"><span>G</span>Googleアカウントでログイン</button>
+        <p class="auth-message" id="authMessage" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell" aria-hidden="true">
+    <header class="site-header">
+      <div class="header-inner">
+        <p class="lesson-current">Java Silver前提仕様編 / 読解Lesson</p>
+        <p class="eyebrow type-logo" aria-label="JAVA OUTPUT PRACTICE"></p>
+        <div class="header-actions">
+          <button class="secondary-link lesson-toggle" type="button" id="lessonToggle" aria-expanded="false" aria-controls="lessonPanel">Lesson一覧</button>
+          <a href="trace-room.html" class="secondary-link">Trace Room</a>
+          <a href="#final" class="primary-link">最初から読む</a>
+          <a href="silver-review.html" class="secondary-link">Silver対策へ</a>
+        </div>
+        <nav class="lesson-panel" id="lessonPanel" aria-label="Lesson一覧">
+          <div class="lesson-panel-head"><p class="eyebrow">Lesson Index</p><h2>Lesson一覧</h2><p>Java Silver前に、仕様で止まりやすい言葉を先にほどきます。</p></div>
+          <div class="lesson-groups">
+            <section class="lesson-group open" data-lesson-group="silver-specs">
+              <button class="lesson-group-toggle" type="button" aria-expanded="true"><span>Java Silver前提仕様編</span><small>8 Lessons</small></button>
+              <div class="lesson-links">
+                <a href="#final" data-lesson-link="spec-final"><span>01</span><b>finalとは？</b><small class="lesson-check">読む</small></a>
+                <a href="#access" data-lesson-link="spec-access"><span>02</span><b>アクセス修飾子</b><small class="lesson-check">読む</small></a>
+                <a href="#inheritance" data-lesson-link="spec-inheritance"><span>03</span><b>継承</b><small class="lesson-check">読む</small></a>
+                <a href="#abstract" data-lesson-link="spec-abstract"><span>04</span><b>abstractとは？</b><small class="lesson-check">読む</small></a>
+                <a href="#interface" data-lesson-link="spec-interface"><span>05</span><b>interfaceとは？</b><small class="lesson-check">読む</small></a>
+                <a href="#overload-override" data-lesson-link="spec-overload-override"><span>06</span><b>オーバーロードとオーバーライド</b><small class="lesson-check">読む</small></a>
+                <a href="#immutable" data-lesson-link="spec-immutable"><span>07</span><b>immutableとは？</b><small class="lesson-check">読む</small></a>
+                <a href="#record" data-lesson-link="spec-record"><span>08</span><b>record classとは？</b><small class="lesson-check">読む</small></a>
+              </div>
+            </section>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="syntax-section">
+        <div class="section-heading">
+          <p class="eyebrow">Before Java Silver</p>
+          <h2>コードを書くだけでは見えにくい、Javaの仕様を先に読む。</h2>
+          <p>Java Silverの問題は、文法を書けるだけでは止まります。どの修飾子が何を禁止するのか、どの型がどこまで約束するのか。ここでは、問題で迷いやすい仕様を短く整理します。</p>
+        </div>
+
+        <div class="topic-deep-dive">
+          <p class="eyebrow">Tracea Guide</p>
+          <h3>「覚える」より先に、「何を守るための仕様か」を見ましょう。</h3>
+          <div class="deep-body">
+            <p>final、abstract、interface、privateは、単語だけ見ると硬いです。でも多くは「勝手に変えない」「未完成をそのまま使わない」「外から雑に触らせない」ためのルールです。</p>
+            <p>Silver問題では、出力よりも先に「これはコンパイルできるか」「このメソッドは上書きできるか」「この値は変わるか」を聞かれます。仕様の理由まで軽くつかんでおくと、選択肢を消す速度が上がります。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="final" class="syntax-section spec-lesson">
+        <div class="section-heading">
+          <p class="eyebrow">Lesson 01 / final</p>
+          <h2>finalは「ここから先は変えない」というロック。</h2>
+          <p>finalは場所によって意味が少し変わります。変数なら再代入できない。メソッドならオーバーライドできない。クラスなら継承できない。共通しているのは、後から勝手に変えられる範囲を狭くすることです。</p>
+        </div>
+        <div class="syntax-layout">
+          <div class="syntax-code"><pre><code>final int max = 10;
+// max = 20; // 再代入できない
+
+final class Tool {
+}
+// class MyTool extends Tool {} // 継承できない</code></pre></div>
+          <div class="syntax-cards">
+            <article class="topic-card"><span class="syntax-label">variable</span><h3>final変数は再代入できない</h3><p>値そのものを守るというより、変数が別の値を指すことを止めます。</p></article>
+            <article class="topic-card"><span class="syntax-label">method</span><h3>finalメソッドは上書き不可</h3><p>子クラスで動きを変えられたくない処理に使います。</p></article>
+            <article class="topic-card"><span class="syntax-label">class</span><h3>finalクラスは継承不可</h3><p>設計をこれ以上広げない、と宣言する形です。</p></article>
+          </div>
+        </div>
+        <div class="topic-deep-dive">
+          <p class="eyebrow">Tracea</p>
+          <h3>勘違い注意: final参照でも、中身が必ず不変とは限りません。</h3>
+          <p>final List&lt;String&gt; list は、listに別のListを代入できないだけです。Listの中へaddできるかどうかは、また別の話です。Silverではここがよく引っかかります。</p>
+        </div>
+        <div class="button-row"><a class="primary-link" href="#access">次のLessonへ</a></div>
+      </section>
+
+      <section id="access" class="syntax-section spec-lesson">
+        <div class="section-heading">
+          <p class="eyebrow">Lesson 02 / access modifier</p>
+          <h2>アクセス修飾子は「誰が触れるか」を決める。</h2>
+          <p>private、何も書かない、protected、publicの違いは、見える範囲の違いです。出力問題というより、コンパイルできるかを判定する問題で効きます。</p>
+        </div>
+        <div class="syntax-layout">
+          <div class="syntax-code"><pre><code>public class Student {
+  private int score;
+
+  public int getScore() {
+    return score;
+  }
+}</code></pre></div>
+          <div class="syntax-cards">
+            <article class="topic-card"><span class="syntax-label">private</span><h3>同じクラス内だけ</h3><p>一番狭い。外から直接触らせたくない値に使います。</p></article>
+            <article class="topic-card"><span class="syntax-label">default</span><h3>同じパッケージ内</h3><p>何も書かない状態です。publicではありません。</p></article>
+            <article class="topic-card"><span class="syntax-label">protected</span><h3>同じパッケージ + 継承先</h3><p>privateより広いですが、publicほど全開ではありません。</p></article>
+            <article class="topic-card"><span class="syntax-label">public</span><h3>どこからでも見える</h3><p>公開APIとして使わせるものに付けます。</p></article>
+          </div>
+        </div>
+        <div class="topic-deep-dive">
+          <p class="eyebrow">Tracea</p>
+          <h3>勘違い注意: top-level classにprivate/protectedは付けられません。</h3>
+          <p>普通のファイル直下のclassは、publicか何も書かない形です。private classやprotected classを見たら、まずコンパイルエラー候補として見てください。</p>
+        </div>
+        <div class="button-row"><a class="secondary-link" href="#final">前へ</a><a class="primary-link" href="#inheritance">次のLessonへ</a></div>
+      </section>
+
+      <section id="inheritance" class="syntax-section spec-lesson">
+        <div class="section-heading">
+          <p class="eyebrow">Lesson 03 / inheritance</p>
+          <h2>継承は「共通部分を受け継ぎ、必要なら差し替える」仕組み。</h2>
+          <p>extendsで親クラスのフィールドやメソッドを使えるようになります。ただし、何でも自由に触れるわけではありません。アクセス修飾子、コンストラクタ、オーバーライドの条件を一緒に見ます。</p>
+        </div>
+        <div class="syntax-layout">
+          <div class="syntax-code"><pre><code>class Animal {
+  void speak() {
+    System.out.println("...");
+  }
+}
+
+class Dog extends Animal {
+  @Override
+  void speak() {
+    System.out.println("bow");
+  }
+}</code></pre></div>
+          <div class="syntax-cards">
+            <article class="topic-card"><span class="syntax-label">extends</span><h3>親の機能を受け継ぐ</h3><p>共通処理を親に置き、子で使い回せます。</p></article>
+            <article class="topic-card"><span class="syntax-label">override</span><h3>必要なら動きを変える</h3><p>同じシグネチャのメソッドを子で書き直します。</p></article>
+            <article class="topic-card"><span class="syntax-label">super</span><h3>親側を見る合図</h3><p>親のコンストラクタやメソッドへ進むときに使います。</p></article>
+          </div>
+        </div>
+        <div class="topic-deep-dive">
+          <p class="eyebrow">Tracea</p>
+          <h3>勘違い注意: コンストラクタは継承されません。</h3>
+          <p>子クラスのコンストラクタから親コンストラクタを呼ぶことはありますが、親のコンストラクタそのものが子へ受け継がれるわけではありません。</p>
+        </div>
+        <div class="button-row"><a class="secondary-link" href="#access">前へ</a><a class="primary-link" href="#abstract">次のLessonへ</a></div>
+      </section>
+
+      <section id="abstract" class="syntax-section spec-lesson">
+        <div class="section-heading">
+          <p class="eyebrow">Lesson 04 / abstract</p>
+          <h2>abstractは「まだ完成していない部分がある」という印。</h2>
+          <p>abstract classは直接newできません。abstract methodは中身を持たず、子クラスが実装する約束になります。未完成のまま使わせないための仕様です。</p>
+        </div>
+        <div class="syntax-layout">
+          <div class="syntax-code"><pre><code>abstract class Shape {
+  abstract int area();
+}
+
+class Square extends Shape {
+  int area() {
+    return 9;
+  }
+}</code></pre></div>
+          <div class="syntax-cards">
+            <article class="topic-card"><span class="syntax-label">no new</span><h3>abstract classは直接new不可</h3><p>設計の途中なので、そのまま実体にできません。</p></article>
+            <article class="topic-card"><span class="syntax-label">no body</span><h3>abstract methodは本体なし</h3><p>波かっこではなく、セミコロンで終わります。</p></article>
+            <article class="topic-card"><span class="syntax-label">implement</span><h3>子クラスが完成させる</h3><p>未実装のメソッドを子が実装します。</p></article>
+          </div>
+        </div>
+        <div class="topic-deep-dive">
+          <p class="eyebrow">Tracea</p>
+          <h3>勘違い注意: abstractとfinalは同時に成立しません。</h3>
+          <p>abstractは「子に完成させてほしい」、finalは「子を作らせない」。方向が逆なので、同じクラスに両方付けるとコンパイルエラーです。</p>
+        </div>
+        <div class="button-row"><a class="secondary-link" href="#inheritance">前へ</a><a class="primary-link" href="#interface">次のLessonへ</a></div>
+      </section>
+
+      <section id="interface" class="syntax-section spec-lesson">
+        <div class="section-heading">
+          <p class="eyebrow">Lesson 05 / interface</p>
+          <h2>interfaceは「この形で使える」という契約。</h2>
+          <p>interfaceは、クラスに実装してほしい振る舞いを決めます。普通の抽象メソッドはpublic abstract扱いです。フィールドはpublic static final扱いです。</p>
+        </div>
+        <div class="syntax-layout">
+          <div class="syntax-code"><pre><code>interface Printable {
+  int SIZE = 10;
+  void print();
+
+  default void log() {
+    System.out.println("log");
+  }
+}</code></pre></div>
+          <div class="syntax-cards">
+            <article class="topic-card"><span class="syntax-label">contract</span><h3>実装すべき形を決める</h3><p>implementsしたクラスは、必要なメソッドを実装します。</p></article>
+            <article class="topic-card"><span class="syntax-label">default</span><h3>defaultは本体を持てる</h3><p>interface内でも、default methodは処理を書けます。</p></article>
+            <article class="topic-card"><span class="syntax-label">constant</span><h3>変数は定数扱い</h3><p>interfaceのフィールドはpublic static finalとして扱われます。</p></article>
+          </div>
+        </div>
+        <div class="topic-deep-dive">
+          <p class="eyebrow">Tracea</p>
+          <h3>勘違い注意: interfaceの普通のメソッドはpublicです。</h3>
+          <p>実装クラス側でアクセスを狭くすると、オーバーライド条件を満たせません。Silverでは「publicを付け忘れている実装」が罠になります。</p>
+        </div>
+        <div class="button-row"><a class="secondary-link" href="#abstract">前へ</a><a class="primary-link" href="#overload-override">次のLessonへ</a></div>
+      </section>
+
+      <section id="overload-override" class="syntax-section spec-lesson">
+        <div class="section-heading">
+          <p class="eyebrow">Lesson 06 / overload vs override</p>
+          <h2>オーバーロードは「別メニュー」、オーバーライドは「上書き」。</h2>
+          <p>名前が似ていますが、試験ではまったく違う判定をします。オーバーロードは同じ名前で引数が違うメソッドを増やすこと。オーバーライドは親のメソッドを子で置き換えることです。</p>
+        </div>
+        <div class="syntax-layout">
+          <div class="syntax-code"><pre><code>void print(String text) {}
+void print(int number) {} // overload
+
+class Child extends Parent {
+  @Override
+  void show() {} // override
+}</code></pre></div>
+          <div class="syntax-cards">
+            <article class="topic-card"><span class="syntax-label">overload</span><h3>引数リストで区別</h3><p>戻り値だけ違ってもオーバーロードにはなりません。</p></article>
+            <article class="topic-card"><span class="syntax-label">override</span><h3>親と同じシグネチャ</h3><p>アクセスを狭くできず、戻り値にもルールがあります。</p></article>
+            <article class="topic-card"><span class="syntax-label">@Override</span><h3>ミス検出に役立つ</h3><p>上書きできていなければコンパイル時に気づけます。</p></article>
+          </div>
+        </div>
+        <div class="topic-deep-dive">
+          <p class="eyebrow">Tracea</p>
+          <h3>勘違い注意: 戻り値だけを変えてもオーバーロードではありません。</h3>
+          <p>Javaは呼び出し時の引数でどのメソッドか選びます。戻り値だけ違う同名同引数メソッドは区別できないので、コンパイルエラーです。</p>
+        </div>
+        <div class="button-row"><a class="secondary-link" href="#interface">前へ</a><a class="primary-link" href="#immutable">次のLessonへ</a></div>
+      </section>
+
+      <section id="immutable" class="syntax-section spec-lesson">
+        <div class="section-heading">
+          <p class="eyebrow">Lesson 07 / immutable</p>
+          <h2>immutableは「作った後に状態が変わらない」こと。</h2>
+          <p>Stringは代表的なimmutableです。replaceやconcatを呼んでも、元のStringが変わるのではなく、新しいStringが返ります。問題では、戻り値を代入しているかを必ず見ます。</p>
+        </div>
+        <div class="syntax-layout">
+          <div class="syntax-code"><pre><code>String s = "Java";
+s.concat(" Silver");
+System.out.println(s); // Java
+
+s = s.concat(" Silver");
+System.out.println(s); // Java Silver</code></pre></div>
+          <div class="syntax-cards">
+            <article class="topic-card"><span class="syntax-label">String</span><h3>Stringは変わらない</h3><p>メソッドは新しい文字列を返します。</p></article>
+            <article class="topic-card"><span class="syntax-label">assign</span><h3>代入して初めて変数が変わる</h3><p>戻り値を受け取らないと、結果は捨てられます。</p></article>
+            <article class="topic-card"><span class="syntax-label">safe</span><h3>安全に共有しやすい</h3><p>勝手に中身が変わらないので、読みやすさと安全性が上がります。</p></article>
+          </div>
+        </div>
+        <div class="topic-deep-dive">
+          <p class="eyebrow">Tracea</p>
+          <h3>勘違い注意: finalとimmutableは同じではありません。</h3>
+          <p>finalは変数の再代入を止める印です。immutableはオブジェクトの状態が変わらない性質です。言葉が近いだけで、見る場所が違います。</p>
+        </div>
+        <div class="button-row"><a class="secondary-link" href="#overload-override">前へ</a><a class="primary-link" href="#record">次のLessonへ</a></div>
+      </section>
+
+      <section id="record" class="syntax-section spec-lesson">
+        <div class="section-heading">
+          <p class="eyebrow">Lesson 08 / record class</p>
+          <h2>recordは「データを持つ小さな型」を短く書く仕組み。</h2>
+          <p>recordは、値を運ぶためのクラスを簡潔に書く機能です。コンポーネントから、private finalフィールド、アクセサ、コンストラクタ、equals、hashCode、toStringが作られます。</p>
+        </div>
+        <div class="syntax-layout">
+          <div class="syntax-code"><pre><code>record Student(String name, int score) {
+}
+
+Student s = new Student("Aoi", 90);
+System.out.println(s.name());
+System.out.println(s.score());</code></pre></div>
+          <div class="syntax-cards">
+            <article class="topic-card"><span class="syntax-label">component</span><h3>丸かっこ内がデータ</h3><p>String nameやint scoreをコンポーネントと呼びます。</p></article>
+            <article class="topic-card"><span class="syntax-label">accessor</span><h3>アクセサはname()</h3><p>getName()ではなく、コンポーネント名と同じメソッドです。</p></article>
+            <article class="topic-card"><span class="syntax-label">final</span><h3>recordは継承されない</h3><p>recordは暗黙的にfinalです。</p></article>
+          </div>
+        </div>
+        <div class="topic-deep-dive">
+          <p class="eyebrow">Tracea</p>
+          <h3>勘違い注意: recordは完全な深いimmutableを保証するわけではありません。</h3>
+          <p>recordのフィールドは再代入できません。ただし、コンポーネントに可変オブジェクトを渡した場合、その中身まで自動で守られるわけではありません。</p>
+        </div>
+        <div class="button-row"><a class="secondary-link" href="#immutable">前へ</a><a class="primary-link" href="silver-review.html">Silver対策へ</a></div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><p>Java Silver prep / final・abstract・interface・record</p><button class="signout-button" type="button" id="signOutButton">ログアウト</button></footer>
+  </div>
+
+  <script src="app.js?v=silver-specs-20260518"></script>
+  <script type="module" src="firebase-auth.js?v=silver-specs-20260518"></script>
+</body>
+</html>

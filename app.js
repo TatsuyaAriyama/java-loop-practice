@@ -5069,6 +5069,23 @@ function createOopBasicLessonGroup() {
   });
 }
 
+function createSilverSpecLessonGroup() {
+  return createLessonGroup({
+    id: "silver-specs",
+    title: "Java Silver前提仕様編",
+    lessons: [
+      { id: "spec-final", href: "silver-specs.html#final", title: "finalとは？", status: "読む" },
+      { id: "spec-access", href: "silver-specs.html#access", title: "アクセス修飾子", status: "読む" },
+      { id: "spec-inheritance", href: "silver-specs.html#inheritance", title: "継承", status: "読む" },
+      { id: "spec-abstract", href: "silver-specs.html#abstract", title: "abstractとは？", status: "読む" },
+      { id: "spec-interface", href: "silver-specs.html#interface", title: "interfaceとは？", status: "読む" },
+      { id: "spec-overload-override", href: "silver-specs.html#overload-override", title: "オーバーロードとオーバーライド", status: "読む" },
+      { id: "spec-immutable", href: "silver-specs.html#immutable", title: "immutableとは？", status: "読む" },
+      { id: "spec-record", href: "silver-specs.html#record", title: "record classとは？", status: "読む" }
+    ]
+  });
+}
+
 function insertLessonGroupAfter(groups, group, afterSelector) {
   const after = groups.querySelector(afterSelector);
   if (after?.nextSibling) {
@@ -5104,8 +5121,12 @@ function ensureLessonSeriesGroups() {
       insertLessonGroupAfter(groups, createOopBasicLessonGroup(), '[data-lesson-group="class-method"]');
     }
 
+    if (!groups.querySelector('[data-lesson-group="silver-specs"]')) {
+      insertLessonGroupAfter(groups, createSilverSpecLessonGroup(), '[data-lesson-group="oop-basic"]');
+    }
+
     if (!groups.querySelector('[data-lesson-group="modern-syntax"]')) {
-      insertLessonGroupAfter(groups, createModernSyntaxLessonGroup(), '[data-lesson-group="oop-basic"]');
+      insertLessonGroupAfter(groups, createModernSyntaxLessonGroup(), '[data-lesson-group="silver-specs"]');
     }
 
     if (!groups.querySelector('[data-lesson-group="compile-error-reading"]')) {
