@@ -324,7 +324,7 @@ const methodOneList = document.querySelector("#methodOneQuestionList");
 const methodTwoList = document.querySelector("#methodTwoQuestionList");
 const classList = document.querySelector("#classQuestionList");
 const oopBasicList = document.querySelector("#oopBasicQuestionList");
-const levelButtons = [...document.querySelectorAll(".difficulty-tab")];
+let levelButtons = [...document.querySelectorAll(".difficulty-tab")];
 const questionsSection = document.querySelector("#questions");
 const unlockInput = document.querySelector(".unlock-input");
 const unlockButton = document.querySelector("#unlockButton");
@@ -3485,7 +3485,10 @@ const basicSyntaxQuestions = [
   makeClassMethodQuestion({ title: "Stringの箱に文字を入れる", concept: "String / variable", prompt: "nameという名前の箱にAoiを入れて表示します。", output: "Aoi", explanation: "Stringは文字列用の箱です。文字列は\"Aoi\"のようにダブルクォーテーションで囲みます。", parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "String", chars: 7 }, " name = ", { answer: "\"Aoi\"", chars: 7 }, ";\n    System.out.println(name);\n  }\n}"] }),
   makeClassMethodQuestion({ title: "変数の中身を表示する", concept: "variable / println", prompt: "messageという箱の中身を表示します。変数名はクォーテーションで囲みません。", output: "ready", explanation: "変数の中身を表示するときは、System.out.println(message)のように変数名をそのまま書きます。", parts: ["class Main {\n  public static void main(String[] args) {\n    String message = \"ready\";\n    System.out.println(", { answer: "message", chars: 8 }, ");\n  }\n}"] }),
   makeClassMethodQuestion({ title: "同じ変数に新しい値を入れる", concept: "assignment", prompt: "levelの中身を1から2に入れ替えて、最後の値を表示します。", output: "2", explanation: "=は右の値を左の箱へ入れる記号です。あとから入れ直すと、前の値は新しい値に変わります。", parts: ["class Main {\n  public static void main(String[] args) {\n    int level = 1;\n    level = ", { answer: "2", chars: 2 }, ";\n    System.out.println(level);\n  }\n}"] }),
-  makeClassMethodQuestion({ title: "2つの命令を上から読む", concept: "order", prompt: "Javaはmainの中の命令を上から順番に動かします。", output: "first\nsecond", explanation: "上のprintlnが先、下のprintlnが後です。コードを読むときは、まず上から下へ目で追います。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(\"first\");\n    System.out.println(", { answer: "\"second\"", chars: 9 }, ");\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "2つの命令を上から読む", concept: "order", prompt: "Javaはmainの中の命令を上から順番に動かします。", output: "first\nsecond", explanation: "上のprintlnが先、下のprintlnが後です。コードを読むときは、まず上から下へ目で追います。", parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(\"first\");\n    System.out.println(", { answer: "\"second\"", chars: 9 }, ");\n  }\n}"] })
+];
+
+const basicSyntaxIntermediateQuestions = [
   makeClassMethodQuestion({
     title: "変数の上書きと文字列連結を読む",
     concept: "assignment / concat",
@@ -3496,13 +3499,85 @@ const basicSyntaxQuestions = [
     parts: ["class Main {\n  public static void main(String[] args) {\n    String status = \"draft\";\n    status = ", { answer: "\"ready\"", chars: 8 }, ";\n\n    System.out.println(", { answer: "\"status: \" + status", accepts: ["\"status: \" + status", "\"status: \"+status"], chars: 20 }, ");\n  }\n}"]
   }),
   makeClassMethodQuestion({
-    title: "実践: 自分で短い表示プログラムを完成させる",
-    concept: "class / variable / println",
-    difficultyLabel: "実践",
-    prompt: "nameとlevelを変数に入れて、2行でプロフィールのように表示します。型、代入、表示命令をまとめて使います。",
+    title: "最後に残る整数を読む",
+    concept: "assignment / int",
+    difficultyLabel: "中級",
+    prompt: "countに値を入れ直し、最後に残った値を表示します。途中の値ではなく、printlnの直前の状態を追ってください。",
+    output: "5",
+    explanation: "変数は最新の代入で中身が変わります。count = count + 2 は、今のcountに2を足して、もう一度countへ戻します。",
+    parts: ["class Main {\n  public static void main(String[] args) {\n    int count = 1;\n    count = 3;\n    count = ", { answer: "count + 2", accepts: ["count + 2", "count+2"], chars: 10 }, ";\n\n    System.out.println(count);\n  }\n}"]
+  }),
+  makeClassMethodQuestion({
+    title: "入口の形をまとめて書く",
+    concept: "main / signature",
+    difficultyLabel: "中級",
+    prompt: "Javaの実行入口を、まとまりとして完成させます。mainの名前だけではなく、public static void から引数までを一つの形として見ます。",
+    output: "Boot",
+    explanation: "public static void main(String[] args) は、Javaアプリの入口としてよく使う定型です。試験ではmainのつづりやString[]の形も見られます。",
+    parts: ["class Main {\n  ", { answer: "public static void main(String[] args)", accepts: ["public static void main(String[] args)", "public static void main(String args[])"], chars: 39 }, " {\n    System.out.println(\"Boot\");\n  }\n}"]
+  }),
+  makeClassMethodQuestion({
+    title: "文字列連結の順番を読む",
+    concept: "String concat / order",
+    difficultyLabel: "中級",
+    prompt: "文字列と数値を+でつなげます。計算したい部分と、文字としてつながる部分を見分けてください。",
+    output: "A12\nA3",
+    explanation: "左から読んで、先に文字列が出ると+は連結になります。計算を先にしたいときは丸かっこで囲みます。",
+    parts: ["class Main {\n  public static void main(String[] args) {\n    System.out.println(\"A\" + 1 + 2);\n    System.out.println(\"A\" + ", { answer: "(1 + 2)", accepts: ["(1 + 2)", "(1+2)"], chars: 8 }, ");\n  }\n}"]
+  }),
+  makeClassMethodQuestion({
+    title: "booleanをそのまま表示する",
+    concept: "boolean / variable",
+    difficultyLabel: "中級",
+    prompt: "真偽値を変数に入れて表示します。文字列ではなく、boolean型の値としてtrueを扱います。",
+    output: "true",
+    explanation: "booleanはtrueかfalseだけを持つ型です。\"true\"のように囲むと文字列になるため、ここでは囲まずに書きます。",
+    parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "boolean", chars: 8 }, " passed = ", { answer: "true", chars: 5 }, ";\n    System.out.println(passed);\n  }\n}"]
+  }),
+  makeClassMethodQuestion({
+    title: "コメントと実行される行を見分ける",
+    concept: "comment / output",
+    difficultyLabel: "中級",
+    prompt: "コメント行は実行されません。実際に画面へ出る行だけを残して、出力の順番を判断します。",
+    output: "visible",
+    explanation: "//から右はJavaが命令として読みません。見た目に文字が書いてあっても、printlnでなければ出力されません。",
+    parts: ["class Main {\n  public static void main(String[] args) {\n    // System.out.println(\"hidden\");\n    ", { answer: "System.out.println(\"visible\")", accepts: ["System.out.println(\"visible\")"], chars: 30 }, ";\n  }\n}"]
+  }),
+  makeClassMethodQuestion({
+    title: "大文字小文字を区別して読む",
+    concept: "identifier / case",
+    difficultyLabel: "中級",
+    prompt: "JavaではscoreとScoreは別の名前です。宣言した変数名と同じ大文字小文字で表示します。",
+    output: "80",
+    explanation: "Javaの識別子は大文字小文字を区別します。宣言がscoreなら、printlnでもscoreと書きます。",
+    parts: ["class Main {\n  public static void main(String[] args) {\n    int score = 80;\n    int Score = 90;\n    System.out.println(", { answer: "score", chars: 6 }, ");\n  }\n}"]
+  }),
+  makeClassMethodQuestion({
+    title: "セミコロンの位置を直す",
+    concept: "statement / semicolon",
+    difficultyLabel: "中級",
+    prompt: "代入文と表示文は、それぞれ1つの命令として終わります。命令の区切りを意識して完成させます。",
+    output: "Java",
+    explanation: "セミコロンは命令の終わりに置きます。変数宣言の行とprintlnの行は、それぞれ別の命令です。",
+    parts: ["class Main {\n  public static void main(String[] args) {\n    String word = \"Java\"", { answer: ";", chars: 2 }, "\n    System.out.println(word)", { answer: ";", chars: 2 }, "\n  }\n}"]
+  }),
+  makeClassMethodQuestion({
+    title: "複数行の出力を組み立てる",
+    concept: "println / variable",
+    difficultyLabel: "中級",
+    prompt: "2つの変数を使い、2行の出力を作ります。変数名はクォーテーションで囲まない点に注意します。",
     output: "name: Ari\nlevel: 1",
-    explanation: "実践では、1つの知識だけでなく、String、int、System.out.printlnを組み合わせます。変数名はクォーテーションで囲まず、文字列と+でつなげます。",
-    parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "String", chars: 7 }, " name = \"Ari\";\n    ", { answer: "int", chars: 4 }, " level = 1;\n\n    System.out.println(", { answer: "\"name: \" + name", accepts: ["\"name: \" + name", "\"name: \"+name"], chars: 17 }, ");\n    System.out.println(", { answer: "\"level: \" + level", accepts: ["\"level: \" + level", "\"level: \"+level"], chars: 19 }, ");\n  }\n}"]
+    explanation: "文字として出したい部分はダブルクォーテーションで囲み、変数の中身を出したい部分は変数名をそのまま書きます。",
+    parts: ["class Main {\n  public static void main(String[] args) {\n    String name = \"Ari\";\n    int level = 1;\n\n    System.out.println(", { answer: "\"name: \" + name", accepts: ["\"name: \" + name", "\"name: \"+name"], chars: 17 }, ");\n    System.out.println(", { answer: "\"level: \" + level", accepts: ["\"level: \" + level", "\"level: \"+level"], chars: 19 }, ");\n  }\n}"]
+  }),
+  makeClassMethodQuestion({
+    title: "短いプログラムを自分で組む",
+    concept: "class / variable / println",
+    difficultyLabel: "中級",
+    prompt: "class、main、変数、表示を組み合わせて、1つの短いプログラムとして完成させます。空欄が少し大きいので、型と表示命令をまとめて書きます。",
+    output: "course: Java\nready",
+    explanation: "中級では、部品を単独で覚えるだけでなく、classの中のmain、その中の変数とprintlnという位置関係まで見ます。",
+    parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "String course = \"Java\"", accepts: ["String course = \"Java\"", "String course=\"Java\""], chars: 23 }, ";\n    System.out.println(", { answer: "\"course: \" + course", accepts: ["\"course: \" + course", "\"course: \"+course"], chars: 21 }, ");\n    ", { answer: "System.out.println(\"ready\")", accepts: ["System.out.println(\"ready\")"], chars: 29 }, ";\n  }\n}"]
   })
 ];
 
@@ -3584,9 +3659,14 @@ const oopBasicQuestions = [
   makeClassMethodQuestion({ title: "責務をクラスへ寄せる", concept: "responsibility", prompt: "Item自身にtotalメソッドを持たせ、価格と個数から合計を返します。", output: "600", explanation: "priceとcountを持つItem自身が合計を計算すると、データと処理の場所が近くなります。これが責務を寄せる感覚です。", parts: ["class Main {\n  public static void main(String[] args) {\n    Item item = new Item(200, 3);\n    System.out.println(item.total());\n  }\n}\n\nclass Item {\n  int price;\n  int count;\n\n  Item(int price, int count) {\n    this.price = price;\n    this.count = count;\n  }\n\n  int total() {\n    return ", { answer: "price * count", accepts: ["price * count", "price*count"], chars: 15 }, ";\n  }\n}"] })
 ];
 
-basicSyntaxQuestions.forEach((question) => {
-  Object.assign(question, buildPrerequisiteSupport(question, "basic-syntax", "beginner"));
-  question.hints = buildTraceaHints(question, question.parts);
+[
+  { questions: basicSyntaxQuestions, level: "beginner" },
+  { questions: basicSyntaxIntermediateQuestions, level: "intermediate" }
+].forEach(({ questions: questionSet, level }) => {
+  questionSet.forEach((question) => {
+    Object.assign(question, buildPrerequisiteSupport(question, "basic-syntax", level));
+    question.hints = buildTraceaHints(question, question.parts);
+  });
 });
 
 basicSyntaxValueQuestions.forEach((question) => {
@@ -3617,7 +3697,7 @@ oopBasicQuestions.forEach((question) => {
 });
 
 const lessonMeta = [
-  { id: "basic-syntax", total: basicSyntaxQuestions.length },
+  { id: "basic-syntax", total: basicSyntaxQuestions.length + basicSyntaxIntermediateQuestions.length },
   { id: "basic-syntax-values", total: basicSyntaxValueQuestions.length },
   { id: "loops", total: questions.length * 2 },
   { id: "arrays", total: arrayQuestions.length * 2 },
@@ -5130,7 +5210,7 @@ function createBasicSyntaxLessonGroup() {
     id: "basic-syntax",
     title: "Java 基礎文法編",
     lessons: [
-      { id: "basic-syntax", href: "basic-syntax.html", title: "はじめの文法", status: "0/12" }
+      { id: "basic-syntax", href: "basic-syntax.html", title: "はじめの文法", status: "0/20" }
     ]
   });
 }
@@ -6370,11 +6450,12 @@ function renderClassMethodQuestions(targetList, targetQuestions, options) {
 
   targetQuestions.forEach((question, index) => {
     const isBasicSyntaxLesson = options.lessonId === "basic-syntax" || options.lessonId === "basic-syntax-values";
+    const level = options.level || question.level || "beginner";
     const card = document.createElement("article");
-    const completed = isQuestionComplete(options.lessonId, index);
+    const completed = isQuestionComplete(options.lessonId, index, level);
     card.className = `question-card${completed ? " completed" : ""}${isBasicSyntaxLesson ? " basic-syntax-question" : ""}`;
     card.dataset.lesson = options.lessonId;
-    card.dataset.level = "beginner";
+    card.dataset.level = level;
     card.dataset.questionIndex = String(index);
 
     card.innerHTML = `
@@ -6393,7 +6474,7 @@ function renderClassMethodQuestions(targetList, targetQuestions, options) {
         <div class="code-panel">
           <div class="panel-title">
             <span>${options.panelLabel}</span>
-            <span class="concept">${question.concept} / ${question.difficultyLabel || "初級"}</span>
+            <span class="concept">${question.concept} / ${question.difficultyLabel || (level === "intermediate" ? "中級" : "初級")}</span>
           </div>
         </div>
         <div class="side-panel">
@@ -6504,19 +6585,63 @@ function activateTopicCard(card) {
   panel?.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
+function ensureDifficultyTabs() {
+  document.querySelectorAll(".questions-section").forEach((section) => {
+    if (section.querySelector(".difficulty-panel")) return;
+    const questionList = section.querySelector(".question-list");
+    if (!questionList) return;
+
+    const panel = document.createElement("div");
+    panel.className = "difficulty-panel";
+    panel.setAttribute("aria-label", "難易度選択");
+    panel.innerHTML = `
+      <div>
+        <h3>難易度</h3>
+        <p>初級は基礎確認、中級はコードのまとまりを自分で考える練習です。</p>
+      </div>
+      <div class="difficulty-tabs" role="group" aria-label="難易度">
+        <button class="difficulty-tab active" type="button" data-level="beginner" aria-pressed="true">初級</button>
+        <button class="difficulty-tab" type="button" data-level="intermediate" aria-pressed="false">中級</button>
+      </div>
+    `;
+    section.insertBefore(panel, questionList);
+  });
+}
+
+function syncDifficultyButtons() {
+  levelButtons.forEach((levelButton) => {
+    const active = levelButton.dataset.level === currentLevel;
+    levelButton.classList.toggle("active", active);
+    levelButton.setAttribute("aria-pressed", String(active));
+  });
+}
+
+function getBasicSyntaxQuestionSet() {
+  return currentLevel === "intermediate" ? basicSyntaxIntermediateQuestions : basicSyntaxQuestions;
+}
+
+function renderBasicSyntaxQuestions() {
+  renderClassMethodQuestions(basicSyntaxList, getBasicSyntaxQuestionSet(), {
+    lessonId: "basic-syntax",
+    numberPrefix: currentLevel === "intermediate" ? "BI-" : "B-",
+    panelLabel: currentLevel === "intermediate" ? "基礎文法コード 中級" : "基礎文法コード",
+    level: currentLevel
+  });
+}
+
+ensureDifficultyTabs();
+levelButtons = [...document.querySelectorAll(".difficulty-tab")];
+syncDifficultyButtons();
 renderQuestions();
 renderArrayQuestions();
 renderConditionalQuestions();
 renderBooleanQuestions();
-renderClassMethodQuestions(basicSyntaxList, basicSyntaxQuestions, {
-  lessonId: "basic-syntax",
-  numberPrefix: "B-",
-  panelLabel: "基礎文法コード"
-});
+renderBasicSyntaxQuestions();
 renderClassMethodQuestions(basicSyntaxValueList, basicSyntaxValueQuestions, {
   lessonId: "basic-syntax-values",
   numberPrefix: "V-",
-  panelLabel: "値と型のコード"
+  panelLabel: "値と型のコード",
+  level: currentLevel
 });
 renderClassMethodQuestions(stringCollectionList, stringCollectionQuestions, {
   lessonId: "strings-arraylist",
@@ -6768,13 +6893,10 @@ if (unlockButton && unlockInput) {
 levelButtons.forEach((button) => {
   button.addEventListener("click", () => {
     currentLevel = button.dataset.level;
-    levelButtons.forEach((levelButton) => {
-      const active = levelButton === button;
-      levelButton.classList.toggle("active", active);
-      levelButton.setAttribute("aria-pressed", String(active));
-    });
+    syncDifficultyButtons();
     renderQuestions();
     renderArrayQuestions();
+    renderBasicSyntaxQuestions();
   });
 });
 
