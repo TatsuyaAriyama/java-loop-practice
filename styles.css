@@ -925,8 +925,8 @@ h1 {
 
 .billing-feedback {
   width: fit-content;
-  max-width: min(100%, 720px);
-  margin: 10px 0 0 auto;
+  max-width: min(calc(100% - 312px), 720px);
+  margin: 10px 300px 0 auto;
   padding: 7px 11px;
   border: 1px solid var(--line);
   background: #ffffff;
@@ -935,6 +935,8 @@ h1 {
   font-weight: 800;
   line-height: 1.6;
   box-shadow: 0 12px 28px rgba(17, 17, 17, 0.06);
+  position: relative;
+  z-index: 3;
 }
 
 .billing-feedback.active {
@@ -3291,6 +3293,11 @@ h1 {
     width: min(340px, 100%);
     margin: 0 0 12px;
     box-shadow: none;
+  }
+
+  .billing-feedback {
+    max-width: 100%;
+    margin: 10px 0 0;
   }
 
   .lesson-panel-head {
