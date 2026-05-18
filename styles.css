@@ -112,6 +112,40 @@ html.auth-optimistic body.auth-pending .auth-screen {
   justify-content: center;
 }
 
+.auth-language-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-bottom: 26px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  background: #f8f8f8;
+}
+
+.auth-language-switch button {
+  min-height: 38px;
+  border: 0;
+  background: transparent;
+  color: #555555;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  transition: transform 180ms ease-out, background 180ms ease-out, color 180ms ease-out, box-shadow 180ms ease-out;
+}
+
+.auth-language-switch button:hover {
+  transform: translateY(-1px);
+  color: var(--ink);
+}
+
+.auth-language-switch button.active {
+  background: var(--ink);
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(17, 17, 17, 0.12);
+}
+
 .auth-card label {
   display: grid;
   gap: 8px;

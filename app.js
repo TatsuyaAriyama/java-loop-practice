@@ -358,7 +358,9 @@ const profileAvatarKey = "java-output-practice-auth-avatar";
 const profileScopeKey = "java-output-practice-auth-profile-scope";
 const profileSetupKeyPrefix = "java-output-practice-profile-setup-complete";
 const profileNudgeDismissKeyPrefix = "java-output-practice-profile-nudge-dismissed";
+const languageKey = "java-output-practice-language";
 let profileNudgeTypingTimer = null;
+let currentLanguage = "ja";
 const userAvatarOptions = [
   { value: "{}", label: "Braces" },
   { value: "[]", label: "Array" },
@@ -379,6 +381,77 @@ const userAvatarOptions = [
   { value: "DB", label: "Database" },
   { value: "git", label: "Git" }
 ];
+
+try {
+  currentLanguage = localStorage.getItem(languageKey) || "ja";
+} catch {}
+
+const uiCopy = {
+  ja: {
+    userInfo: "ユーザー情報",
+    edit: "編集",
+    totalCleared: "総演習クリア数",
+    lessonsCleared: "修了レッスン数",
+    profileEditor: "ユーザープロフィール編集",
+    later: "あとで",
+    username: "ユーザーネーム",
+    avatarChoice: "アイコン選択",
+    save: "保存",
+    close: "閉じる",
+    profilePrompt: "ようこそ。Trace Roomで見える名前を、あなたらしく整えておきましょう。入力したら保存を押してください。",
+    profileNameRequired: "1文字以上で入力してください。",
+    profileSaved: "プロフィールを更新しました。",
+    todayLog: "今日の学習ログ",
+    solvedProblems: "解いた問題",
+    misses: "ミス",
+    reviewCandidates: "復習候補",
+    missedProblems: "ミスした問題",
+    noMisses: "まだミスはありません。",
+    noReview: "復習候補はまだありません。",
+    beginner: "初級",
+    intermediate: "中級",
+    timesSuffix: "回"
+  },
+  en: {
+    userInfo: "User information",
+    edit: "Edit",
+    totalCleared: "Exercises cleared",
+    lessonsCleared: "Lessons completed",
+    profileEditor: "Profile settings",
+    later: "Later",
+    username: "Username",
+    avatarChoice: "Avatar choices",
+    save: "Save",
+    close: "Close",
+    profilePrompt: "Welcome. Choose the name that others will see in Trace Room. Save it when you are ready.",
+    profileNameRequired: "Enter at least one character.",
+    profileSaved: "Profile updated.",
+    todayLog: "Today’s Study Log",
+    solvedProblems: "Solved",
+    misses: "Misses",
+    reviewCandidates: "Review",
+    missedProblems: "Missed questions",
+    noMisses: "No misses yet.",
+    noReview: "No review candidates yet.",
+    beginner: "Beginner",
+    intermediate: "Intermediate",
+    timesSuffix: "x"
+  }
+};
+
+function t(key) {
+  return uiCopy[currentLanguage]?.[key] || uiCopy.ja[key] || key;
+}
+
+function applyLanguageToDynamicUi() {
+  document.documentElement.lang = currentLanguage === "en" ? "en" : "ja";
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
+    element.textContent = t(element.dataset.i18n);
+  });
+  document.querySelectorAll("[data-i18n-aria]").forEach((element) => {
+    element.setAttribute("aria-label", t(element.dataset.i18nAria));
+  });
+}
 
 try {
   const savedProfileScope = localStorage.getItem(profileScopeKey);
@@ -3622,7 +3695,8 @@ function ensureUserSummary() {
 
   const panel = document.createElement("section");
   panel.className = "user-summary";
-  panel.setAttribute("aria-label", "ユーザー情報");
+  panel.setAttribute("aria-label", t("userInfo"));
+  panel.setAttribute("data-i18n-aria", "userInfo");
   panel.innerHTML = `
     <div class="user-summary-head">
       <span class="user-avatar" aria-hidden="true">U</span>
@@ -3630,39 +3704,39 @@ function ensureUserSummary() {
         <p class="user-label">User</p>
         <p class="user-name" data-user-name>User</p>
       </div>
-      <button class="user-edit-button" type="button" data-action="profile-toggle" aria-expanded="false">編集</button>
+      <button class="user-edit-button" type="button" data-action="profile-toggle" aria-expanded="false" data-i18n="edit">${t("edit")}</button>
     </div>
     <div class="user-metrics">
       <div>
         <span data-total-cleared>0</span>
-        <small>総演習クリア数</small>
+        <small data-i18n="totalCleared">${t("totalCleared")}</small>
       </div>
       <div>
         <span data-lessons-cleared>0/${lessonMeta.length}</span>
-        <small>修了レッスン数</small>
+        <small data-i18n="lessonsCleared">${t("lessonsCleared")}</small>
       </div>
     </div>
-    <div class="user-profile-editor" aria-label="ユーザープロフィール編集">
+    <div class="user-profile-editor" aria-label="${t("profileEditor")}" data-i18n-aria="profileEditor">
       <div class="profile-tracea-nudge" data-profile-nudge aria-hidden="true">
         <div class="profile-tracea-avatar" aria-hidden="true">T</div>
         <div class="profile-tracea-body">
           <p class="profile-tracea-label">Tracea</p>
           <p class="profile-tracea-text" data-profile-nudge-text></p>
-          <button class="profile-nudge-skip" type="button" data-action="profile-nudge-dismiss">あとで</button>
+          <button class="profile-nudge-skip" type="button" data-action="profile-nudge-dismiss" data-i18n="later">${t("later")}</button>
         </div>
       </div>
       <label>
-        <span>ユーザーネーム</span>
+        <span data-i18n="username">${t("username")}</span>
         <input type="text" data-profile-name-input maxlength="18" autocomplete="off">
       </label>
-      <div class="avatar-choice-group" role="group" aria-label="アイコン選択">
+      <div class="avatar-choice-group" role="group" aria-label="${t("avatarChoice")}" data-i18n-aria="avatarChoice">
         ${userAvatarOptions.map((option) => `
           <button class="avatar-choice" type="button" data-action="avatar-choice" data-avatar-choice="${option.value}" aria-label="${option.label}" aria-pressed="false">${option.value}</button>
         `).join("")}
       </div>
       <div class="profile-actions">
-        <button class="action-button primary" type="button" data-action="profile-save">保存</button>
-        <button class="action-button secondary" type="button" data-action="profile-cancel">閉じる</button>
+        <button class="action-button primary" type="button" data-action="profile-save" data-i18n="save">${t("save")}</button>
+        <button class="action-button secondary" type="button" data-action="profile-cancel" data-i18n="close">${t("close")}</button>
       </div>
       <p class="profile-message" data-profile-message aria-live="polite"></p>
     </div>
@@ -3670,6 +3744,7 @@ function ensureUserSummary() {
 
   const actions = headerInner.querySelector(".header-actions");
   headerInner.insertBefore(panel, actions);
+  applyLanguageToDynamicUi();
   updateUserSummary();
 }
 
@@ -3678,35 +3753,36 @@ function ensureStudyLogPanel() {
 
   const panel = document.createElement("aside");
   panel.className = "study-log-panel";
-  panel.setAttribute("aria-label", "今日の学習ログ");
+  panel.setAttribute("aria-label", t("todayLog"));
+  panel.setAttribute("data-i18n-aria", "todayLog");
   panel.innerHTML = `
     <div class="study-log-head">
       <div>
         <p class="eyebrow">Today Log</p>
-        <h2>今日の学習ログ</h2>
+        <h2 data-i18n="todayLog">${t("todayLog")}</h2>
       </div>
       <span data-study-date></span>
     </div>
     <div class="study-log-metrics">
       <div>
         <span data-study-attempted>0</span>
-        <small>解いた問題</small>
+        <small data-i18n="solvedProblems">${t("solvedProblems")}</small>
       </div>
       <div>
         <span data-study-missed>0</span>
-        <small>ミス</small>
+        <small data-i18n="misses">${t("misses")}</small>
       </div>
       <div>
         <span data-study-review>0</span>
-        <small>復習候補</small>
+        <small data-i18n="reviewCandidates">${t("reviewCandidates")}</small>
       </div>
     </div>
     <div class="study-log-section">
-      <h3>ミスした問題</h3>
+      <h3 data-i18n="missedProblems">${t("missedProblems")}</h3>
       <ul data-study-miss-list></ul>
     </div>
     <div class="study-log-section review">
-      <h3>復習候補</h3>
+      <h3 data-i18n="reviewCandidates">${t("reviewCandidates")}</h3>
       <ul data-study-review-list></ul>
     </div>
   `;
@@ -3720,6 +3796,7 @@ function ensureStudyLogPanel() {
   } else {
     headerInner.appendChild(panel);
   }
+  applyLanguageToDynamicUi();
   renderStudyLog();
 }
 
@@ -3736,7 +3813,7 @@ function createStudyLogListItem(item, emptyText) {
   const count = document.createElement("small");
   label.textContent = item.number;
   title.textContent = item.title;
-  count.textContent = item.count > 1 ? `${item.count}回` : item.level === "intermediate" ? "中級" : "初級";
+  count.textContent = item.count > 1 ? `${item.count}${t("timesSuffix")}` : item.level === "intermediate" ? t("intermediate") : t("beginner");
   li.append(label, title, count);
   return li;
 }
@@ -3763,7 +3840,7 @@ function renderStudyLog() {
     missList.textContent = "";
     const latestMisses = [...log.missed].slice(-4).reverse();
     if (latestMisses.length === 0) {
-      missList.appendChild(createStudyLogListItem(null, "まだミスはありません。"));
+      missList.appendChild(createStudyLogListItem(null, t("noMisses")));
     } else {
       latestMisses.forEach((item) => missList.appendChild(createStudyLogListItem(item, "")));
     }
@@ -3772,7 +3849,7 @@ function renderStudyLog() {
   if (reviewList) {
     reviewList.textContent = "";
     if (review.length === 0) {
-      reviewList.appendChild(createStudyLogListItem(null, "復習候補はまだありません。"));
+      reviewList.appendChild(createStudyLogListItem(null, t("noReview")));
     } else {
       review.forEach((item) => reviewList.appendChild(createStudyLogListItem(item, "")));
     }
@@ -3809,7 +3886,7 @@ function showProfileSetupPrompt() {
 
   profileNudgeTypingTimer = typeTextIntoElement(
     text,
-    "ようこそ。Trace Roomで見える名前を、あなたらしく整えておきましょう。入力したら保存を押してください。",
+    t("profilePrompt"),
     { speed: 28, delay: 240 }
   );
 }
@@ -3850,7 +3927,7 @@ function saveUserProfile() {
   const nextName = input?.value.trim().replace(/\s+/g, " ").slice(0, 18);
 
   if (!nextName) {
-    setProfileMessage("1文字以上で入力してください。", "no");
+    setProfileMessage(t("profileNameRequired"), "no");
     return;
   }
 
@@ -3877,7 +3954,7 @@ function saveUserProfile() {
       profileSetupCompleted: true
     }
   }));
-  setProfileMessage("プロフィールを更新しました。", "ok");
+  setProfileMessage(t("profileSaved"), "ok");
   window.setTimeout(() => toggleProfileEditor(false), 520);
 }
 
@@ -5559,6 +5636,7 @@ renderClassMethodQuestions(classList, classQuestions, {
 ensureLessonSeriesGroups();
 ensureUserSummary();
 ensureStudyLogPanel();
+applyLanguageToDynamicUi();
 updateLessonProgress();
 notifyLearningStatus();
 renderTraceRoom();
@@ -5593,6 +5671,19 @@ window.addEventListener("java-practice-auth-ready", (event) => {
   }
   if (hasLoopUnlock()) {
     applyLoopUnlock();
+  }
+});
+window.addEventListener("java-practice-language-changed", (event) => {
+  currentLanguage = event.detail?.language === "en" ? "en" : "ja";
+  try {
+    localStorage.setItem(languageKey, currentLanguage);
+  } catch {}
+  applyLanguageToDynamicUi();
+  renderStudyLog();
+
+  const nudge = document.querySelector("[data-profile-nudge]");
+  if (nudge?.getAttribute("aria-hidden") === "false") {
+    showProfileSetupPrompt();
   }
 });
 window.addEventListener("java-practice-progress-loaded", (event) => {

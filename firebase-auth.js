@@ -52,6 +52,7 @@ const createAccountButton = document.querySelector("#createAccountButton");
 const signOutButton = document.querySelector("#signOutButton");
 const authMessage = document.querySelector("#authMessage");
 const hasRoomChat = Boolean(document.querySelector("#roomChatList"));
+const languageKey = "java-output-practice-language";
 let tracePresenceRef = null;
 let unsubscribeTraceUsers = null;
 let unsubscribeRegisteredUsers = null;
@@ -71,6 +72,7 @@ let hasExactProgressSnapshot = false;
 let isApplyingRemoteProgress = false;
 let roomTypingTimer = null;
 let activeAccountUid = null;
+let currentLanguage = "ja";
 const profileNameKey = "java-output-practice-auth-name";
 const profileDisplayNameKey = "java-output-practice-auth-display-name";
 const profileAvatarKey = "java-output-practice-auth-avatar";
@@ -93,6 +95,115 @@ function hasLocalProfileSetup(uid) {
   }
 }
 
+try {
+  currentLanguage = localStorage.getItem(languageKey) || "ja";
+} catch {}
+
+const authCopy = {
+  ja: {
+    authAria: "ログイン画面",
+    title: "ログイン",
+    intro: "メール、パスワード、またはGoogleアカウントで学習ページに入ります。",
+    email: "メールアドレス",
+    password: "パスワード",
+    signIn: "メールでログイン",
+    create: "新規作成",
+    google: "Googleアカウントでログイン",
+    invalidEmail: "メールアドレスの形式を確認してください。",
+    missingPassword: "パスワードを入力してください。",
+    weakPassword: "パスワードは6文字以上にしてください。",
+    emailInUse: "このメールアドレスはすでに登録されています。ログインを試してください。",
+    invalidCredential: "メールアドレスまたはパスワードが違います。",
+    popupClosed: "Googleログインがキャンセルされました。",
+    unauthorizedDomain: "Firebase Authenticationの承認済みドメイン設定を確認してください。",
+    loginFailed: "ログインに失敗しました。Firebaseのログイン方法設定を確認してください。"
+  },
+  en: {
+    authAria: "Sign-in screen",
+    title: "Sign in",
+    intro: "Continue with email, password, or your Google account to enter your Java learning workspace.",
+    email: "Email address",
+    password: "Password",
+    signIn: "Sign in with email",
+    create: "Create account",
+    google: "Continue with Google",
+    invalidEmail: "Please check the email address format.",
+    missingPassword: "Please enter your password.",
+    weakPassword: "Use a password with at least 6 characters.",
+    emailInUse: "This email address is already registered. Try signing in instead.",
+    invalidCredential: "The email address or password is incorrect.",
+    popupClosed: "Google sign-in was canceled.",
+    unauthorizedDomain: "Please check the authorized domains in Firebase Authentication.",
+    loginFailed: "Sign-in failed. Please check the Firebase sign-in method settings."
+  }
+};
+
+function authT(key) {
+  return authCopy[currentLanguage]?.[key] || authCopy.ja[key] || key;
+}
+
+function ensureAuthLanguageSwitch() {
+  if (!authForm || authForm.querySelector("[data-auth-language-switch]")) return;
+
+  const switcher = document.createElement("div");
+  switcher.className = "auth-language-switch";
+  switcher.setAttribute("data-auth-language-switch", "");
+  switcher.setAttribute("aria-label", "Language");
+  switcher.innerHTML = `
+    <button type="button" data-lang-choice="ja">日本語</button>
+    <button type="button" data-lang-choice="en">English</button>
+  `;
+
+  authForm.insertBefore(switcher, authForm.firstElementChild);
+}
+
+function setGoogleButtonText() {
+  if (!googleLoginButton) return;
+  googleLoginButton.textContent = "";
+  const mark = document.createElement("span");
+  mark.textContent = "G";
+  googleLoginButton.append(mark, document.createTextNode(authT("google")));
+}
+
+function applyAuthLanguage() {
+  document.documentElement.lang = currentLanguage === "en" ? "en" : "ja";
+
+  if (authScreen) {
+    authScreen.setAttribute("aria-label", authT("authAria"));
+  }
+
+  const title = authScreen?.querySelector(".auth-brand h1");
+  const intro = authScreen?.querySelector(".auth-brand p:last-child");
+  const labels = authForm?.querySelectorAll("label > span");
+  const signInButton = authForm?.querySelector(".auth-submit");
+  const createButton = authForm?.querySelector(".auth-create");
+
+  if (title) title.textContent = authT("title");
+  if (intro) intro.textContent = authT("intro");
+  if (labels?.[0]) labels[0].textContent = authT("email");
+  if (labels?.[1]) labels[1].textContent = authT("password");
+  if (signInButton) signInButton.textContent = authT("signIn");
+  if (createButton) createButton.textContent = authT("create");
+  setGoogleButtonText();
+
+  authForm?.querySelectorAll("[data-lang-choice]").forEach((button) => {
+    const active = button.dataset.langChoice === currentLanguage;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+}
+
+function setLanguage(language) {
+  currentLanguage = language === "en" ? "en" : "ja";
+  try {
+    localStorage.setItem(languageKey, currentLanguage);
+  } catch {}
+  applyAuthLanguage();
+  window.dispatchEvent(new CustomEvent("java-practice-language-changed", {
+    detail: { language: currentLanguage }
+  }));
+}
+
 function setMessage(message) {
   authMessage.textContent = message;
 }
@@ -100,17 +211,17 @@ function setMessage(message) {
 function friendlyError(error) {
   const code = error?.code || "";
 
-  if (code.includes("invalid-email")) return "メールアドレスの形式を確認してください。";
-  if (code.includes("missing-password")) return "パスワードを入力してください。";
-  if (code.includes("weak-password")) return "パスワードは6文字以上にしてください。";
-  if (code.includes("email-already-in-use")) return "このメールアドレスはすでに登録されています。ログインを試してください。";
+  if (code.includes("invalid-email")) return authT("invalidEmail");
+  if (code.includes("missing-password")) return authT("missingPassword");
+  if (code.includes("weak-password")) return authT("weakPassword");
+  if (code.includes("email-already-in-use")) return authT("emailInUse");
   if (code.includes("invalid-credential") || code.includes("wrong-password") || code.includes("user-not-found")) {
-    return "メールアドレスまたはパスワードが違います。";
+    return authT("invalidCredential");
   }
-  if (code.includes("popup-closed-by-user")) return "Googleログインがキャンセルされました。";
-  if (code.includes("unauthorized-domain")) return "Firebase Authenticationの承認済みドメイン設定を確認してください。";
+  if (code.includes("popup-closed-by-user")) return authT("popupClosed");
+  if (code.includes("unauthorized-domain")) return authT("unauthorizedDomain");
 
-  return "ログインに失敗しました。Firebaseのログイン方法設定を確認してください。";
+  return authT("loginFailed");
 }
 
 function setLoading(isLoading) {
@@ -874,6 +985,13 @@ window.addEventListener("beforeunload", () => {
     online: false,
     status: latestLearningStatus
   });
+});
+
+ensureAuthLanguageSwitch();
+applyAuthLanguage();
+
+authForm?.querySelectorAll("[data-lang-choice]").forEach((button) => {
+  button.addEventListener("click", () => setLanguage(button.dataset.langChoice));
 });
 
 authForm.addEventListener("submit", async (event) => {
