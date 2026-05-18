@@ -3655,6 +3655,350 @@ h1 {
   display: inline-flex;
 }
 
+/* Compact density: closer to a 75% browser zoom feel without forcing browser zoom. */
+.header-inner,
+main,
+.site-footer {
+  width: min(1360px, calc(100% - 36px));
+}
+
+.header-inner {
+  padding: 20px 0 18px 66px;
+}
+
+.site-header {
+  background:
+    linear-gradient(90deg, var(--red) 0 48px, transparent 48px),
+    linear-gradient(180deg, #ffffff 0%, #fbfbfa 100%);
+}
+
+.lesson-current {
+  margin-bottom: 6px;
+  padding: 4px 0 4px 9px;
+  font-size: 11px;
+}
+
+.eyebrow {
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+
+.trace-room-logo {
+  margin-bottom: 10px;
+  padding: 6px 10px 6px 6px;
+  gap: 9px;
+}
+
+.trace-room-mark {
+  width: 38px;
+  height: 38px;
+}
+
+.trace-room-word strong {
+  font-size: clamp(16px, 1.55vw, 22px);
+}
+
+.user-summary {
+  width: min(318px, 100%);
+  margin: 8px 0 10px;
+}
+
+.user-summary-head {
+  padding: 9px 11px;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 28px;
+}
+
+.user-metrics {
+  grid-template-columns: repeat(2, 72px);
+}
+
+.user-metrics div {
+  padding: 8px 6px;
+}
+
+.user-metrics span {
+  font-size: 16px;
+}
+
+.study-log-panel {
+  top: 42px;
+  width: 252px;
+  padding: 8px;
+  gap: 6px;
+}
+
+.study-log-head h2 {
+  font-size: 13px;
+}
+
+.study-log-metrics div {
+  padding: 6px 4px;
+}
+
+.study-log-metrics span {
+  font-size: 18px;
+}
+
+.study-log-section li {
+  padding: 5px;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+}
+
+.header-actions {
+  max-width: calc(100% - 276px);
+}
+
+.header-actions .primary-link,
+.header-actions .secondary-link,
+.primary-link,
+.secondary-link,
+.action-button {
+  min-height: 32px;
+  padding: 6px 11px;
+  font-size: 12px;
+}
+
+.billing-feedback {
+  max-width: min(calc(100% - 276px), 640px);
+  margin: 8px 276px 0 auto;
+  padding: 6px 10px;
+}
+
+.lesson-panel {
+  width: min(520px, 45vw);
+  max-height: min(620px, calc(100vh - 150px));
+  margin-top: 10px;
+}
+
+.lesson-panel-head {
+  padding: 12px 14px;
+}
+
+.lesson-panel-head h2 {
+  font-size: 18px;
+}
+
+.lesson-group-toggle {
+  min-height: 36px;
+  padding: 7px 10px;
+  font-size: 12px;
+}
+
+.lesson-links a {
+  min-height: 36px;
+  padding: 7px 10px;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.lesson-links b {
+  font-size: 12px;
+}
+
+.syntax-section,
+.questions-section,
+.array-section,
+.trace-room-section {
+  padding: 32px 0;
+}
+
+.section-heading {
+  margin-bottom: 22px;
+}
+
+.section-heading h2 {
+  font-size: clamp(28px, 3.3vw, 52px);
+}
+
+.section-heading p {
+  max-width: 900px;
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.syntax-code pre,
+.array-code pre {
+  padding: 20px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.syntax-cards article,
+.array-cards article,
+.topic-card {
+  min-height: 112px;
+  padding: 18px;
+}
+
+.syntax-cards h3,
+.array-cards h3,
+.topic-card h3 {
+  font-size: clamp(18px, 1.9vw, 28px);
+  line-height: 1.35;
+}
+
+.question-list {
+  gap: 22px;
+}
+
+.question-top {
+  grid-template-columns: 76px 1fr;
+}
+
+.question-number {
+  font-size: 22px;
+}
+
+.question-copy {
+  padding: 16px 18px;
+}
+
+.question-copy h3 {
+  margin-bottom: 6px;
+  font-size: 20px;
+}
+
+.exam-prompt {
+  margin-top: 10px;
+  padding: 11px 13px 13px;
+}
+
+.exam-prompt-main {
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.exam-prompt-condition p,
+.tracea-prompt p {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.prerequisite-panel {
+  margin: 12px 0;
+  padding: 11px;
+}
+
+.prerequisite-tag {
+  min-height: 30px;
+  padding: 5px 8px;
+  font-size: 11px;
+}
+
+.panel-title {
+  min-height: 38px;
+  padding: 0 13px;
+}
+
+.code-box {
+  padding: 14px 15px 16px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.code-input {
+  height: 27px;
+  font-size: 13px;
+}
+
+.side-panel {
+  padding: 14px;
+}
+
+.output-box,
+.explain-box,
+.tracea-panel,
+.answer-box {
+  padding: 11px;
+}
+
+.explain-box,
+.tracea-panel,
+.answer-box {
+  margin-top: 9px;
+}
+
+.button-row {
+  gap: 8px;
+  margin: 11px 0;
+}
+
+.trace-room-copy {
+  padding: 22px;
+}
+
+.trace-user-card {
+  padding: 9px 13px;
+  gap: 10px;
+}
+
+.trace-user-top {
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.trace-user-avatar {
+  width: 42px;
+  height: 42px;
+}
+
+.trace-user-name-line h3 {
+  font-size: 21px;
+}
+
+.trace-user-details div {
+  padding: 8px 10px;
+}
+
+.trace-room-switcher {
+  margin-bottom: 14px;
+}
+
+.trace-room-switch {
+  padding: 10px 13px;
+}
+
+.chat-heading {
+  padding: 14px 18px;
+}
+
+.chat-message-list {
+  min-height: 360px;
+  max-height: 500px;
+  padding: 16px;
+}
+
+.chat-message-body {
+  padding: 9px 11px 8px;
+}
+
+.chat-input-form {
+  padding: 12px 14px 14px;
+}
+
+.practice-editor-section {
+  width: min(1360px, calc(100% - 36px));
+}
+
+.practice-points article,
+.practice-workbench,
+.practice-tracea-guide {
+  padding: 22px;
+}
+
+.practice-editor-head {
+  padding: 26px 30px 20px;
+}
+
+.code-editor {
+  height: 380px;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .question-card:hover,
   .topic-card:hover,
