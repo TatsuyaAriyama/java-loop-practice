@@ -11,7 +11,7 @@
     body.auth-pending .auth-screen, body.auth-pending .app-shell { display: none !important; }
     html.auth-optimistic body.auth-pending .app-shell { display: block !important; }
   </style>
-  <link rel="stylesheet" href="styles.css?v=stripe-monthly-default-20260518">
+  <link rel="stylesheet" href="styles.css?v=oop-basic-20260518">
 </head>
 <body class="auth-pending">
   <section class="auth-screen" id="authScreen" aria-label="ログイン画面">
@@ -46,7 +46,7 @@
             <section class="lesson-group open" data-lesson-group="oop-basic">
               <button class="lesson-group-toggle" type="button" aria-expanded="true"><span>Java オブジェクト指向基礎編</span><small>1 Lessons</small></button>
               <div class="lesson-links">
-                <a href="oop-basic.html" class="active" data-lesson-link="oop-basic"><span>01</span><b>オブジェクト指向の基礎</b><small class="lesson-check">講座</small></a>
+                <a href="oop-basic.html" class="active" data-lesson-link="oop-basic"><span>01</span><b>オブジェクト指向の基礎</b><small class="lesson-check">0/10</small></a>
               </div>
             </section>
           </div>
@@ -79,30 +79,43 @@ s.score = 90;
 s.show();</code></pre>
           </div>
           <div class="syntax-cards">
-            <article class="topic-card"><span class="syntax-label">class</span><h3>クラスは設計図</h3><p>どんな値を持ち、どんな処理ができるかを決めます。まだ実体ではなく、作るための型です。</p></article>
-            <article class="topic-card"><span class="syntax-label">object</span><h3>オブジェクトは実体</h3><p><span class="term">new Student()</span> で、設計図から実際に使える1つの実体を作ります。</p></article>
-            <article class="topic-card"><span class="syntax-label">field</span><h3>フィールドは状態</h3><p><span class="term">name</span> や <span class="term">score</span> のように、オブジェクトが持つ値です。</p></article>
-            <article class="topic-card"><span class="syntax-label">method</span><h3>メソッドは振る舞い</h3><p><span class="term">show()</span> のように、オブジェクトに行わせる処理です。状態を使って動くことがあります。</p></article>
-            <article class="topic-card"><span class="syntax-label">dot</span><h3>ドットは「誰の」を表す</h3><p><span class="term">s.name</span> は「sという実体のname」です。左側の実体を必ず見ます。</p></article>
-            <article class="topic-card"><span class="syntax-label">new</span><h3>newは作成の合図</h3><p>クラス名だけでは実体はありません。<span class="term">new</span> が出たら、メモリ上にオブジェクトが作られると読みます。</p></article>
+            <article class="topic-card" data-topic="class-basic" tabindex="0" role="button" aria-expanded="false"><span class="syntax-label">class</span><h3>クラスは設計図</h3><p>どんな値を持ち、どんな処理ができるかを決めます。まだ実体ではなく、作るための型です。</p></article>
+            <article class="topic-card" data-topic="class-object" tabindex="0" role="button" aria-expanded="false"><span class="syntax-label">object</span><h3>オブジェクトは実体</h3><p><span class="term">new Student()</span> で、設計図から実際に使える1つの実体を作ります。</p></article>
+            <article class="topic-card" data-topic="class-field" tabindex="0" role="button" aria-expanded="false"><span class="syntax-label">field</span><h3>フィールドは状態</h3><p><span class="term">name</span> や <span class="term">score</span> のように、オブジェクトが持つ値です。</p></article>
+            <article class="topic-card" data-topic="class-instance-method" tabindex="0" role="button" aria-expanded="false"><span class="syntax-label">method</span><h3>メソッドは振る舞い</h3><p><span class="term">show()</span> のように、オブジェクトに行わせる処理です。状態を使って動くことがあります。</p></article>
+            <article class="topic-card" data-topic="class-dot" tabindex="0" role="button" aria-expanded="false"><span class="syntax-label">dot</span><h3>ドットは「誰の」を表す</h3><p><span class="term">s.name</span> は「sという実体のname」です。左側の実体を必ず見ます。</p></article>
+            <article class="topic-card" data-topic="class-constructor" tabindex="0" role="button" aria-expanded="false"><span class="syntax-label">constructor</span><h3>コンストラクタは初期化の入口</h3><p><span class="term">new Student("Ari")</span> の瞬間に、必要な値をフィールドへ入れます。</p></article>
+            <article class="topic-card" data-topic="class-this" tabindex="0" role="button" aria-expanded="false"><span class="syntax-label">this</span><h3>thisは「この実体」</h3><p><span class="term">this.name</span> は、今作っているオブジェクト自身のnameフィールドを指します。</p></article>
+            <article class="topic-card" data-topic="class-reference" tabindex="0" role="button" aria-expanded="false"><span class="syntax-label">reference</span><h3>参照は実体への手がかり</h3><p><span class="term">b = a</span> と書くと、bもaと同じ実体を見る状態になります。</p></article>
+            <article class="topic-card" data-topic="oop-encapsulation" tabindex="0" role="button" aria-expanded="false"><span class="syntax-label">private</span><h3>カプセル化は値を守る</h3><p><span class="term">private</span> とメソッドを使って、値の読み書きの入口を整えます。</p></article>
+            <article class="topic-card" data-topic="oop-responsibility" tabindex="0" role="button" aria-expanded="false"><span class="syntax-label">role</span><h3>責務はクラスの仕事</h3><p>データを持つクラスに、そのデータを使う処理を寄せると、コードの意味が読みやすくなります。</p></article>
           </div>
         </div>
 
-        <div class="topic-deep-dive">
+        <div class="topic-deep-dive" aria-live="polite">
           <p class="eyebrow">Tracea Note</p>
-          <h3>「クラス」と「オブジェクト」を混ぜない。</h3>
+          <h3>カードを押して、オブジェクト指向の読み方を深掘りしましょう。</h3>
           <div class="deep-body">
             <p>クラスはルール、オブジェクトはそのルールから作った実物です。試験問題では、クラスに書いてある内容を見てから、どの変数がどのオブジェクトを指しているかを追います。</p>
             <p>出力問題では、フィールドの値がいつ代入され、どのメソッドがその値を使うのかを線でつないでください。ここが曖昧だと、継承やコンストラクタに進んだときに一気に読みにくくなります。</p>
           </div>
         </div>
       </section>
+
+      <section id="oopBasicQuestions" class="questions-section">
+        <div class="section-heading">
+          <p class="eyebrow">OOP Output Practice</p>
+          <h2>オブジェクト指向基礎の穴埋め問題10問</h2>
+          <p>class、object、constructor、this、reference、privateを、出力問題として手で追います。答えより先に、どの変数がどの実体を見ているかを確認しましょう。</p>
+        </div>
+        <div id="oopBasicQuestionList" class="question-list"></div>
+      </section>
     </main>
 
     <footer class="site-footer"><p>Java OOP / class・object・field・method</p><button class="signout-button" type="button" id="signOutButton">ログアウト</button></footer>
   </div>
 
-  <script src="app.js?v=stripe-monthly-default-20260518"></script>
-  <script type="module" src="firebase-auth.js?v=stripe-monthly-default-20260518"></script>
+  <script src="app.js?v=oop-basic-20260518"></script>
+  <script type="module" src="firebase-auth.js?v=oop-basic-20260518"></script>
 </body>
 </html>

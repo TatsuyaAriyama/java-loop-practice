@@ -323,6 +323,7 @@ const stringCollectionList = document.querySelector("#stringCollectionQuestionLi
 const methodOneList = document.querySelector("#methodOneQuestionList");
 const methodTwoList = document.querySelector("#methodTwoQuestionList");
 const classList = document.querySelector("#classQuestionList");
+const oopBasicList = document.querySelector("#oopBasicQuestionList");
 const levelButtons = [...document.querySelectorAll(".difficulty-tab")];
 const questionsSection = document.querySelector("#questions");
 const unlockInput = document.querySelector(".unlock-input");
@@ -1501,6 +1502,41 @@ const prerequisiteCatalog = [
     description: "クラスやオブジェクトが持つ値です。ドットを使って読み書きします。",
     defaultStatus: "復習推奨",
     pitfall: "どのオブジェクトの値を読んでいるのか見失う"
+  },
+  {
+    label: "オブジェクト",
+    terms: ["new ", "Student s", "Book book", "Item item", "Account account", "Counter counter"],
+    description: "クラスという設計図からnewで作った実体です。フィールドの値はオブジェクトごとに分かれます。",
+    defaultStatus: "初見注意",
+    pitfall: "クラス名と、newで作った実体を同じものとして読んでしまう"
+  },
+  {
+    label: "コンストラクタ",
+    terms: ["Student(", "Book(", "Item(", "Account(", "Counter("],
+    description: "newした瞬間に呼ばれる特別な処理です。クラス名と同じ名前で、戻り値の型を書きません。",
+    defaultStatus: "初見注意",
+    pitfall: "普通のメソッドのようにvoidや戻り値を書いてしまう"
+  },
+  {
+    label: "this",
+    terms: ["this."],
+    description: "今扱っているオブジェクト自身を指します。this.nameは、この実体が持つnameフィールドです。",
+    defaultStatus: "復習推奨",
+    pitfall: "引数のnameとフィールドのthis.nameを区別できない"
+  },
+  {
+    label: "参照",
+    terms: [" = a", " = s", "b = a", "copy ="],
+    description: "クラス型の変数には、実体そのものではなく、その実体を指す手がかりが入ります。",
+    defaultStatus: "初見注意",
+    pitfall: "別変数に入れたら別オブジェクトになったと勘違いする"
+  },
+  {
+    label: "カプセル化",
+    terms: ["private", "get", "set", "deposit", "withdraw"],
+    description: "フィールドを直接触らせすぎず、メソッドを通して安全に扱う考え方です。",
+    defaultStatus: "初見注意",
+    pitfall: "値を直接書き換える設計と、メソッドで守る設計の違いが見えない"
   }
 ];
 
@@ -1512,7 +1548,8 @@ const lessonPrerequisiteLabels = {
   conditionals: ["変数", "if文", "比較演算子", "System.out.println"],
   booleans: ["boolean型", "比較演算子", "System.out.println"],
   methods: ["メソッド", "引数", "戻り値", "void", "static", "System.out.println"],
-  classes: ["クラス", "フィールド", "変数", "String型", "int型", "System.out.println"]
+  classes: ["クラス", "フィールド", "変数", "String型", "int型", "System.out.println"],
+  "oop-basic": ["クラス", "オブジェクト", "フィールド", "メソッド", "コンストラクタ", "this", "参照", "System.out.println"]
 };
 
 const prerequisitePriority = {
@@ -1523,7 +1560,8 @@ const prerequisitePriority = {
   conditionals: ["if文", "else", "比較演算子", "論理演算子", "boolean型", "変数", "int型", "System.out.println"],
   booleans: ["boolean型", "比較演算子", "論理演算子", "if文", "変数", "System.out.println"],
   methods: ["メソッド", "引数", "戻り値", "void", "static", "if文", "比較演算子", "変数", "int型", "String型", "System.out.println"],
-  classes: ["クラス", "フィールド", "変数", "String型", "int型", "System.out.println"]
+  classes: ["クラス", "フィールド", "変数", "String型", "int型", "System.out.println"],
+  "oop-basic": ["クラス", "オブジェクト", "フィールド", "メソッド", "コンストラクタ", "this", "参照", "カプセル化", "String型", "int型", "System.out.println"]
 };
 
 const prerequisiteAllowList = {
@@ -3371,6 +3409,30 @@ const classMethodTopicDeepDives = {
 
 Object.assign(topicDeepDives, classMethodTopicDeepDives);
 
+Object.assign(topicDeepDives, {
+  "oop-identity": {
+    eyebrow: "identity",
+    title: "オブジェクトは、値だけでなく「どの実体か」を持つ。",
+    body: ["オブジェクト指向で最初に緊張感を持つべき点は、同じ値を持っていても同じ実体とは限らないことです。newを2回書けば、同じStudentクラスでも別々のオブジェクトが作られます。", "a.nameとb.nameがどちらも\"Aoi\"でも、aとbが別のnewから作られていれば別人です。逆に b = a と書けば、bはaと同じ実体を指します。ここを見落とすと、参照の問題で一気に崩れます。", "コードを読むときは、クラス名より先に、どの変数がどのnewを指しているかを線で追ってください。オブジェクト指向の出力問題は、ほとんどここから始まります。"],
+    checks: ["newの回数を見る。", "ドットの左側がどの実体を指すか確認する。", "b = a は同じ実体を共有する合図。", "値が同じでも、実体が同じとは限らない。"],
+    code: "Student a = new Student();\nStudent b = new Student();\nStudent c = a;\n\n// aとcは同じ実体を見る。bは別の実体。"
+  },
+  "oop-encapsulation": {
+    eyebrow: "encapsulation",
+    title: "カプセル化は、値を雑に触らせない設計。",
+    body: ["カプセル化は、フィールドを外から直接触らせず、メソッドを通して扱う考え方です。目的は難しい文法を増やすことではなく、値が壊れる入口を減らすことです。", "たとえば残高balanceを誰でも直接書き換えられると、マイナス残高や不正な値が簡単に入ります。depositやwithdrawのようなメソッドを入口にすれば、金額が0以下なら拒否する、といったルールを置けます。", "Java Silverではprivateやgetter/setterの形だけでなく、なぜ直接触らせないのかも問われます。値を守るために、フィールドとメソッドの役割を分けて読みましょう。"],
+    checks: ["privateは外から直接触らせない印。", "値を読む入口としてgetterを作る。", "値を変える入口としてメソッドを作る。", "不正な値を防ぐ設計につながる。"],
+    code: "class Account {\n  private int balance;\n\n  void deposit(int amount) {\n    if (amount > 0) balance += amount;\n  }\n\n  int getBalance() {\n    return balance;\n  }\n}"
+  },
+  "oop-responsibility": {
+    eyebrow: "responsibility",
+    title: "責務は、そのクラスが引き受ける仕事。",
+    body: ["責務とは、そのクラスが何を知っていて、何をするべきかという役割です。Itemがpriceとcountを持っているなら、合計金額を計算するtotalもItemに置くと自然です。", "反対に、Mainの中で全部計算してしまうと、Mainが何でも知っている巨大な場所になります。最初は動きますが、コードが増えるほど読みにくくなります。", "オブジェクト指向の読み方は、処理を分散させることではありません。データを持っている場所の近くに、そのデータを使う処理を置く。この感覚をまず持ってください。"],
+    checks: ["その値を一番よく知っているクラスはどれかを見る。", "Mainに処理を集めすぎない。", "データと処理を近づける。", "メソッド名で役割が読めるようにする。"],
+    code: "class Item {\n  int price;\n  int count;\n\n  int total() {\n    return price * count;\n  }\n}"
+  }
+});
+
 function fillAnswer(parts) {
   return parts.map((part) => typeof part === "string" ? part : part.answer).join("");
 }
@@ -3457,6 +3519,19 @@ const classQuestions = [
   makeClassMethodQuestion({ title: "フィールドで計算する", concept: "calculation", prompt: "item.priceとitem.countを使って合計を表示します。", output: "600", explanation: "複数のフィールドを使って計算できます。", parts: ["class Main {\n  public static void main(String[] args) {\n    Item item = new Item();\n    item.price = 200;\n    item.count = 3;\n    System.out.println(", { answer: "item.price * item.count", accepts: ["item.price * item.count", "item.price*item.count"], chars: 25 }, ");\n  }\n}\n\nclass Item { int price; int count; }"] })
 ];
 
+const oopBasicQuestions = [
+  makeClassMethodQuestion({ title: "オブジェクトごとの状態を読む", concept: "object state", prompt: "同じStudentクラスから2つの実体を作ります。aとbは別々のnameを持ちます。", output: "Aoi/Ren", explanation: "同じ設計図から作っても、newを2回書けば別々のオブジェクトです。ドットの左側がaかbかで、読みに行くフィールドが変わります。", parts: ["class Main {\n  public static void main(String[] args) {\n    Student a = new Student();\n    Student b = new Student();\n    a.name = \"Aoi\";\n    b.name = \"Ren\";\n    System.out.println(", { answer: "a.name + \"/\" + b.name", accepts: ["a.name + \"/\" + b.name", "a.name+\"/\"+b.name"], chars: 23 }, ");\n  }\n}\n\nclass Student {\n  String name;\n}"] }),
+  makeClassMethodQuestion({ title: "コンストラクタで初期値を入れる", concept: "constructor", prompt: "new Student(\"Aoi\", 90)の瞬間に、nameとscoreをフィールドへ入れます。", output: "Aoi:90", explanation: "コンストラクタはクラス名と同じ名前で書き、戻り値の型を書きません。受け取った値をthisでフィールドへ入れます。", parts: ["class Main {\n  public static void main(String[] args) {\n    Student s = new Student(\"Aoi\", 90);\n    System.out.println(s.name + \":\" + s.score);\n  }\n}\n\nclass Student {\n  String name;\n  int score;\n\n  Student(String name, int score) {\n    ", { answer: "this.name = name", accepts: ["this.name = name", "this.name=name"], chars: 17 }, ";\n    this.score = score;\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "thisでフィールドを区別する", concept: "this / field", prompt: "引数nameとフィールドnameが同じ名前です。this.nameでフィールド側を指定します。", output: "Mio", explanation: "this.nameは、このオブジェクトが持つフィールドです。右側のnameはコンストラクタが受け取った引数です。", parts: ["class Main {\n  public static void main(String[] args) {\n    User user = new User(\"Mio\");\n    System.out.println(user.name);\n  }\n}\n\nclass User {\n  String name;\n\n  User(String name) {\n    this.name = ", { answer: "name", chars: 5 }, ";\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "インスタンスメソッドが自分の値を使う", concept: "instance method", prompt: "showメソッドは、そのStudentオブジェクト自身のnameとscoreを使って表示します。", output: "Ren scored 88", explanation: "s.show()と呼ぶと、showの中ではsが持っているフィールドを使います。データと処理が同じクラスにまとまります。", parts: ["class Main {\n  public static void main(String[] args) {\n    Student s = new Student(\"Ren\", 88);\n    s.show();\n  }\n}\n\nclass Student {\n  String name;\n  int score;\n\n  Student(String name, int score) {\n    this.name = name;\n    this.score = score;\n  }\n\n  void show() {\n    System.out.println(", { answer: "name + \" scored \" + score", accepts: ["name + \" scored \" + score", "name+\" scored \"+score"], chars: 27 }, ");\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "参照を共有すると同じ実体を見る", concept: "reference", prompt: "b = a とすると、aとbは同じCounterオブジェクトを見ます。bから値を変えるとaから見ても変わります。", output: "2", explanation: "クラス型の変数には参照が入ります。代入でオブジェクトがコピーされるのではなく、同じ実体を見る変数が増えます。", parts: ["class Main {\n  public static void main(String[] args) {\n    Counter a = new Counter();\n    Counter b = a;\n    a.count = 1;\n    b.count = 2;\n    System.out.println(", { answer: "a.count", chars: 8 }, ");\n  }\n}\n\nclass Counter {\n  int count;\n}"] }),
+  makeClassMethodQuestion({ title: "メソッドで状態を変える", concept: "behavior / state", prompt: "depositメソッドを呼ぶと、Accountが持っているbalanceが増えます。", output: "1500", explanation: "オブジェクト指向では、値を外から直接いじるだけでなく、その値を変える処理をメソッドとして持たせます。", parts: ["class Main {\n  public static void main(String[] args) {\n    Account account = new Account();\n    account.balance = 1000;\n    account.deposit(500);\n    System.out.println(account.balance);\n  }\n}\n\nclass Account {\n  int balance;\n\n  void deposit(int amount) {\n    balance = ", { answer: "balance + amount", accepts: ["balance + amount", "balance+amount"], chars: 17 }, ";\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "privateフィールドをメソッドで守る", concept: "encapsulation", prompt: "balanceをprivateにし、depositとgetBalanceを通して扱います。", output: "700", explanation: "privateフィールドはクラスの外から直接触れません。値を安全に変える入口としてメソッドを用意します。", parts: ["class Main {\n  public static void main(String[] args) {\n    Account account = new Account();\n    account.deposit(700);\n    System.out.println(account.getBalance());\n  }\n}\n\nclass Account {\n  private int balance;\n\n  void deposit(int amount) {\n    balance += amount;\n  }\n\n  int getBalance() {\n    ", { answer: "return balance", chars: 15 }, ";\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "複数オブジェクトを配列で扱う", concept: "objects / array", prompt: "Studentオブジェクトを配列に入れ、1番のnameを表示します。", output: "Ren", explanation: "配列の中にもオブジェクトを入れられます。students[1]は2番目のStudent実体を指します。", parts: ["class Main {\n  public static void main(String[] args) {\n    Student[] students = {\n      new Student(\"Aoi\"),\n      new Student(\"Ren\")\n    };\n    System.out.println(", { answer: "students[1].name", chars: 17 }, ");\n  }\n}\n\nclass Student {\n  String name;\n  Student(String name) { this.name = name; }\n}"] }),
+  makeClassMethodQuestion({ title: "オブジェクトを引数で渡す", concept: "object parameter", prompt: "printメソッドへBookオブジェクトを渡し、titleを表示します。", output: "Java", explanation: "オブジェクトも引数として渡せます。受け取った側では、変数bookを通してフィールドを読みます。", parts: ["class Main {\n  public static void main(String[] args) {\n    Book book = new Book(\"Java\");\n    print(book);\n  }\n\n  static void print(Book book) {\n    System.out.println(", { answer: "book.title", chars: 11 }, ");\n  }\n}\n\nclass Book {\n  String title;\n  Book(String title) { this.title = title; }\n}"] }),
+  makeClassMethodQuestion({ title: "責務をクラスへ寄せる", concept: "responsibility", prompt: "Item自身にtotalメソッドを持たせ、価格と個数から合計を返します。", output: "600", explanation: "priceとcountを持つItem自身が合計を計算すると、データと処理の場所が近くなります。これが責務を寄せる感覚です。", parts: ["class Main {\n  public static void main(String[] args) {\n    Item item = new Item(200, 3);\n    System.out.println(item.total());\n  }\n}\n\nclass Item {\n  int price;\n  int count;\n\n  Item(int price, int count) {\n    this.price = price;\n    this.count = count;\n  }\n\n  int total() {\n    return ", { answer: "price * count", accepts: ["price * count", "price*count"], chars: 15 }, ";\n  }\n}"] })
+];
+
 basicSyntaxQuestions.forEach((question) => {
   Object.assign(question, buildPrerequisiteSupport(question, "basic-syntax", "beginner"));
   question.hints = buildTraceaHints(question, question.parts);
@@ -3484,6 +3559,11 @@ classQuestions.forEach((question) => {
   question.hints = buildTraceaHints(question, question.parts);
 });
 
+oopBasicQuestions.forEach((question) => {
+  Object.assign(question, buildPrerequisiteSupport(question, "oop-basic", "beginner"));
+  question.hints = buildTraceaHints(question, question.parts);
+});
+
 const lessonMeta = [
   { id: "basic-syntax", total: basicSyntaxQuestions.length },
   { id: "basic-syntax-values", total: basicSyntaxValueQuestions.length },
@@ -3494,7 +3574,8 @@ const lessonMeta = [
   { id: "strings-arraylist", total: stringCollectionQuestions.length },
   { id: "methods-1", total: methodOneQuestions.length },
   { id: "methods-2", total: methodTwoQuestions.length },
-  { id: "classes", total: classQuestions.length }
+  { id: "classes", total: classQuestions.length },
+  { id: "oop-basic", total: oopBasicQuestions.length }
 ];
 
 const progressPrefix = "java-output-practice-progress-v3";
@@ -4983,7 +5064,7 @@ function createOopBasicLessonGroup() {
     id: "oop-basic",
     title: "Java オブジェクト指向基礎編",
     lessons: [
-      { id: "oop-basic", href: "oop-basic.html", title: "オブジェクト指向の基礎", status: "講座" }
+      { id: "oop-basic", href: "oop-basic.html", title: "オブジェクト指向の基礎", status: "0/10" }
     ]
   });
 }
@@ -5886,6 +5967,11 @@ renderClassMethodQuestions(classList, classQuestions, {
   lessonId: "classes",
   numberPrefix: "C-",
   panelLabel: "クラスコード"
+});
+renderClassMethodQuestions(oopBasicList, oopBasicQuestions, {
+  lessonId: "oop-basic",
+  numberPrefix: "O-",
+  panelLabel: "オブジェクト指向コード"
 });
 ensureLessonSeriesGroups();
 ensureTraceRoomLogo();
