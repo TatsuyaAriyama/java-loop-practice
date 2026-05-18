@@ -268,7 +268,7 @@ async function startStripeCheckout(plan) {
         : errorCode.includes("support-price-missing")
           ? "支援用のPrice IDがFunctions側に設定されていません。"
           : errorCode.includes("Failed to fetch")
-            ? "Checkout用のFirebase Functionsに接続できません。FunctionsのデプロイとCORS設定を確認してください。"
+            ? "Checkout用のFirebase Functionsに接続できません。FirebaseをBlazeプランへアップグレード後、Functionsをデプロイしてください。"
             : "Checkout画面を作成できませんでした。Firebase Functionsの設定を確認してください。";
 
     window.dispatchEvent(new CustomEvent("java-practice-checkout-error", {

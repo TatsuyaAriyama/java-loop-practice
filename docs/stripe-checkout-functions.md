@@ -59,6 +59,12 @@ Price ID自体は秘密鍵ではありませんが、料金の選択ロジック
 
 このリポジトリには `functions/index.js` と `firebase.json` を追加済みです。
 
+前提として、Firebase FunctionsをデプロイするにはFirebaseプロジェクトをBlazeプランへアップグレードする必要があります。Spark無料プランのままだと `artifactregistry.googleapis.com`、`cloudfunctions.googleapis.com`、`cloudbuild.googleapis.com` を有効化できず、Checkout用Functionsは公開できません。
+
+```text
+https://console.firebase.google.com/project/java-output-practice/usage/details
+```
+
 1. Stripe秘密鍵をFirebase Functionsに設定します。
 
 ```bash
