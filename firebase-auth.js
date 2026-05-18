@@ -242,7 +242,12 @@ async function startStripeCheckout(plan) {
     });
 
     if (!response.ok) {
-      throw new Error("checkout-request-failed");
+      let errorCode = "checkout-request-failed";
+      try {
+        const errorData = await response.json();
+        errorCode = errorData?.error || errorCode;
+      } catch {}
+      throw new Error(errorCode);
     }
 
     const data = await response.json();
@@ -255,10 +260,19 @@ async function startStripeCheckout(plan) {
     }));
     window.location.assign(data.url);
   } catch (error) {
+    const errorCode = error?.message || "";
+    const message = errorCode.includes("stripe-secret-key-missing")
+      ? "Stripe秘密鍵がFunctions側に設定されていません。STRIPE_SECRET_KEYを設定してください。"
+      : errorCode.includes("monthly-price-missing")
+        ? "月額プランのPrice IDがFunctions側に設定されていません。"
+        : errorCode.includes("support-price-missing")
+          ? "支援用のPrice IDがFunctions側に設定されていません。"
+          : errorCode.includes("Failed to fetch")
+            ? "Checkout用のFirebase Functionsに接続できません。FunctionsのデプロイとCORS設定を確認してください。"
+            : "Checkout画面を作成できませんでした。Firebase Functionsの設定を確認してください。";
+
     window.dispatchEvent(new CustomEvent("java-practice-checkout-error", {
-      detail: {
-        message: "Checkout画面を作成できませんでした。Firebase Functionsの設定を確認してください。"
-      }
+      detail: { message }
     }));
   }
 }

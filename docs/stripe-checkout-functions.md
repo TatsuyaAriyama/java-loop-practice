@@ -55,9 +55,50 @@ Price ID自体は秘密鍵ではありませんが、料金の選択ロジック
 }
 ```
 
+## デプロイ手順
+
+このリポジトリには `functions/index.js` と `firebase.json` を追加済みです。
+
+1. Stripe秘密鍵をFirebase Functionsに設定します。
+
+```bash
+firebase functions:config:set stripe.secret_key="sk_live_xxx"
+```
+
+2. 月額プランのPrice IDを設定します。
+
+```bash
+firebase functions:config:set stripe.monthly_price_id="price_1TYK62R04gxdDcT8Ok26saqS"
+```
+
+3. 1回払いの支援ボタンも使う場合は、別途Price IDを作って設定します。
+
+```bash
+firebase functions:config:set stripe.support_price_id="price_xxx"
+```
+
+4. Functionsをデプロイします。
+
+```bash
+firebase deploy --only functions
+```
+
+5. Stripe DashboardでWebhook送信先を追加します。
+
+```text
+https://us-central1-java-output-practice.cloudfunctions.net/stripeWebhook
+```
+
+Webhookの署名シークレットを設定します。
+
+```bash
+firebase functions:config:set stripe.webhook_secret="whsec_xxx"
+firebase deploy --only functions
+```
+
 ## Functions実装例
 
-実運用では `STRIPE_SECRET_KEY`、`STRIPE_WEBHOOK_SECRET`、各Price IDをFirebase FunctionsのSecret Managerまたは環境変数で管理してください。
+実運用では `STRIPE_SECRET_KEY`、`STRIPE_WEBHOOK_SECRET`、各Price IDをFirebase FunctionsのSecret Managerまたは環境変数で管理してください。このリポジトリのFunctionsは `functions.config().stripe` からも読み取れるようにしています。
 
 ```js
 const functions = require("firebase-functions");
