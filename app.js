@@ -411,7 +411,14 @@ const uiCopy = {
     noReview: "復習候補はまだありません。",
     beginner: "初級",
     intermediate: "中級",
-    timesSuffix: "回"
+    timesSuffix: "回",
+    support: "支援する",
+    monthlyPlan: "月額プランに参加する",
+    checkoutPreparing: "Stripe Checkoutへ移動します。",
+    checkoutRedirecting: "Stripe Checkoutへ移動しています。",
+    checkoutSecureNote: "カード情報はStripe上で安全に入力します。",
+    billingActive: "月額プランは有効です。",
+    billingSupported: "支援ありがとうございます。決済状態は保存されています。"
   },
   en: {
     userInfo: "User information",
@@ -436,7 +443,14 @@ const uiCopy = {
     noReview: "No review candidates yet.",
     beginner: "Beginner",
     intermediate: "Intermediate",
-    timesSuffix: "x"
+    timesSuffix: "x",
+    support: "Support",
+    monthlyPlan: "Join monthly plan",
+    checkoutPreparing: "Opening Stripe Checkout.",
+    checkoutRedirecting: "Redirecting to Stripe Checkout.",
+    checkoutSecureNote: "Card details are entered securely on Stripe.",
+    billingActive: "Your monthly plan is active.",
+    billingSupported: "Thank you for your support. Payment status is saved."
   }
 };
 
@@ -3903,6 +3917,57 @@ function ensureStudyLogPanel() {
   renderStudyLog();
 }
 
+function ensureBillingActions() {
+  const actions = headerInner?.querySelector(".header-actions");
+  if (!actions || actions.querySelector("[data-billing-plan]")) return;
+
+  const supportButton = document.createElement("button");
+  supportButton.className = "secondary-link billing-link";
+  supportButton.type = "button";
+  supportButton.dataset.billingPlan = "support";
+  supportButton.dataset.i18n = "support";
+  supportButton.textContent = t("support");
+
+  const monthlyButton = document.createElement("button");
+  monthlyButton.className = "primary-link billing-link";
+  monthlyButton.type = "button";
+  monthlyButton.dataset.billingPlan = "monthly";
+  monthlyButton.dataset.i18n = "monthlyPlan";
+  monthlyButton.textContent = t("monthlyPlan");
+
+  const message = document.createElement("p");
+  message.className = "billing-feedback";
+  message.dataset.billingFeedback = "";
+  message.textContent = t("checkoutSecureNote");
+  message.setAttribute("aria-live", "polite");
+
+  actions.append(supportButton, monthlyButton);
+  actions.insertAdjacentElement("afterend", message);
+  applyLanguageToDynamicUi();
+}
+
+function setBillingPending(plan, isPending) {
+  document.querySelectorAll("[data-billing-plan]").forEach((button) => {
+    button.disabled = isPending;
+    button.classList.toggle("loading", isPending && button.dataset.billingPlan === plan);
+  });
+}
+
+function setBillingFeedback(message, tone = "") {
+  const feedback = document.querySelector("[data-billing-feedback]");
+  if (!feedback) return;
+  feedback.className = `billing-feedback ${tone}`.trim();
+  feedback.textContent = message;
+}
+
+function requestCheckout(plan) {
+  setBillingPending(plan, true);
+  setBillingFeedback(t("checkoutPreparing"), "active");
+  window.dispatchEvent(new CustomEvent("java-practice-checkout-requested", {
+    detail: { plan }
+  }));
+}
+
 function createStudyLogListItem(item, emptyText) {
   const li = document.createElement("li");
   if (!item) {
@@ -5744,6 +5809,7 @@ renderClassMethodQuestions(classList, classQuestions, {
 ensureLessonSeriesGroups();
 ensureUserSummary();
 ensureStudyLogPanel();
+ensureBillingActions();
 applyLanguageToDynamicUi();
 updateLessonProgress();
 notifyLearningStatus();
@@ -5792,6 +5858,29 @@ window.addEventListener("java-practice-language-changed", (event) => {
   const nudge = document.querySelector("[data-profile-nudge]");
   if (nudge?.getAttribute("aria-hidden") === "false") {
     showProfileSetupPrompt();
+  }
+});
+window.addEventListener("java-practice-checkout-redirecting", (event) => {
+  setBillingPending(event.detail?.plan, true);
+  setBillingFeedback(t("checkoutRedirecting"), "active");
+});
+window.addEventListener("java-practice-checkout-error", (event) => {
+  setBillingPending("", false);
+  setBillingFeedback(event.detail?.message || "Checkout画面を作成できませんでした。", "no");
+});
+window.addEventListener("java-practice-billing-status", (event) => {
+  const status = String(event.detail?.status || "none");
+  const plan = String(event.detail?.plan || "");
+  if (status === "active" || status === "trialing") {
+    setBillingFeedback(t("billingActive"), "active");
+    return;
+  }
+  if (status === "paid" || plan === "support") {
+    setBillingFeedback(t("billingSupported"), "active");
+    return;
+  }
+  if (status === "none") {
+    setBillingFeedback(t("checkoutSecureNote"));
   }
 });
 window.addEventListener("java-practice-progress-loaded", (event) => {
@@ -6050,6 +6139,12 @@ if (topicCards.length > 0) {
     });
   });
 }
+
+document.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-billing-plan]");
+  if (!button) return;
+  requestCheckout(button.dataset.billingPlan);
+});
 
 function handleQuestionAction(event) {
   const button = event.target.closest("button[data-action]");

@@ -59,6 +59,7 @@ let unsubscribeRegisteredUsers = null;
 let unsubscribeAccountProgress = null;
 let unsubscribeRoomMessages = null;
 let unsubscribeRoomTyping = null;
+let unsubscribeBillingStatus = null;
 let tracePresenceUsers = [];
 let registeredTraceUsers = [];
 let traceHeartbeatTimer = null;
@@ -78,6 +79,7 @@ const profileDisplayNameKey = "java-output-practice-auth-display-name";
 const profileAvatarKey = "java-output-practice-auth-avatar";
 const profileScopeKey = "java-output-practice-auth-profile-scope";
 const profileSetupKeyPrefix = "java-output-practice-profile-setup-complete";
+const checkoutFunctionUrl = "https://us-central1-java-output-practice.cloudfunctions.net/createStripeCheckoutSession";
 
 function getScopedProfileSetupKey(uid) {
   return `${profileSetupKeyPrefix}:${uid || "local"}`;
@@ -202,6 +204,63 @@ function setLanguage(language) {
   window.dispatchEvent(new CustomEvent("java-practice-language-changed", {
     detail: { language: currentLanguage }
   }));
+}
+
+function getCheckoutReturnUrl(path) {
+  const currentPath = window.location.pathname;
+  const directory = currentPath.endsWith("/")
+    ? currentPath
+    : currentPath.slice(0, currentPath.lastIndexOf("/") + 1);
+  return `${window.location.origin}${directory}${path}`;
+}
+
+async function startStripeCheckout(plan) {
+  const user = auth.currentUser;
+  const cleanPlan = plan === "monthly" ? "monthly" : "support";
+
+  if (!user) {
+    window.dispatchEvent(new CustomEvent("java-practice-checkout-error", {
+      detail: { message: "ログイン後に決済へ進めます。" }
+    }));
+    return;
+  }
+
+  try {
+    const idToken = await user.getIdToken();
+    const response = await fetch(window.JAVA_PRACTICE_CHECKOUT_ENDPOINT || checkoutFunctionUrl, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${idToken}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        plan: cleanPlan,
+        mode: cleanPlan === "monthly" ? "subscription" : "payment",
+        successUrl: getCheckoutReturnUrl("success/"),
+        cancelUrl: getCheckoutReturnUrl("cancel/")
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error("checkout-request-failed");
+    }
+
+    const data = await response.json();
+    if (!data?.url) {
+      throw new Error("checkout-url-missing");
+    }
+
+    window.dispatchEvent(new CustomEvent("java-practice-checkout-redirecting", {
+      detail: { plan: cleanPlan }
+    }));
+    window.location.assign(data.url);
+  } catch (error) {
+    window.dispatchEvent(new CustomEvent("java-practice-checkout-error", {
+      detail: {
+        message: "Checkout画面を作成できませんでした。Firebase Functionsの設定を確認してください。"
+      }
+    }));
+  }
 }
 
 function setMessage(message) {
@@ -650,6 +709,33 @@ function stopRoomTypingSubscription() {
   unsubscribeRoomTyping = null;
 }
 
+function stopBillingStatusSubscription() {
+  if (!unsubscribeBillingStatus) return;
+  unsubscribeBillingStatus();
+  unsubscribeBillingStatus = null;
+}
+
+function startBillingStatusSubscription(user) {
+  stopBillingStatusSubscription();
+  if (!user) return;
+
+  try {
+    unsubscribeBillingStatus = onSnapshot(doc(db, "billingStatus", user.uid), (docSnap) => {
+      window.dispatchEvent(new CustomEvent("java-practice-billing-status", {
+        detail: docSnap.exists() ? docSnap.data() : { status: "none" }
+      }));
+    }, () => {
+      window.dispatchEvent(new CustomEvent("java-practice-billing-status", {
+        detail: { status: "unavailable" }
+      }));
+    });
+  } catch {
+    window.dispatchEvent(new CustomEvent("java-practice-billing-status", {
+      detail: { status: "unavailable" }
+    }));
+  }
+}
+
 function startRoomMessageSubscription() {
   if (!hasRoomChat) return;
   if (unsubscribeRoomMessages) return;
@@ -966,6 +1052,10 @@ window.addEventListener("java-practice-room-typing", (event) => {
   updateRoomTyping(Boolean(event.detail?.isTyping));
 });
 
+window.addEventListener("java-practice-checkout-requested", (event) => {
+  startStripeCheckout(event.detail?.plan);
+});
+
 document.addEventListener("visibilitychange", () => {
   updateTracePresence({
     online: document.visibilityState === "visible",
@@ -1104,6 +1194,7 @@ onAuthStateChanged(auth, async (user) => {
       stopAccountProgressSubscription();
       stopRoomMessageSubscription();
       stopRoomTypingSubscription();
+      stopBillingStatusSubscription();
       updateRoomTyping(false);
       stopTraceHeartbeat();
       dispatchMergedTraceUsers();
@@ -1124,6 +1215,7 @@ onAuthStateChanged(auth, async (user) => {
     startTraceRoomSubscription();
     startRoomMessageSubscription();
     startRoomTypingSubscription();
+    startBillingStatusSubscription(user);
   }
 
   window.dispatchEvent(new CustomEvent("java-practice-auth-ready", {

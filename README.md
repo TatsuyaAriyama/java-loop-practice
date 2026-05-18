@@ -16,3 +16,7 @@ GitHub Pagesで公開できる静的教材サイトです。
 4. `main` ブランチの `/root` を指定する
 5. 表示されたURLを開く
 
+## Stripe Checkout
+
+課金導線はフロントにStripe秘密鍵を置かず、Firebase FunctionsでCheckout Sessionを作成する前提です。
+Functions側の設計メモは `docs/stripe-checkout-functions.md` を参照してください。
