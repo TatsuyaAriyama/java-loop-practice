@@ -35,7 +35,7 @@ const publicCheckoutOptions = {
 };
 const publicWebhookOptions = {
   invoker: "public",
-  secrets: ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
+  secrets: ["STRIPE_SECRET_KEY"]
 };
 
 function setCors(req, res) {
