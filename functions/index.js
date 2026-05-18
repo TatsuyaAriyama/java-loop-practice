@@ -29,6 +29,14 @@ const allowedOrigins = new Set([
   "http://127.0.0.1:5173",
   "http://127.0.0.1:8080"
 ]);
+const publicCheckoutOptions = {
+  invoker: "public",
+  secrets: ["STRIPE_SECRET_KEY"]
+};
+const publicWebhookOptions = {
+  invoker: "public",
+  secrets: ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]
+};
 
 function setCors(req, res) {
   const origin = req.get("origin") || "";
@@ -86,7 +94,7 @@ function resolveCheckoutPlan(rawPlan) {
 }
 
 exports.createStripeCheckoutSession = functions
-  .runWith({ invoker: "public" })
+  .runWith(publicCheckoutOptions)
   .region("us-central1")
   .https.onRequest(async (req, res) => {
     setCors(req, res);
@@ -139,7 +147,7 @@ exports.createStripeCheckoutSession = functions
   });
 
 exports.stripeWebhook = functions
-  .runWith({ invoker: "public" })
+  .runWith(publicWebhookOptions)
   .region("us-central1")
   .https.onRequest(async (req, res) => {
     if (!stripeWebhookSecret) {
