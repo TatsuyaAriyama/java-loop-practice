@@ -251,12 +251,16 @@ html.auth-optimistic body.auth-pending .auth-screen {
   background: #ffffff;
 }
 
-.app-shell.visible::before {
-  --puzzle-red-piece: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M13 11h16c0-5.7 3.6-9 8-9s8 3.3 8 9h7v16c5.7 0 10 3.9 10 8.5S57.7 44 52 44v9H36c0-5.7-3.6-9-8-9s-8 3.3-8 9h-7V37c-5.7 0-10-3.9-10-8.5S7.3 20 13 20V11Z' fill='%23c8102e' fill-opacity='.12' stroke='%23c8102e' stroke-opacity='.24' stroke-width='1.3'/%3E%3C/svg%3E");
-  --puzzle-white-piece: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M14 12h15c0-5.4 3.5-8.7 7.8-8.7S44.5 6.6 44.5 12H52v15.2c5.4 0 9.6 3.8 9.6 8.3S57.4 44 52 44v8H35.8c0-5.4-3.5-8.7-7.8-8.7S20.2 46.6 20.2 52H14V36.8c-5.4 0-9.6-3.8-9.6-8.3S8.6 20 14 20V12Z' fill='%23ffffff' stroke='%23d9d9d9' stroke-width='1.2'/%3E%3C/svg%3E");
+.app-shell.visible::before,
+.app-shell.visible::after {
+  --puzzle-red-piece: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'%3E%3Cpath d='M18.5 14.5h15.7c-.4-5.1 2.5-8.7 6.8-8.7s7.1 3.6 6.8 8.7h7.7v15.7c5.1-.4 8.7 2.5 8.7 6.8s-3.6 7.1-8.7 6.8v10.7H39.8c.4 5.1-2.5 8.7-6.8 8.7s-7.1-3.6-6.8-8.7h-7.7V38.8c-5.1.4-8.7-2.5-8.7-6.8s3.6-7.1 8.7-6.8V14.5Z' fill='%23c8102e' fill-opacity='.105' stroke='%23c8102e' stroke-opacity='.34' stroke-width='1.35'/%3E%3Cpath d='M23 19h10.4M45.8 19H51M23 50h4.8M41 50h10' fill='none' stroke='%23c8102e' stroke-opacity='.18' stroke-width='1'/%3E%3C/svg%3E");
+  --puzzle-white-piece: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'%3E%3Cpath d='M18.5 14.5h15.7c-.4-5.1 2.5-8.7 6.8-8.7s7.1 3.6 6.8 8.7h7.7v15.7c5.1-.4 8.7 2.5 8.7 6.8s-3.6 7.1-8.7 6.8v10.7H39.8c.4 5.1-2.5 8.7-6.8 8.7s-7.1-3.6-6.8-8.7h-7.7V38.8c-5.1.4-8.7-2.5-8.7-6.8s3.6-7.1 8.7-6.8V14.5Z' fill='%23ffffff' fill-opacity='.86' stroke='%23d6d6d6' stroke-width='1.25'/%3E%3Cpath d='M23 19h10.4M45.8 19H51M23 50h4.8M41 50h10' fill='none' stroke='%23c8102e' stroke-opacity='.12' stroke-width='1'/%3E%3C/svg%3E");
   content: "";
   position: fixed;
-  inset: 0;
+  top: -120vh;
+  right: 0;
+  left: 0;
+  height: 220vh;
   z-index: 0;
   pointer-events: none;
   background-image:
@@ -268,21 +272,54 @@ html.auth-optimistic body.auth-pending .auth-screen {
     var(--puzzle-white-piece);
   background-repeat: no-repeat;
   background-size:
-    72px 72px,
-    58px 58px,
-    46px 46px,
-    80px 80px,
-    52px 52px,
-    64px 64px;
+    30px 30px,
+    24px 24px,
+    18px 18px,
+    34px 34px,
+    22px 22px,
+    28px 28px;
   background-position:
-    calc(100% - 132px) 148px,
-    74px 42vh,
-    calc(100% - 232px) 78vh,
-    16vw 84vh,
-    78vw 46vh,
-    42vw 18vh;
-  filter: drop-shadow(0 16px 26px rgba(17, 17, 17, 0.055));
-  opacity: 0.92;
+    9vw 4vh,
+    74vw 19vh,
+    27vw 46vh,
+    88vw 68vh,
+    15vw 96vh,
+    56vw 124vh;
+  filter: drop-shadow(0 10px 18px rgba(17, 17, 17, 0.05));
+  opacity: 0.76;
+  transform: translate3d(0, -8vh, 0);
+  animation: puzzle-fall 30s linear infinite;
+  will-change: transform;
+}
+
+.app-shell.visible::after {
+  background-size:
+    20px 20px,
+    32px 32px,
+    24px 24px,
+    18px 18px,
+    30px 30px,
+    22px 22px;
+  background-position:
+    42vw 2vh,
+    6vw 34vh,
+    82vw 52vh,
+    34vw 84vh,
+    68vw 116vh,
+    22vw 146vh;
+  opacity: 0.58;
+  animation-duration: 38s;
+  animation-delay: -17s;
+}
+
+@keyframes puzzle-fall {
+  from {
+    transform: translate3d(0, -8vh, 0) rotate(0.001deg);
+  }
+
+  to {
+    transform: translate3d(0, 108vh, 0) rotate(0.001deg);
+  }
 }
 
 .site-header,
@@ -4122,6 +4159,12 @@ main,
     scroll-behavior: auto;
   }
 
+  .app-shell.visible::before,
+  .app-shell.visible::after {
+    animation: none !important;
+    transform: none !important;
+  }
+
   *,
   *::before,
   *::after {
@@ -4133,22 +4176,23 @@ main,
 }
 
 @media (max-width: 900px) {
-  .app-shell.visible::before {
+  .app-shell.visible::before,
+  .app-shell.visible::after {
     background-size:
-      54px 54px,
-      44px 44px,
-      38px 38px,
-      58px 58px,
+      22px 22px,
+      18px 18px,
       0 0,
-      48px 48px;
+      26px 26px,
+      16px 16px,
+      20px 20px;
     background-position:
-      calc(100% - 42px) 118px,
-      18px 48vh,
-      calc(100% - 76px) 82vh,
-      12vw 88vh,
+      12vw 4vh,
+      76vw 30vh,
       0 0,
-      62vw 18vh;
-    opacity: 0.78;
+      90vw 74vh,
+      18vw 112vh,
+      58vw 144vh;
+    opacity: 0.48;
   }
 
   .auth-shell {
