@@ -86,6 +86,7 @@ function resolveCheckoutPlan(rawPlan) {
 }
 
 exports.createStripeCheckoutSession = functions
+  .runWith({ invoker: "public" })
   .region("us-central1")
   .https.onRequest(async (req, res) => {
     setCors(req, res);
@@ -138,6 +139,7 @@ exports.createStripeCheckoutSession = functions
   });
 
 exports.stripeWebhook = functions
+  .runWith({ invoker: "public" })
   .region("us-central1")
   .https.onRequest(async (req, res) => {
     if (!stripeWebhookSecret) {
