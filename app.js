@@ -4443,6 +4443,35 @@ function normalizeLearningStatus(status, online = false) {
   return text;
 }
 
+function parseTraceMetric(value) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  const match = String(value ?? "").match(/\d+/);
+  return match ? Number(match[0]) : 0;
+}
+
+function parseTraceActiveTime(value) {
+  if (!value || value === "常時オンライン") return 0;
+  const direct = new Date(value).getTime();
+  if (!Number.isNaN(direct)) return direct;
+
+  const dateMatch = String(value).match(/(\d{4})[/-](\d{1,2})[/-](\d{1,2})/);
+  if (dateMatch) {
+    return new Date(Number(dateMatch[1]), Number(dateMatch[2]) - 1, Number(dateMatch[3])).getTime();
+  }
+
+  return 0;
+}
+
+function getTraceActivityScore(user) {
+  const lastActiveTime = Number(user.lastActiveTime || 0);
+  const totalCleared = parseTraceMetric(user.totalCleared);
+  const lessonsCleared = parseTraceMetric(user.lessonsCleared);
+
+  return lastActiveTime
+    + (totalCleared * 60 * 60 * 1000)
+    + (lessonsCleared * 6 * 60 * 60 * 1000);
+}
+
 const seededTraceRoomUsers = [
   {
     userName: "@hiromusage",
@@ -4525,12 +4554,20 @@ function traceRoomFallbackKey(user) {
 
 function mergeTraceRoomUser(base = {}, next = {}) {
   const merged = { ...base, ...next };
+  const baseTotal = parseTraceMetric(base.totalCleared);
+  const nextTotal = parseTraceMetric(next.totalCleared);
+  const baseLessons = parseTraceMetric(base.lessonsCleared);
+  const nextLessons = parseTraceMetric(next.lessonsCleared);
 
   if (!next.uid && base.uid) merged.uid = base.uid;
   if ((next.totalCleared === "未取得" || next.totalCleared === "取得中" || next.totalCleared == null) && base.totalCleared != null) {
     merged.totalCleared = base.totalCleared;
+  } else if (baseTotal > nextTotal) {
+    merged.totalCleared = base.totalCleared;
   }
   if ((next.lessonsCleared === "未取得" || next.lessonsCleared === "取得中" || next.lessonsCleared == null) && base.lessonsCleared != null) {
+    merged.lessonsCleared = base.lessonsCleared;
+  } else if (baseLessons > nextLessons) {
     merged.lessonsCleared = base.lessonsCleared;
   }
   if (!next.online && base.online) merged.online = base.online;
@@ -4580,7 +4617,8 @@ function mergeTraceRoomUserList(users) {
 function normalizeTraceRoomUser(user) {
   const displayName = user.displayName || "Learner";
   const activeSource = user.lastActive || user.lastActiveLabel;
-  const activeDate = activeSource && activeSource !== "常時オンライン" ? new Date(activeSource) : null;
+  const activeTime = parseTraceActiveTime(activeSource);
+  const activeDate = activeTime ? new Date(activeTime) : null;
 
   return {
     uid: user.uid,
@@ -4590,7 +4628,7 @@ function normalizeTraceRoomUser(user) {
     role: user.role || "Learner",
     status: normalizeLearningStatus(user.status, Boolean(user.online)),
     lastActive: user.lastActiveLabel || (user.lastActive === "常時オンライン" ? user.lastActive : formatActiveTime(activeDate)),
-    lastActiveTime: Number.isNaN(activeDate?.getTime?.()) ? 0 : activeDate?.getTime?.() || 0,
+    lastActiveTime: activeTime,
     online: Boolean(user.online),
     mentor: Boolean(user.mentor),
     badge: user.badge,
@@ -4604,7 +4642,11 @@ function sortTraceRoomUsers(users) {
   return [...users].sort((a, b) => {
     if (a.mentor !== b.mentor) return a.mentor ? -1 : 1;
     if (a.online !== b.online) return a.online ? -1 : 1;
-    return (b.lastActiveTime || 0) - (a.lastActiveTime || 0);
+    const activityDiff = getTraceActivityScore(b) - getTraceActivityScore(a);
+    if (activityDiff !== 0) return activityDiff;
+    const totalDiff = parseTraceMetric(b.totalCleared) - parseTraceMetric(a.totalCleared);
+    if (totalDiff !== 0) return totalDiff;
+    return String(a.displayName || "").localeCompare(String(b.displayName || ""), "ja");
   });
 }
 

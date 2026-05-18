@@ -381,6 +381,23 @@ function getTrustedProgressDisplay(data = {}, uid = "") {
   };
 }
 
+function parseTraceMetric(value) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  const match = String(value ?? "").match(/\d+/);
+  return match ? Number(match[0]) : 0;
+}
+
+function getTraceActivityScore(user) {
+  const lastActiveTime = new Date(user.lastActive || 0).getTime();
+  const safeLastActiveTime = Number.isNaN(lastActiveTime) ? 0 : lastActiveTime;
+  const totalCleared = parseTraceMetric(user.totalCleared);
+  const lessonsCleared = parseTraceMetric(user.lessonsCleared);
+
+  return safeLastActiveTime
+    + (totalCleared * 60 * 60 * 1000)
+    + (lessonsCleared * 6 * 60 * 60 * 1000);
+}
+
 function dispatchTraceUsers(users) {
   window.dispatchEvent(new CustomEvent("java-practice-trace-users", {
     detail: { users }
@@ -437,7 +454,11 @@ function mergeTraceUsers() {
 
   return [...usersById.values()].sort((a, b) => {
     if (a.online !== b.online) return a.online ? -1 : 1;
-    return new Date(b.lastActive || 0).getTime() - new Date(a.lastActive || 0).getTime();
+    const activityDiff = getTraceActivityScore(b) - getTraceActivityScore(a);
+    if (activityDiff !== 0) return activityDiff;
+    const totalDiff = parseTraceMetric(b.totalCleared) - parseTraceMetric(a.totalCleared);
+    if (totalDiff !== 0) return totalDiff;
+    return String(a.displayName || "").localeCompare(String(b.displayName || ""), "ja");
   });
 }
 
