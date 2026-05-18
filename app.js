@@ -378,6 +378,8 @@ const userAvatarOptions = [
   { value: "int", label: "Integer" },
   { value: "new", label: "New" },
   { value: "try", label: "Try" },
+  { value: "cat", label: "Trace Cat" },
+  { value: "PC", label: "Developer PC" },
   { value: "API", label: "API" },
   { value: "DB", label: "Database" },
   { value: "git", label: "Git" }
