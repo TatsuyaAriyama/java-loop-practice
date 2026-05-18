@@ -363,6 +363,32 @@ const profileNudgeDismissKeyPrefix = "java-output-practice-profile-nudge-dismiss
 const languageKey = "java-output-practice-language";
 let profileNudgeTypingTimer = null;
 let currentLanguage = "ja";
+let hasPremiumAccess = false;
+const premiumLessonGroups = new Set([
+  "silver-specs",
+  "modern-syntax",
+  "compile-error-reading",
+  "silver-se17",
+  "oop-advanced"
+]);
+const premiumLessonLinks = new Set([
+  "spec-final",
+  "spec-access",
+  "spec-inheritance",
+  "spec-abstract",
+  "spec-interface",
+  "spec-overload-override",
+  "spec-immutable",
+  "spec-record",
+  "modern-syntax-soon",
+  "compile-error-reading-soon",
+  "strings-arraylist-silver",
+  "inheritance",
+  "interfaces",
+  "exceptions",
+  "silver-review",
+  "oop-advanced-soon"
+]);
 const userAvatarOptions = [
   { value: "{}", label: "Braces" },
   { value: "[]", label: "Array" },
@@ -423,6 +449,9 @@ const uiCopy = {
     checkoutSecureNote: "カード情報はStripe上で安全に入力します。",
     billingActive: "月額プランは有効です。",
     billingSupported: "支援ありがとうございます。決済状態は保存されています。",
+    premiumLocked: "ここから先は月額プランで解放されます。",
+    premiumUnlocked: "月額プランで有料Lessonが解放されています。",
+    premiumCta: "月額プランで解放",
     traceRoomLogoAria: "Trace Roomへ移動",
     traceRoomTagline: "学習者が集まる共有ラボ"
   },
@@ -458,6 +487,9 @@ const uiCopy = {
     checkoutSecureNote: "Card details are entered securely on Stripe.",
     billingActive: "Your monthly plan is active.",
     billingSupported: "Thank you for your support. Payment status is saved.",
+    premiumLocked: "Lessons after this point are unlocked with the monthly plan.",
+    premiumUnlocked: "Premium lessons are unlocked by your monthly plan.",
+    premiumCta: "Unlock with monthly plan",
     traceRoomLogoAria: "Open Trace Room",
     traceRoomTagline: "Shared lab for Java learners"
   }
@@ -4122,6 +4154,42 @@ function setBillingFeedback(message, tone = "") {
   feedback.textContent = message;
 }
 
+function isPremiumBillingStatus(status, plan = "") {
+  return status === "active"
+    || status === "trialing"
+    || status === "paid"
+    || plan === "monthly";
+}
+
+function isPremiumLink(link) {
+  return link?.dataset?.premiumLink === "true";
+}
+
+function applyPremiumLocks() {
+  document.body.classList.toggle("premium-active", hasPremiumAccess);
+  document.body.classList.toggle("premium-locked", !hasPremiumAccess);
+
+  document.querySelectorAll("[data-premium-group='true']").forEach((group) => {
+    group.classList.toggle("premium-group-locked", !hasPremiumAccess);
+    group.classList.toggle("premium-group-unlocked", hasPremiumAccess);
+  });
+
+  document.querySelectorAll("[data-premium-link='true']").forEach((link) => {
+    const locked = !hasPremiumAccess;
+    link.classList.toggle("premium-locked-link", locked);
+    link.classList.toggle("premium-unlocked-link", hasPremiumAccess);
+    link.setAttribute("aria-disabled", String(locked));
+    link.title = locked ? t("premiumLocked") : t("premiumUnlocked");
+    const check = link.querySelector(".lesson-check");
+    if (check) {
+      if (!check.dataset.originalStatus) {
+        check.dataset.originalStatus = check.textContent || "読む";
+      }
+      check.textContent = locked ? "鍵" : check.dataset.originalStatus;
+    }
+  });
+}
+
 function requestCheckout(plan) {
   setBillingPending(plan, true);
   setBillingFeedback(t("checkoutPreparing"), "active");
@@ -4955,6 +5023,9 @@ function createLessonGroup({ id, title, lessons, open = false }) {
   const section = document.createElement("section");
   section.className = "lesson-group";
   section.dataset.lessonGroup = id;
+  if (premiumLessonGroups.has(id)) {
+    section.dataset.premiumGroup = "true";
+  }
   section.innerHTML = `
     <button class="lesson-group-toggle" type="button" aria-expanded="${open}">
       <span>${title}</span>
@@ -4962,7 +5033,7 @@ function createLessonGroup({ id, title, lessons, open = false }) {
     </button>
     <div class="lesson-links">
       ${lessons.map((lesson, index) => `
-        <a href="${lesson.href}" ${lesson.href === "#" ? 'class="disabled" aria-disabled="true"' : ""} data-lesson-link="${lesson.id}"><span>${String(index + 1).padStart(2, "0")}</span><b>${lesson.title}</b><small class="lesson-check">${lesson.status || "講座"}</small></a>
+        <a href="${lesson.href}" ${lesson.href === "#" ? 'class="disabled" aria-disabled="true"' : ""} data-lesson-link="${lesson.id}" ${premiumLessonGroups.has(id) || premiumLessonLinks.has(lesson.id) ? 'data-premium-link="true"' : ""}><span>${String(index + 1).padStart(2, "0")}</span><b>${lesson.title}</b><small class="lesson-check">${lesson.status || "講座"}</small></a>
       `).join("")}
     </div>
   `;
@@ -6000,6 +6071,7 @@ ensureUserSummary();
 ensureStudyLogPanel();
 ensureBillingActions();
 applyLanguageToDynamicUi();
+applyPremiumLocks();
 updateLessonProgress();
 notifyLearningStatus();
 renderTraceRoom();
@@ -6021,6 +6093,8 @@ window.addEventListener("java-practice-auth-ready", (event) => {
   currentDisplayName = event.detail?.displayName || currentUserName;
   currentUserAvatar = event.detail?.avatar || getAvatarLetter(currentDisplayName);
   updateUserSummary();
+  hasPremiumAccess = false;
+  applyPremiumLocks();
   updateLessonProgress();
   renderStudyLog();
   notifyLearningStatus();
@@ -6042,6 +6116,7 @@ window.addEventListener("java-practice-language-changed", (event) => {
     localStorage.setItem(languageKey, currentLanguage);
   } catch {}
   applyLanguageToDynamicUi();
+  applyPremiumLocks();
   renderStudyLog();
 
   const nudge = document.querySelector("[data-profile-nudge]");
@@ -6060,11 +6135,13 @@ window.addEventListener("java-practice-checkout-error", (event) => {
 window.addEventListener("java-practice-billing-status", (event) => {
   const status = String(event.detail?.status || "none");
   const plan = String(event.detail?.plan || "");
+  hasPremiumAccess = isPremiumBillingStatus(status, plan);
+  applyPremiumLocks();
   if (status === "active" || status === "trialing") {
     setBillingFeedback(t("billingActive"), "active");
     return;
   }
-  if (status === "paid" || plan === "support") {
+  if (status === "paid") {
     setBillingFeedback(t("billingSupported"), "active");
     return;
   }
@@ -6146,6 +6223,15 @@ if (lessonPanel && lessonToggles.length > 0) {
       const open = !group.classList.contains("open");
       group.classList.toggle("open", open);
       groupToggle.setAttribute("aria-expanded", String(open));
+      return;
+    }
+
+    const lockedPremiumLink = event.target.closest("a[data-premium-link='true']");
+    if (lockedPremiumLink && !hasPremiumAccess) {
+      event.preventDefault();
+      setBillingFeedback(t("premiumLocked"), "no");
+      requestCheckout("monthly");
+      toggleLessonPanel(false);
       return;
     }
 

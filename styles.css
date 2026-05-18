@@ -1282,6 +1282,50 @@ h1 {
   transform: none;
 }
 
+.lesson-links a.premium-locked-link {
+  color: #7a7474;
+  background: linear-gradient(90deg, #fffafa 0%, #ffffff 78%);
+}
+
+.lesson-links a.premium-locked-link:hover {
+  border-color: rgba(200, 16, 46, 0.32);
+  color: var(--red);
+}
+
+.lesson-links a.premium-locked-link b::after {
+  content: "LOCK";
+  margin-left: 8px;
+  border: 1px solid rgba(200, 16, 46, 0.45);
+  padding: 1px 5px;
+  color: var(--red);
+  font-family: Menlo, Consolas, "Courier New", monospace;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.lesson-links a.premium-unlocked-link b::after {
+  content: "OPEN";
+  margin-left: 8px;
+  border: 1px solid rgba(30, 126, 71, 0.35);
+  padding: 1px 5px;
+  color: var(--ok);
+  font-family: Menlo, Consolas, "Courier New", monospace;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.premium-group-locked > .lesson-group-toggle span::after {
+  content: "鍵";
+  margin-left: 10px;
+  border: 1px solid rgba(200, 16, 46, 0.42);
+  padding: 2px 7px;
+  color: var(--red);
+  font-size: 10px;
+  font-weight: 900;
+}
+
 .lesson-links span {
   color: var(--red);
   font-family: Menlo, Consolas, "Courier New", monospace;
