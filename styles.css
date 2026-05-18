@@ -251,77 +251,6 @@ html.auth-optimistic body.auth-pending .auth-screen {
   background: #ffffff;
 }
 
-.app-shell.visible::before,
-.app-shell.visible::after {
-  --puzzle-red-piece: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'%3E%3Cpath d='M18.5 14.5h15.7c-.4-5.1 2.5-8.7 6.8-8.7s7.1 3.6 6.8 8.7h7.7v15.7c5.1-.4 8.7 2.5 8.7 6.8s-3.6 7.1-8.7 6.8v10.7H39.8c.4 5.1-2.5 8.7-6.8 8.7s-7.1-3.6-6.8-8.7h-7.7V38.8c-5.1.4-8.7-2.5-8.7-6.8s3.6-7.1 8.7-6.8V14.5Z' fill='%23c8102e' fill-opacity='.105' stroke='%23c8102e' stroke-opacity='.34' stroke-width='1.35'/%3E%3Cpath d='M23 19h10.4M45.8 19H51M23 50h4.8M41 50h10' fill='none' stroke='%23c8102e' stroke-opacity='.18' stroke-width='1'/%3E%3C/svg%3E");
-  --puzzle-white-piece: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'%3E%3Cpath d='M18.5 14.5h15.7c-.4-5.1 2.5-8.7 6.8-8.7s7.1 3.6 6.8 8.7h7.7v15.7c5.1-.4 8.7 2.5 8.7 6.8s-3.6 7.1-8.7 6.8v10.7H39.8c.4 5.1-2.5 8.7-6.8 8.7s-7.1-3.6-6.8-8.7h-7.7V38.8c-5.1.4-8.7-2.5-8.7-6.8s3.6-7.1 8.7-6.8V14.5Z' fill='%23ffffff' fill-opacity='.86' stroke='%23d6d6d6' stroke-width='1.25'/%3E%3Cpath d='M23 19h10.4M45.8 19H51M23 50h4.8M41 50h10' fill='none' stroke='%23c8102e' stroke-opacity='.12' stroke-width='1'/%3E%3C/svg%3E");
-  content: "";
-  position: fixed;
-  top: -120vh;
-  right: 0;
-  left: 0;
-  height: 220vh;
-  z-index: 0;
-  pointer-events: none;
-  background-image:
-    var(--puzzle-red-piece),
-    var(--puzzle-white-piece),
-    var(--puzzle-red-piece),
-    var(--puzzle-white-piece),
-    var(--puzzle-red-piece),
-    var(--puzzle-white-piece);
-  background-repeat: no-repeat;
-  background-size:
-    30px 30px,
-    24px 24px,
-    18px 18px,
-    34px 34px,
-    22px 22px,
-    28px 28px;
-  background-position:
-    9vw 4vh,
-    74vw 19vh,
-    27vw 46vh,
-    88vw 68vh,
-    15vw 96vh,
-    56vw 124vh;
-  filter: drop-shadow(0 10px 18px rgba(17, 17, 17, 0.05));
-  opacity: 0.76;
-  transform: translate3d(0, -8vh, 0);
-  animation: puzzle-fall 30s linear infinite;
-  will-change: transform;
-}
-
-.app-shell.visible::after {
-  background-size:
-    20px 20px,
-    32px 32px,
-    24px 24px,
-    18px 18px,
-    30px 30px,
-    22px 22px;
-  background-position:
-    42vw 2vh,
-    6vw 34vh,
-    82vw 52vh,
-    34vw 84vh,
-    68vw 116vh,
-    22vw 146vh;
-  opacity: 0.58;
-  animation-duration: 38s;
-  animation-delay: -17s;
-}
-
-@keyframes puzzle-fall {
-  from {
-    transform: translate3d(0, -8vh, 0) rotate(0.001deg);
-  }
-
-  to {
-    transform: translate3d(0, 108vh, 0) rotate(0.001deg);
-  }
-}
-
 .site-header,
 main,
 .site-footer {
@@ -4159,12 +4088,6 @@ main,
     scroll-behavior: auto;
   }
 
-  .app-shell.visible::before,
-  .app-shell.visible::after {
-    animation: none !important;
-    transform: none !important;
-  }
-
   *,
   *::before,
   *::after {
@@ -4176,25 +4099,6 @@ main,
 }
 
 @media (max-width: 900px) {
-  .app-shell.visible::before,
-  .app-shell.visible::after {
-    background-size:
-      22px 22px,
-      18px 18px,
-      0 0,
-      26px 26px,
-      16px 16px,
-      20px 20px;
-    background-position:
-      12vw 4vh,
-      76vw 30vh,
-      0 0,
-      90vw 74vh,
-      18vw 112vh,
-      58vw 144vh;
-    opacity: 0.48;
-  }
-
   .auth-shell {
     grid-template-columns: 1fr;
   }
