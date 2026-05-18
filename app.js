@@ -319,6 +319,7 @@ const conditionalList = document.querySelector("#conditionalQuestionList");
 const booleanList = document.querySelector("#booleanQuestionList");
 const basicSyntaxList = document.querySelector("#basicSyntaxQuestionList");
 const basicSyntaxValueList = document.querySelector("#basicSyntaxValueQuestionList");
+const stringCollectionList = document.querySelector("#stringCollectionQuestionList");
 const methodOneList = document.querySelector("#methodOneQuestionList");
 const methodTwoList = document.querySelector("#methodTwoQuestionList");
 const classList = document.querySelector("#classQuestionList");
@@ -1239,6 +1240,27 @@ const prerequisiteCatalog = [
     pitfall: "文字列と変数名の違いが曖昧になる"
   },
   {
+    label: "Stringの不変性",
+    terms: ["concat", "substring", "replace", ".equals"],
+    description: "Stringは一度作ると中身を直接変えません。メソッドは新しい文字列を返す、と読んでください。",
+    defaultStatus: "復習推奨",
+    pitfall: "concatやreplaceを呼ぶだけで元の変数が変わったと思ってしまう"
+  },
+  {
+    label: "StringBuilder",
+    terms: ["StringBuilder", ".append", ".insert", ".delete", ".reverse"],
+    description: "文字列を組み立てるためのクラスです。appendやinsertはStringBuilder自身の中身を変えます。",
+    defaultStatus: "初見注意",
+    pitfall: "Stringと同じように、変更されないものとして読んでしまう"
+  },
+  {
+    label: "ArrayList",
+    terms: ["ArrayList", ".add", ".get", ".remove", ".set", ".size"],
+    description: "要素数をあとから増やしたり減らしたりできるリストです。番号は配列と同じく0から始まります。",
+    defaultStatus: "初見注意",
+    pitfall: "remove後に後ろの要素が前へ詰まることを見落とす"
+  },
+  {
     label: "boolean型",
     terms: ["boolean", "true", "false"],
     description: "trueかfalseのどちらかだけを入れる型です。条件式の結果もbooleanになります。",
@@ -1338,7 +1360,7 @@ const prerequisiteCatalog = [
   },
   {
     label: "index",
-    terms: ["[0]", "[1]", "[i]", "i - 1"],
+    terms: ["[0]", "[1]", "[i]", "i - 1", "charAt", "substring", "get("],
     description: "配列の番号です。Javaの配列は0番から始まります。",
     defaultStatus: "復習推奨",
     pitfall: "最初の要素を1番だと思ってしまう"
@@ -1417,6 +1439,7 @@ const prerequisiteCatalog = [
 
 const lessonPrerequisiteLabels = {
   "basic-syntax": ["クラス", "変数", "int型", "String型", "代入演算子", "System.out.println"],
+  strings: ["String型", "System.out.println"],
   loops: ["変数", "int型", "比較演算子", "System.out.println"],
   arrays: ["変数", "配列", "index", "System.out.println"],
   conditionals: ["変数", "if文", "比較演算子", "System.out.println"],
@@ -1427,6 +1450,7 @@ const lessonPrerequisiteLabels = {
 
 const prerequisitePriority = {
   "basic-syntax": ["クラス", "変数", "int型", "String型", "boolean型", "代入演算子", "比較演算子", "if文", "フィールド", "System.out.println"],
+  strings: ["String型", "Stringの不変性", "StringBuilder", "ArrayList", "index", "length", "メソッド", "変数", "int型", "System.out.println"],
   loops: ["for文", "while文", "break", "continue", "比較演算子", "+=", "++", "--", "%", "変数", "int型", "System.out.println"],
   arrays: ["配列", "index", "length", "for文", "if文", "比較演算子", "+=", "++", "変数", "int型", "String型", "System.out.println"],
   conditionals: ["if文", "else", "比較演算子", "論理演算子", "boolean型", "変数", "int型", "System.out.println"],
@@ -2862,6 +2886,66 @@ const topicDeepDives = {
     ],
     code: "int[] scores = {80, 90, 70};\nSystem.out.println(scores[2]); // OK\n// System.out.println(scores[3]); // 範囲外"
   },
+  "string-immutable": {
+    eyebrow: "String",
+    title: "Stringは、呼んだだけでは元の値が変わらない。",
+    body: [
+      "Stringは不変です。concat、replace、substringのようなメソッドは、新しい文字列を返します。元の変数へ代入していなければ、変数の中身は変わりません。",
+      "試験ではここを静かに狙ってきます。text.concat(\"Silver\"); と書いてあっても、text = text.concat(\"Silver\"); でなければ、textは元のままです。",
+      "出力を追うときは、メソッド名だけで判断しないでください。戻り値を受け取っているか。そこに赤線を引く感覚で読みます。"
+    ],
+    checks: [
+      "Stringのメソッドは新しい文字列を返す。",
+      "代入していない戻り値は捨てられる。",
+      "==ではなくequalsで内容比較する場面が多い。"
+    ],
+    code: "String text = \"Java\";\ntext.concat(\"Silver\");\nSystem.out.println(text); // Java\n\ntext = text.concat(\"Silver\");\nSystem.out.println(text); // JavaSilver"
+  },
+  "string-index": {
+    eyebrow: "index",
+    title: "文字列の位置も0から数える。終わりの位置は含まない。",
+    body: [
+      "charAt(0) は先頭の1文字を取り出します。配列と同じで、文字列の位置も0から始まります。",
+      "substring(1, 4) は、1番から始めて4番の直前までを取り出します。つまり開始位置は含み、終了位置は含みません。",
+      "ここは一度ずれると出力が全部ずれます。文字の下に0、1、2、3と番号を振ってから読むと、急に安定します。"
+    ],
+    checks: [
+      "charAt(0) は先頭。",
+      "substring(start, end) はendを含まない。",
+      "lengthは文字数で、最後の位置は length - 1。"
+    ],
+    code: "String word = \"Silver\";\nSystem.out.println(word.charAt(0));      // S\nSystem.out.println(word.substring(1, 4)); // ilv"
+  },
+  "builder-mutable": {
+    eyebrow: "StringBuilder",
+    title: "StringBuilderは、その場で中身が変わる。",
+    body: [
+      "StringBuilderは文字列を少しずつ組み立てるためのクラスです。append、insert、deleteなどを呼ぶと、StringBuilder自身の中身が変わります。",
+      "Stringと逆です。Stringは戻り値を代入しないと変わらない。StringBuilderはappendした時点で中身が動きます。この対比を持つだけで、多くの出力問題が読みやすくなります。",
+      "問題文でStringBuilderが出たら、各行のあとに今の中身を書き出してください。頭の中だけで追うより、1行ごとに状態を更新する方が強いです。"
+    ],
+    checks: [
+      "appendは後ろへ足す。",
+      "insertは指定位置へ差し込む。",
+      "delete(start, end) はendを含まない。"
+    ],
+    code: "StringBuilder sb = new StringBuilder(\"Ja\");\nsb.append(\"va\");\nsb.insert(4, \" Silver\");\nSystem.out.println(sb); // Java Silver"
+  },
+  "arraylist-mutable": {
+    eyebrow: "ArrayList",
+    title: "ArrayListは、増える。減る。詰まる。",
+    body: [
+      "ArrayListは、あとから要素を追加・削除できるリストです。addで追加し、getで取り出し、setで入れ替え、removeで削除します。",
+      "重要なのはremove後です。1番を消したら、2番にいた要素が1番へ詰まります。ここを読まずに次のget(1)を見ると、ほぼ確実に外します。",
+      "ArrayListの問題は、小さな表を作るのが一番です。0番、1番、2番と列を作り、add/remove/setのたびに更新してください。落ち着いて表を動かせば解けます。"
+    ],
+    checks: [
+      "addは末尾へ追加する。",
+      "get(index) は指定位置を読む。",
+      "remove(index) の後は、後ろの要素が前へ詰まる。"
+    ],
+    code: "ArrayList<String> list = new ArrayList<>();\nlist.add(\"A\");\nlist.add(\"B\");\nlist.add(\"C\");\nlist.remove(1);\nSystem.out.println(list.get(1)); // C"
+  },
   "class-main": {
     eyebrow: "class Main",
     title: "Javaは、まずクラスという箱の中にコードを書く。",
@@ -3254,6 +3338,19 @@ const basicSyntaxValueQuestions = [
   makeClassMethodQuestion({ title: "文字列連結は左から進む", concept: "String concat", prompt: "文字列と数字を+でつなげた結果を読みます。", output: "score: 90", explanation: "左に文字列があると、+は文字をつなげる働きになります。計算したい場所は丸かっこで囲むと安全です。", parts: ["class Main {\n  public static void main(String[] args) {\n    int score = 90;\n    System.out.println(", { answer: "\"score: \" + score", accepts: ["\"score: \" + score", "\"score: \"+score"], chars: 18 }, ");\n  }\n}"] })
 ];
 
+const stringCollectionQuestions = [
+  makeClassMethodQuestion({ title: "concatの戻り値を受け取る", concept: "String / immutable", prompt: "次のコードでJavaSilverと表示するには、concatの戻り値をtextに入れ直す必要があります。", output: "JavaSilver", explanation: "Stringは元の中身を直接変えません。concatが返した新しい文字列を、もう一度textへ代入します。", parts: ["class Main {\n  public static void main(String[] args) {\n    String text = \"Java\";\n    ", { answer: "text = text.concat(\"Silver\")", accepts: ["text = text.concat(\"Silver\")", "text=text.concat(\"Silver\")"], chars: 29 }, ";\n    System.out.println(text);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "substringの範囲を読む", concept: "String / substring", prompt: "Silverの1番から4番の直前までを取り出して表示します。終了位置は含まれません。", output: "ilv", explanation: "substring(1, 4)は1番、2番、3番を取り出します。4番は含まない点が試験でよく狙われます。", parts: ["class Main {\n  public static void main(String[] args) {\n    String word = \"Silver\";\n    System.out.println(word.substring(", { answer: "1", chars: 2 }, ", ", { answer: "4", chars: 2 }, "));\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "文字列の内容を比較する", concept: "String / equals", prompt: "aとbの内容が同じかを比較してtrueを表示します。", output: "true", explanation: "文字列の内容比較ではequalsを使います。==は同じ参照かを見るため、出力問題では注意が必要です。", parts: ["class Main {\n  public static void main(String[] args) {\n    String a = \"Java\";\n    String b = new String(\"Java\");\n    System.out.println(a.", { answer: "equals(b)", accepts: ["equals(b)", "equals( b )"], chars: 10 }, ");\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "StringBuilderに後ろから足す", concept: "StringBuilder / append", prompt: "StringBuilderの末尾にvaを足してJavaと表示します。", output: "Java", explanation: "StringBuilderのappendは、自分自身の末尾に文字を追加します。Stringとは違い、呼んだ時点で中身が変わります。", parts: ["class Main {\n  public static void main(String[] args) {\n    StringBuilder sb = new StringBuilder(\"Ja\");\n    sb.", { answer: "append(\"va\")", accepts: ["append(\"va\")", "append( \"va\" )"], chars: 13 }, ";\n    System.out.println(sb);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "StringBuilderに途中から差し込む", concept: "StringBuilder / insert", prompt: "Jvaの1番の位置にaを差し込み、Javaと表示します。", output: "Java", explanation: "insert(1, \"a\")は、1番の位置の前にaを差し込みます。位置は0から数えます。", parts: ["class Main {\n  public static void main(String[] args) {\n    StringBuilder sb = new StringBuilder(\"Jva\");\n    sb.", { answer: "insert(1, \"a\")", accepts: ["insert(1, \"a\")", "insert(1,\"a\")"], chars: 16 }, ";\n    System.out.println(sb);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "deleteの終わりは含まない", concept: "StringBuilder / delete", prompt: "JavaSE17からSEだけを削除してJava17と表示します。", output: "Java17", explanation: "delete(4, 6)は4番から6番の直前までを削除します。substringと同じく、終了位置は含みません。", parts: ["class Main {\n  public static void main(String[] args) {\n    StringBuilder sb = new StringBuilder(\"JavaSE17\");\n    sb.delete(", { answer: "4", chars: 2 }, ", ", { answer: "6", chars: 2 }, ");\n    System.out.println(sb);\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "ArrayListから1番を取り出す", concept: "ArrayList / get", prompt: "A、Bの順に追加したあと、1番の要素を表示します。", output: "B", explanation: "ArrayListも0番から始まります。get(1)は2番目の要素を取り出します。", parts: ["import java.util.ArrayList;\n\nclass Main {\n  public static void main(String[] args) {\n    ArrayList<String> list = new ArrayList<>();\n    list.add(\"A\");\n    list.add(\"B\");\n    System.out.println(list.", { answer: "get(1)", chars: 7 }, ");\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "remove後に要素が詰まる", concept: "ArrayList / remove", prompt: "A、B、Cのうち1番を削除します。その後、1番にいる値を表示します。", output: "C", explanation: "remove(1)でBが消えると、Cが1番へ詰まります。削除後の番号を更新して読むのが大切です。", parts: ["import java.util.ArrayList;\n\nclass Main {\n  public static void main(String[] args) {\n    ArrayList<String> list = new ArrayList<>();\n    list.add(\"A\");\n    list.add(\"B\");\n    list.add(\"C\");\n    list.", { answer: "remove(1)", chars: 10 }, ";\n    System.out.println(list.get(1));\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "setで要素を入れ替える", concept: "ArrayList / set", prompt: "0番のAをSに入れ替えて、SBと表示します。", output: "SB", explanation: "set(index, value)は指定した位置の要素を置き換えます。追加ではなく入れ替えです。", parts: ["import java.util.ArrayList;\n\nclass Main {\n  public static void main(String[] args) {\n    ArrayList<String> list = new ArrayList<>();\n    list.add(\"A\");\n    list.add(\"B\");\n    list.", { answer: "set(0, \"S\")", accepts: ["set(0, \"S\")", "set(0,\"S\")"], chars: 13 }, ";\n    System.out.println(list.get(0) + list.get(1));\n  }\n}"] }),
+  makeClassMethodQuestion({ title: "sizeで現在の要素数を見る", concept: "ArrayList / size", prompt: "AとBを追加し、Aを削除したあと、残った要素数を表示します。", output: "1", explanation: "size()は現在の要素数を返します。addとremoveのあとに何個残っているかを数えます。", parts: ["import java.util.ArrayList;\n\nclass Main {\n  public static void main(String[] args) {\n    ArrayList<String> list = new ArrayList<>();\n    list.add(\"A\");\n    list.add(\"B\");\n    list.", { answer: "remove(\"A\")", accepts: ["remove(\"A\")", "remove( \"A\" )"], chars: 13 }, ";\n    System.out.println(list.size());\n  }\n}"] })
+];
+
 const methodOneQuestions = [
   makeClassMethodQuestion({ title: "あいさつメソッドを呼ぶ", concept: "method / call", prompt: "greetメソッドを呼び出してHelloを表示します。", output: "Hello", explanation: "voidメソッドは、名前と丸かっこで呼び出します。", parts: ["class Main {\n  public static void main(String[] args) {\n    ", { answer: "greet()", chars: 8 }, ";\n  }\n\n  static void greet() {\n    System.out.println(\"Hello\");\n  }\n}"] }),
   makeClassMethodQuestion({ title: "名前を受け取って表示する", concept: "parameter", prompt: "nameを受け取るgreetメソッドを作り、Aoiにあいさつします。", output: "Hello Aoi", explanation: "引数は外から渡される材料です。String nameとして受け取ります。", parts: ["class Main {\n  public static void main(String[] args) {\n    greet(\"Aoi\");\n  }\n\n  static void greet(", { answer: "String name", chars: 12 }, ") {\n    System.out.println(\"Hello \" + ", { answer: "name", chars: 5 }, ");\n  }\n}"] }),
@@ -3303,6 +3400,11 @@ basicSyntaxValueQuestions.forEach((question) => {
   question.hints = buildTraceaHints(question, question.parts);
 });
 
+stringCollectionQuestions.forEach((question) => {
+  Object.assign(question, buildPrerequisiteSupport(question, "strings", "beginner"));
+  question.hints = buildTraceaHints(question, question.parts);
+});
+
 [methodOneQuestions, methodTwoQuestions].forEach((set) => {
   set.forEach((question) => {
     Object.assign(question, buildPrerequisiteSupport(question, "methods", "beginner"));
@@ -3322,6 +3424,7 @@ const lessonMeta = [
   { id: "arrays", total: arrayQuestions.length * 2 },
   { id: "conditionals", total: conditionalQuestions.length },
   { id: "booleans", total: booleanQuestions.length },
+  { id: "strings-arraylist", total: stringCollectionQuestions.length },
   { id: "methods-1", total: methodOneQuestions.length },
   { id: "methods-2", total: methodTwoQuestions.length },
   { id: "classes", total: classQuestions.length }
@@ -4678,7 +4781,7 @@ function createStringCollectionsLessonGroup() {
     id: "strings-builders-lists",
     title: "Java String・StringBuilder・ArrayList編",
     lessons: [
-      { id: "strings-builders-lists-soon", href: "#", title: "準備中", status: "近日追加" }
+      { id: "strings-arraylist", href: "strings-arraylist.html", title: "String・StringBuilder・ArrayList", status: "0/10" }
     ]
   });
 }
@@ -5617,6 +5720,11 @@ renderClassMethodQuestions(basicSyntaxValueList, basicSyntaxValueQuestions, {
   lessonId: "basic-syntax-values",
   numberPrefix: "V-",
   panelLabel: "値と型のコード"
+});
+renderClassMethodQuestions(stringCollectionList, stringCollectionQuestions, {
+  lessonId: "strings-arraylist",
+  numberPrefix: "S-",
+  panelLabel: "String・Listコード"
 });
 renderClassMethodQuestions(methodOneList, methodOneQuestions, {
   lessonId: "methods-1",
