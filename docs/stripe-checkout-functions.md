@@ -37,6 +37,16 @@ STRIPE_SUPPORT_PRICE_ID=price_xxxxxxxxxxxxxxxxxxxxxxxx
 
 Price ID自体は秘密鍵ではありませんが、料金の選択ロジックはFunctions側に置きます。フロントから任意のPrice IDを送らせないことで、想定外の価格へ差し替えられる余地を減らします。
 
+公開可能キーは次の値です。
+
+```text
+STRIPE_PUBLISHABLE_KEY=pk_live_51TYJ3tR04gxdDcT8ZEE1Gf4jvk7OjjQAQLRXJsVyjVqClXRLerD4LaFI5xtvKIdQrsHnQ0nMQ8Afsbf9kFjTP1vR00XnLOopci
+```
+
+ただし、現在の実装はFunctionsが作成したCheckout Sessionの `url` へ直接遷移する方式です。そのため、この公開可能キーは現時点ではフロントに埋め込む必要がありません。将来Stripe.jsの `redirectToCheckout` を使う方式に変える場合に使います。
+
+Checkoutが動くために必須なのは、Functions側に設定する `stripe.secret_key` です。公開可能キーだけではCheckout Sessionを作成できません。
+
 ## Firestore保存先の例
 
 - `billingCheckoutSessions/{sessionId}`
